@@ -12,7 +12,7 @@ pipelineJob('release-deploy-snapshots') {
     }
 
     triggers {
-        cron('0 */6 * * *')
+        cron('0 0,6,19 * * *')
     }
 
     parameters {
