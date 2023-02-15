@@ -32,7 +32,7 @@ public class ConnectorFactories {
         int dbPort = controller.getDatabasePort();
 
         return cb
-                .put("topic.prefix", cb.getDbServerName())
+                .put("database.server.name", cb.getDbServerName())
                 .put("database.server.id", 5400 + random.nextInt(1000))
                 .put("connector.class", "io.debezium.connector.mysql.MySqlConnector")
                 .put("task.max", 1)
@@ -40,8 +40,8 @@ public class ConnectorFactories {
                 .put("database.port", dbPort)
                 .put("database.user", ConfigProperties.DATABASE_MYSQL_DBZ_USERNAME)
                 .put("database.password", ConfigProperties.DATABASE_MYSQL_DBZ_PASSWORD)
-                .put("schema.history.internal.kafka.bootstrap.servers", kafka.getBootstrapAddress())
-                .put("schema.history.internal.kafka.topic", "schema-changes.inventory")
+                .put("database.history.kafka.bootstrap.servers", kafka.getBootstrapAddress())
+                .put("database.history.kafka.topic", "schema-changes.inventory")
                 .addOperationRouterForTable("u", "customers");
 
     }
@@ -52,7 +52,7 @@ public class ConnectorFactories {
         int dbPort = controller.getDatabasePort();
 
         return cb
-                .put("topic.prefix", cb.getDbServerName())
+                .put("database.server.name", cb.getDbServerName())
                 .put("connector.class", "io.debezium.connector.postgresql.PostgresConnector")
                 .put("task.max", 1)
                 .put("database.hostname", dbHost)
@@ -72,17 +72,16 @@ public class ConnectorFactories {
         int dbPort = controller.getDatabasePort();
 
         return cb
-                .put("topic.prefix", cb.getDbServerName())
+                .put("database.server.name", cb.getDbServerName())
                 .put("connector.class", "io.debezium.connector.sqlserver.SqlServerConnector")
                 .put("task.max", 1)
                 .put("database.hostname", dbHost)
                 .put("database.port", dbPort)
                 .put("database.user", ConfigProperties.DATABASE_SQLSERVER_DBZ_USERNAME)
                 .put("database.password", ConfigProperties.DATABASE_SQLSERVER_DBZ_PASSWORD)
-                .put("database.names", ConfigProperties.DATABASE_SQLSERVER_DBZ_DBNAMES)
-                .put("database.encrypt", false)
-                .put("schema.history.internal.kafka.bootstrap.servers", kafka.getBootstrapAddress())
-                .put("schema.history.internal.kafka.topic", "schema-changes.inventory")
+                .put("database.dbname", ConfigProperties.DATABASE_SQLSERVER_DBZ_DBNAMES)
+                .put("database.history.kafka.bootstrap.servers", kafka.getBootstrapAddress())
+                .put("database.history.kafka.topic", "schema-changes.inventory")
                 .addOperationRouterForTable("u", "customers");
     }
 
@@ -92,7 +91,7 @@ public class ConnectorFactories {
         int dbPort = controller.getDatabasePort();
 
         return cb
-                .put("topic.prefix", cb.getDbServerName())
+                .put("mongodb.name", cb.getDbServerName())
                 .put("connector.class", "io.debezium.connector.mongodb.MongoDbConnector")
                 .put("task.max", 1)
                 .put("mongodb.hosts", "rs0/" + dbHost + ":" + dbPort)
@@ -107,7 +106,7 @@ public class ConnectorFactories {
         int dbPort = controller.getDatabasePort();
 
         return cb
-                .put("topic.prefix", cb.getDbServerName())
+                .put("database.server.name", cb.getDbServerName())
                 .put("connector.class", "io.debezium.connector.db2.Db2Connector")
                 .put("task.max", 1)
                 .put("database.hostname", dbHost)
@@ -116,8 +115,8 @@ public class ConnectorFactories {
                 .put("database.password", ConfigProperties.DATABASE_DB2_DBZ_PASSWORD)
                 .put("database.dbname", ConfigProperties.DATABASE_DB2_DBZ_DBNAME)
                 .put("database.cdcschema", ConfigProperties.DATABASE_DB2_CDC_SCHEMA)
-                .put("schema.history.internal.kafka.bootstrap.servers", kafka.getBootstrapAddress())
-                .put("schema.history.internal.kafka.topic", "schema-changes.inventory")
+                .put("database.history.kafka.bootstrap.servers", kafka.getBootstrapAddress())
+                .put("database.history.kafka.topic", "schema-changes.inventory")
                 .addOperationRouterForTable("u", "CUSTOMERS");
     }
 
@@ -127,7 +126,7 @@ public class ConnectorFactories {
         int dbPort = controller.getDatabasePort();
 
         return cb
-                .put("topic.prefix", cb.getDbServerName())
+                .put("database.server.name", cb.getDbServerName())
                 .put("connector.class", "io.debezium.connector.oracle.OracleConnector")
                 .put("task.max", 1)
                 .put("database.hostname", dbHost)
@@ -139,8 +138,8 @@ public class ConnectorFactories {
                 .put("schema.include.list", "DEBEZIUM")
                 .put("table.include.list", "DEBEZIUM.CUSTOMERS")
                 .put("database.pdb.name", ConfigProperties.DATABASE_ORACLE_PDBNAME)
-                .put("schema.history.internal.kafka.bootstrap.servers", kafka.getBootstrapAddress())
-                .put("schema.history.internal.kafka.topic", "schema-changes.oracle")
+                .put("database.history.kafka.bootstrap.servers", kafka.getBootstrapAddress())
+                .put("database.history.kafka.topic", "schema-changes.oracle")
                 .put("log.mining.strategy", "online_catalog")
                 .addOperationRouterForTable("u", "CUSTOMERS");
     }
