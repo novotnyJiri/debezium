@@ -49,8 +49,7 @@ public abstract class SqlServerTests extends ConnectorTest {
     }
 
     private String topic(String key) {
-        String prefix = connectorConfig.getDbServerName() + "." +
-                connectorConfig.getAsString("database.names");
+        String prefix = connectorConfig.getDbServerName();
         return prefix + "." + key;
     }
 
