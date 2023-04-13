@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+  postgres-db:
+    image: 'postgres:14.1'
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d quarkus_test --username=quarkus_user" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "5432:5432"
+    container_name: postgres-quarkus
+    environment:
+      - POSTGRES_USER=quarkus_user
+      - POSTGRES_PASSWORD=quarkus_test
+      - POSTGRES_DB=quarkus_test
+
+  mysql-db:
+    image: 'mysql:8.0'
+    healthcheck:
+      test: [ "CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u quarkus_user --password=quarkus_test" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+#    cap_add:
+#      - SYS_NICE
+    ports:
+      - '3306:3306'
+    container_name: mysql-quarkus
+    environment:
+      MYSQL_DATABASE: "quarkus_test"
+      MYSQL_USER: "quarkus_user"
+      MYSQL_PASSWORD: "quarkus_test"
+      MYSQL_ROOT_PASSWORD: "quarkus_test"
+
+
+
