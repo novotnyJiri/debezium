@@ -1,21 +1,22 @@
 package io.debezium.dao;
 
-import io.agroal.api.AgroalDataSource;
-import io.debezium.entity.DatabaseEntry;
-import io.debezium.queryCreator.PostgresQueryCreator;
-import io.debezium.queryCreator.QueryCreator;
-import io.quarkus.agroal.DataSource;
-import io.quarkus.arc.Unremovable;
-import io.quarkus.arc.lookup.LookupIfProperty;
-import org.jboss.logging.Logger;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 import java.util.Optional;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+
+import org.jboss.logging.Logger;
+
+import io.agroal.api.AgroalDataSource;
+import io.debezium.entity.DatabaseEntry;
+import io.debezium.queryCreator.PostgresQueryCreator;
+import io.quarkus.agroal.DataSource;
+import io.quarkus.arc.Unremovable;
+import io.quarkus.arc.lookup.LookupIfProperty;
 
 @ApplicationScoped
 @LookupIfProperty(name = "quarkus.datasource.postgresql.enabled", stringValue = "true")
@@ -42,10 +43,11 @@ public class PostgresDao implements Dao {
 
     @Override
     public void insert(DatabaseEntry databaseEntry) {
-        try(Connection conn = source.getConnection();
-            Statement stmt = conn.createStatement()) {
+        try (Connection conn = source.getConnection();
+                Statement stmt = conn.createStatement()) {
             stmt.execute(queryCreator.InsertQuery(databaseEntry));
-        } catch (SQLException ex) {
+        }
+        catch (SQLException ex) {
             LOG.error("Could not insert into database " + databaseEntry);
         }
     }
@@ -67,10 +69,11 @@ public class PostgresDao implements Dao {
 
     @Override
     public void createTable(DatabaseEntry databaseEntry) {
-        try(Connection conn = source.getConnection();
-            Statement stmt = conn.createStatement()) {
+        try (Connection conn = source.getConnection();
+                Statement stmt = conn.createStatement()) {
             stmt.execute(queryCreator.CreateTableQuery(databaseEntry.getDatabaseTable()));
-        } catch (SQLException ex) {
+        }
+        catch (SQLException ex) {
             LOG.error("Could not create table " + databaseEntry);
         }
     }

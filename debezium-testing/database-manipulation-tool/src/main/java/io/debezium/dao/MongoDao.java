@@ -1,24 +1,26 @@
 package io.debezium.dao;
 
+import java.util.List;
+import java.util.Optional;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+
+import org.bson.conversions.Bson;
+import org.jboss.logging.Logger;
+
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.UpdateOptions;
-import com.mongodb.client.model.Updates;
+
 import io.debezium.entity.DatabaseColumnEntry;
 import io.debezium.entity.DatabaseEntry;
 import io.debezium.queryCreator.MongoBsonCreator;
 import io.quarkus.arc.Unremovable;
 import io.quarkus.arc.lookup.LookupIfProperty;
 import io.quarkus.mongodb.MongoClientName;
-import org.bson.conversions.Bson;
-import org.jboss.logging.Logger;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import java.util.List;
-import java.util.Optional;
 
 @ApplicationScoped
 @LookupIfProperty(name = "quarkus.mongodb.main.enabled", stringValue = "true")
@@ -35,6 +37,7 @@ public class MongoDao implements Dao {
     MongoBsonCreator bsonCreator;
 
     private static final Logger LOG = Logger.getLogger(MongoDao.class);
+
     @Override
     public Optional<DatabaseEntry> get(long id) {
         return Optional.empty();
@@ -73,7 +76,8 @@ public class MongoDao implements Dao {
             Bson update = bsonCreator.updateBson(databaseEntry);
             UpdateOptions options = new UpdateOptions().upsert(true);
             db.getCollection(databaseEntry.getDatabaseTable().getName()).updateOne(filter, update, options);
-        } catch (MongoException me) {
+        }
+        catch (MongoException me) {
             LOG.error("Could not upsert " + databaseEntry);
             LOG.error(me);
         }
@@ -84,7 +88,8 @@ public class MongoDao implements Dao {
         try {
             MongoDatabase db = client.getDatabase(DATABASE_NAME);
             db.createCollection(databaseEntry.getDatabaseTable().getName());
-        } catch (MongoException me) {
+        }
+        catch (MongoException me) {
             LOG.error("Could not create table " + databaseEntry);
             LOG.error(me);
         }

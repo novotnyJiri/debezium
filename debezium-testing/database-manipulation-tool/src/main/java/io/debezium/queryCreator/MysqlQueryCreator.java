@@ -1,14 +1,15 @@
 package io.debezium.queryCreator;
 
+import javax.enterprise.context.ApplicationScoped;
+
 import io.debezium.entity.DatabaseColumnEntry;
 import io.debezium.entity.DatabaseEntry;
-
-import javax.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class MysqlQueryCreator extends AbstractBasicQueryCreator {
 
-    public MysqlQueryCreator() {}
+    public MysqlQueryCreator() {
+    }
 
     @Override
     public String UpsertQuery(DatabaseEntry databaseEntry) {
@@ -22,7 +23,7 @@ public class MysqlQueryCreator extends AbstractBasicQueryCreator {
                     .append('\'')
                     .append(", ");
         }
-        return builder.delete(builder.length() -2, builder.length()).toString();
+        return builder.delete(builder.length() - 2, builder.length()).toString();
 
     }
 }

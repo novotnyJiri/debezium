@@ -1,13 +1,16 @@
 package io.debezium.queryCreator;
 
-import com.mongodb.client.model.Updates;
-import io.debezium.entity.DatabaseEntry;
+import java.util.stream.Collectors;
+
+import javax.enterprise.context.ApplicationScoped;
+
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.jboss.logging.Logger;
 
-import javax.enterprise.context.ApplicationScoped;
-import java.util.stream.Collectors;
+import com.mongodb.client.model.Updates;
+
+import io.debezium.entity.DatabaseEntry;
 
 @ApplicationScoped
 public class MongoBsonCreator {
@@ -17,8 +20,7 @@ public class MongoBsonCreator {
         return Updates.combine(
                 databaseEntry.getColumnEntries().stream()
                         .map(columnEntry -> Updates.set(columnEntry.getColumnName(), columnEntry.getValue()))
-                        .collect(Collectors.toList())
-        );
+                        .collect(Collectors.toList()));
     }
 
     public Bson insertBson(DatabaseEntry databaseEntry) {

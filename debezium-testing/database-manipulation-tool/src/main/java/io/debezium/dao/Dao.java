@@ -1,9 +1,9 @@
 package io.debezium.dao;
 
-import io.debezium.entity.DatabaseEntry;
-
 import java.util.List;
 import java.util.Optional;
+
+import io.debezium.entity.DatabaseEntry;
 
 public interface Dao {
     Optional<DatabaseEntry> get(long id);

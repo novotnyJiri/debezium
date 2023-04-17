@@ -1,10 +1,11 @@
 package io.debezium.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import io.vertx.mutiny.sqlclient.Row;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import io.vertx.mutiny.sqlclient.Row;
 
 public class TestModel {
     private final long id;
@@ -22,10 +23,12 @@ public class TestModel {
     public static TestModel from(ResultSet row) throws SQLException {
         return new TestModel(row.getLong("id"), row.getString("name"));
     }
+
     @JsonProperty("id")
     public long getId() {
         return id;
     }
+
     @JsonProperty("name")
     public String getName() {
         return name;

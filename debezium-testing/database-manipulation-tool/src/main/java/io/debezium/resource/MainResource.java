@@ -1,8 +1,5 @@
 package io.debezium.resource;
 
-import io.debezium.entity.DatabaseEntry;
-import io.debezium.service.MainService;
-
 import javax.inject.Inject;
 import javax.json.JsonObject;
 import javax.ws.rs.Consumes;
@@ -12,6 +9,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import io.debezium.entity.DatabaseEntry;
+import io.debezium.service.MainService;
+
 @Path("Main")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
@@ -19,6 +19,7 @@ public class MainResource {
 
     @Inject
     MainService mainService;
+
     @Path("Insert")
     @POST
     public Response Insert(JsonObject inputJsonObj) {
@@ -27,7 +28,8 @@ public class MainResource {
             mainService.insert(dbEntity);
             return Response.ok().build();
 
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) {
             return Response.noContent().status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -40,7 +42,8 @@ public class MainResource {
             mainService.createTable(dbEntity);
             return Response.ok().build();
 
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) {
             return Response.noContent().status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -52,7 +55,8 @@ public class MainResource {
             DatabaseEntry dbEntity = new DatabaseEntry(inputJsonObj);
             mainService.upsert(dbEntity);
             return Response.ok().build();
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) {
             return Response.noContent().status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }

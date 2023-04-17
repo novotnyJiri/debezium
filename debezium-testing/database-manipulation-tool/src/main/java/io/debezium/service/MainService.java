@@ -1,11 +1,11 @@
 package io.debezium.service;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+
 import io.debezium.dao.Dao;
 import io.debezium.dao.DaoManager;
 import io.debezium.entity.DatabaseEntry;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 
 @ApplicationScoped
 public class MainService {

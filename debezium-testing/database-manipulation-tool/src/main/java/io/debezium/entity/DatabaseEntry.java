@@ -1,15 +1,15 @@
 package io.debezium.entity;
 
-import org.jboss.logging.Logger;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import javax.json.JsonArray;
 import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+
+import org.jboss.logging.Logger;
 
 public class DatabaseEntry {
 
@@ -32,7 +32,7 @@ public class DatabaseEntry {
             String primary = inputJsonObject.getString("primary");
             JsonArray payload = inputJsonObject.getJsonArray("payload");
 
-            for (JsonValue rawEntry: payload) {
+            for (JsonValue rawEntry : payload) {
                 JsonObject objectEntry = rawEntry.asJsonObject();
                 DatabaseColumnEntry entry = new DatabaseColumnEntry(objectEntry.getString("value"), objectEntry.getString("name"), objectEntry.getString("dataType"));
                 entries.add(entry);
@@ -41,7 +41,8 @@ public class DatabaseEntry {
             this.columnEntries = entries;
             this.databaseTable = table;
 
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) {
             LOG.error("Could not parse DatabaseEntity from Json object");
             LOG.error("Tha cause was: " + ex);
             throw new JsonException("Could not parse DatabaseEntity from Json object", ex.getCause());
@@ -73,7 +74,7 @@ public class DatabaseEntry {
         if (primaryColumn.isEmpty()) {
             return Optional.empty();
         }
-        for (DatabaseColumnEntry columnEntry: columnEntries) {
+        for (DatabaseColumnEntry columnEntry : columnEntries) {
             if (columnEntry.getColumnName().equals(primaryColumn.get().getName())) {
                 return Optional.of(columnEntry);
             }

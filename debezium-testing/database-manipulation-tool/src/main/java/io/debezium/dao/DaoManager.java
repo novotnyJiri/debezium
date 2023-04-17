@@ -1,11 +1,12 @@
 package io.debezium.dao;
 
-import org.jboss.logging.Logger;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.spi.CDI;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.jboss.logging.Logger;
 
 @ApplicationScoped
 public class DaoManager {

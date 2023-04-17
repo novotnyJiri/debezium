@@ -39,7 +39,7 @@ public class DatabaseTable {
     }
 
     public Optional<DatabaseColumn> getPrimary() {
-        for (DatabaseColumn column: columns) {
+        for (DatabaseColumn column : columns) {
             if (column.isPrimary()) {
                 return Optional.of(column);
             }
