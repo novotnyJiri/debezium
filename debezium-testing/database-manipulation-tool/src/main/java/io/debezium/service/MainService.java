@@ -8,7 +8,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 @ApplicationScoped
-public class InsertService {
+public class MainService {
     @Inject
     DaoManager daoManager;
 
@@ -21,6 +21,12 @@ public class InsertService {
     public void createTable(DatabaseEntry dbEntity) {
         for (Dao dao : daoManager.getEnabledDbs()) {
             dao.createTable(dbEntity);
+        }
+    }
+
+    public void upsert(DatabaseEntry dbEntity) {
+        for (Dao dao : daoManager.getEnabledDbs()) {
+            dao.upsert(dbEntity);
         }
     }
 

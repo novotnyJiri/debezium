@@ -1,10 +1,11 @@
-version: '3'
+version: '3.4'
 
 services:
   postgres-db:
     image: 'postgres:14.1'
+#    restart: always
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -d quarkus_test --username=quarkus_user" ]
+      test: [ "CMD-SHELL", "pg_isready -d $$POSTGRES_DB --username=$$POSTGRES_USER" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -18,8 +19,9 @@ services:
 
   mysql-db:
     image: 'mysql:8.0'
+#    restart: always
     healthcheck:
-      test: [ "CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u quarkus_user --password=quarkus_test" ]
+      test: [ "CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u $$MYSQL_USER --password=$$MYSQL_PASSWORD" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -33,6 +35,25 @@ services:
       MYSQL_USER: "quarkus_user"
       MYSQL_PASSWORD: "quarkus_test"
       MYSQL_ROOT_PASSWORD: "quarkus_test"
+
+
+  mongo-db:
+    image: 'mongo:6.0'
+    command: mongod --quiet --logpath /dev/null
+    #    restart: always
+    healthcheck:
+      test: mongosh --eval 'db.runCommand("ping").ok' --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    ports:
+      - '27017:27017'
+    container_name: mongo-quarkus
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: "quarkus_user"
+      MONGO_INITDB_ROOT_PASSWORD: "quarkus_test"
+
 
 
 

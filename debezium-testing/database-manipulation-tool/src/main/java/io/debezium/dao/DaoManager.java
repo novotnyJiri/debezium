@@ -21,7 +21,9 @@ public class DaoManager {
         if (CDI.current().select(MysqlDao.class).isResolvable()) {
             enabledDbs.add(CDI.current().select(MysqlDao.class).get());
         }
-
+        if (CDI.current().select(MongoDao.class).isResolvable()) {
+            enabledDbs.add(CDI.current().select(MongoDao.class).get());
+        }
     }
 
     public List<Dao> getEnabledDbs() {

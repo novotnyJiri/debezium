@@ -2,6 +2,7 @@ package io.debezium.entity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class DatabaseTable {
     String name;
@@ -35,5 +36,14 @@ public class DatabaseTable {
 
     public void addColumn(DatabaseColumn column) {
         columns.add(column);
+    }
+
+    public Optional<DatabaseColumn> getPrimary() {
+        for (DatabaseColumn column: columns) {
+            if (column.isPrimary()) {
+                return Optional.of(column);
+            }
+        }
+        return Optional.empty();
     }
 }

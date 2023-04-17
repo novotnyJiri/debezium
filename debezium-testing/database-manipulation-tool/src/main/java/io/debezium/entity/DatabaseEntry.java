@@ -2,17 +2,19 @@ package io.debezium.entity;
 
 import org.jboss.logging.Logger;
 
+import javax.json.JsonArray;
 import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class DatabaseEntry {
 
     private List<DatabaseColumnEntry> columnEntries;
-    private DatabaseTable databaseTable;
+    private final DatabaseTable databaseTable;
 
     private static final Logger LOG = Logger.getLogger(DatabaseEntry.class);
 
@@ -26,14 +28,15 @@ public class DatabaseEntry {
             List<DatabaseColumnEntry> entries = new ArrayList<>();
             DatabaseTable table = new DatabaseTable();
 
-            JsonObject payload = inputJsonObject.getJsonObject("payload");
-            table.setName(payload.getString("table"));
+            table.setName(inputJsonObject.getString("table"));
+            String primary = inputJsonObject.getString("primary");
+            JsonArray payload = inputJsonObject.getJsonArray("payload");
 
-            for (JsonValue rawEntry: payload.getJsonArray("entries")) {
+            for (JsonValue rawEntry: payload) {
                 JsonObject objectEntry = rawEntry.asJsonObject();
                 DatabaseColumnEntry entry = new DatabaseColumnEntry(objectEntry.getString("value"), objectEntry.getString("name"), objectEntry.getString("dataType"));
                 entries.add(entry);
-                table.addColumn(new DatabaseColumn(entry.getColumnName(), entry.getDataType()));
+                table.addColumn(new DatabaseColumn(entry.getColumnName(), entry.getDataType(), primary.equals(entry.getColumnName())));
             }
             this.columnEntries = entries;
             this.databaseTable = table;
@@ -58,13 +61,24 @@ public class DatabaseEntry {
     }
 
     public List<DatabaseColumn> getColumns() {
-        return columnEntries.stream()
-                .map(columnEntry -> new DatabaseColumn(columnEntry.getColumnName(), columnEntry.getDataType()))
-                .collect(Collectors.toList());
+        return databaseTable.getColumns();
     }
 
     public DatabaseTable getDatabaseTable() {
         return databaseTable;
+    }
+
+    public Optional<DatabaseColumnEntry> getPrimaryColumnEntry() {
+        Optional<DatabaseColumn> primaryColumn = databaseTable.getPrimary();
+        if (primaryColumn.isEmpty()) {
+            return Optional.empty();
+        }
+        for (DatabaseColumnEntry columnEntry: columnEntries) {
+            if (columnEntry.getColumnName().equals(primaryColumn.get().getName())) {
+                return Optional.of(columnEntry);
+            }
+        }
+        return Optional.empty();
     }
 
     @Override

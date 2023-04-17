@@ -63,18 +63,23 @@ public class MysqlDao implements Dao {
 
     @Override
     public void upsert(DatabaseEntry databaseEntry) {
-
+        try(Connection conn = source.getConnection();
+            Statement stmt = conn.createStatement()) {
+            stmt.execute(queryCreator.UpsertQuery(databaseEntry));
+        } catch (SQLException ex) {
+            LOG.error("Could not create table " + databaseEntry);
+            LOG.error(ex);
+        }
     }
 
     @Override
     public void createTable(DatabaseEntry databaseEntry) {
         try(Connection conn = source.getConnection();
             Statement stmt = conn.createStatement()) {
-            LOG.info("Created create table statement");
             stmt.execute(queryCreator.CreateTableQuery(databaseEntry.getDatabaseTable()));
-            LOG.info("Executed create table statement");
         } catch (SQLException ex) {
             LOG.error("Could not create table " + databaseEntry);
+            LOG.error(ex);
         }
     }
 

@@ -7,4 +7,6 @@ public interface QueryCreator {
     String InsertQuery(DatabaseEntry databaseEntry);
 
     String CreateTableQuery(DatabaseTable databaseTable);
+
+    String UpsertQuery(DatabaseEntry databaseEntry);
 }

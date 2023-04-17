@@ -1,65 +1,47 @@
 # database-manipulation-tool
 
+## Working features
+
+This is currently in aplha state so there are not many features completed and the ones that are finished aren't tested properly.
+
+| Database/feature        	 | Postgres 	 | Mongo 	 | Mysql 	 | Oracle 	 | SqlServer 	 | Db2 	 |
+|---------------------------|------------|---------|---------|----------|-------------|-------|
+| Create table            	 | X    	     | X   	   | X   	   | 	        | 	           | 	     |
+| Insert                  	 | X    	     | 	       | X   	   | 	        | 	           | 	     |
+| Create table and insert 	 | 	          | 	       | 	       | 	        | 	           | 	     |
+| Update                  	 | 	          | 	       | 	       | 	        | 	           | 	     |
+| Upsert                  	 | 	          | X   	   | X   	   | 	        | 	           | 	     |
+| Delete                  	 | 	          | 	       | 	       | 	        | 	           | 	     |
+| Selects and Gets        	 | 	          | 	       | 	       | 	        | 	           | 	     |
+
+There is some error handling and debug logging, but it is not complete. 
 ## Json insertion schema
 ```
 {
-    databases: [db2, postgresql, mysql, mongo]
-    tableName: [
-        {
-            name: "name",
-            dataType: "VarChar(255)",
-            value: "PepaZDepa"
+	"databases": ["db2", "postgresql", "mysql", "mongo"],
+	"table": "pepici",
+	"primary": "name",
+	"payload": [{
+            "name": "name",
+            "dataType": "VarChar(255)",
+            "value": "PepaZDepa"
         },
         {
-            name: "age",
-            dataType: "Integer",
-            value: "20"
-        },
+            "name": "age",
+            "dataType": "Integer",
+            "value": "20"
+        }
     ]
 }
 ```
-{
-databases: [db2, postgresql, mysql, mongo]
-tableName: [
-{
-name: "name",
-dataType: "VarChar(255)",
-value: "PepaZDepa"
-},
-{
-name: "age",
-dataType: "Integer",
-value: "20"
-},
-]
-}
 
-```
-{
-    databases: [db2, postgresql, mysql, mongo]
-    payload:
-        {
-            table: "Pepici"
-            entries: [
-                {
-                    name: "name",
-                    dataType: "VarChar(255)",
-                    value: "PepaZDepa"
-                },
-                {
-                    name: "age",
-                    dataType: "Integer",
-                    value: "20"
-                },
-            ]
-        }
-}
-```
+It is imperative to use the primary key so that the created tables can have primary key and can be correctly updated.
+Primary keys must always be unique and once set cannot be changed. Therefore, I recommend using GUID or other system that ensures these properties.
 
+When Creating tables, the `payload` value determines the columns and their types.
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+You can enable/disable different databases with the `enabled` property. The database insertion filtering based on json key `databases` is not implemented yet. Every enabled database will try to execute the command.
 
-If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
 
 ## Running the application in dev mode
 
