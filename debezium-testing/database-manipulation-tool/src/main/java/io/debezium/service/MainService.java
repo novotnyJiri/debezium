@@ -30,4 +30,9 @@ public class MainService {
         }
     }
 
+    public void CreateTableAndUpsert(DatabaseEntry dbEntity) {
+        for (Dao dao : daoManager.getEnabledDbs()) {
+            dao.createTableAndUpsert(dbEntity);
+        }
+    }
 }

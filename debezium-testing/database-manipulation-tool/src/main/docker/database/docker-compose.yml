@@ -53,6 +53,7 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: "quarkus_user"
       MONGO_INITDB_ROOT_PASSWORD: "quarkus_test"
+      MONGO_INITDB_DATABASE: "quarkus_test"
 
 
 

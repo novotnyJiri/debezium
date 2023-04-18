@@ -7,6 +7,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.bson.conversions.Bson;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
 
 import com.mongodb.MongoException;
@@ -27,7 +28,8 @@ import io.quarkus.mongodb.MongoClientName;
 @Unremovable
 public class MongoDao implements Dao {
 
-    private static final String DATABASE_NAME = "quarkus_test";
+    @ConfigProperty(name = "mongodb.database")
+    String databaseName;
 
     @Inject
     @MongoClientName("main")
@@ -66,7 +68,7 @@ public class MongoDao implements Dao {
     @Override
     public void upsert(DatabaseEntry databaseEntry) {
         try {
-            MongoDatabase db = client.getDatabase(DATABASE_NAME);
+            MongoDatabase db = getDatabase();
             Optional<DatabaseColumnEntry> primary = databaseEntry.getPrimaryColumnEntry();
             if (primary.isEmpty()) {
                 insert(databaseEntry);
@@ -86,18 +88,26 @@ public class MongoDao implements Dao {
     @Override
     public void createTable(DatabaseEntry databaseEntry) {
         try {
-            MongoDatabase db = client.getDatabase(DATABASE_NAME);
+            MongoDatabase db = getDatabase();
             db.createCollection(databaseEntry.getDatabaseTable().getName());
         }
         catch (MongoException me) {
             LOG.error("Could not create table " + databaseEntry);
             LOG.error(me);
         }
-
     }
 
     @Override
     public void createTableAndInsert(DatabaseEntry databaseEntry) {
 
+    }
+
+    @Override
+    public void createTableAndUpsert(DatabaseEntry databaseEntry) {
+        upsert(databaseEntry);
+    }
+
+    private MongoDatabase getDatabase() {
+        return client.getDatabase(databaseName);
     }
 }

@@ -9,6 +9,7 @@ This is currently in aplha state so there are not many features completed and th
 | Create table            	 | X    	     | X   	   | X   	   | 	        | 	           | 	     |
 | Insert                  	 | X    	     | 	       | X   	   | 	        | 	           | 	     |
 | Create table and insert 	 | 	          | 	       | 	       | 	        | 	           | 	     |
+| Create table and upsert 	 | 	          | X	      | X	      | 	        | 	           | 	     |
 | Update                  	 | 	          | 	       | 	       | 	        | 	           | 	     |
 | Upsert                  	 | 	          | X   	   | X   	   | 	        | 	           | 	     |
 | Delete                  	 | 	          | 	       | 	       | 	        | 	           | 	     |
@@ -47,6 +48,7 @@ You can enable/disable different databases with the `enabled` property. The data
  <summary><code>POST</code> <code><b>/Main/Insert</b></code> <code>(Inserts json into all enabled databases)</code></summary>
 <summary><code>POST</code> <code><b>/Main/CreateTable</b></code> <code>(Creates table/collection in every enabled database)</code></summary>
 <summary><code>POST</code> <code><b>/Main/Upsert</b></code> <code>(Upserts json into all databases)</code></summary>
+<summary><code>POST</code> <code><b>/Main/CreateTableAndUpsert</b></code> <code>(Upserts json into all databases and creates tables if they did not exist)</code></summary>
 
 
 ## Running the application in dev mode

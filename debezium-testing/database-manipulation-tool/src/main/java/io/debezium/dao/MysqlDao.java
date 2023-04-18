@@ -51,6 +51,7 @@ public class MysqlDao implements Dao {
         }
         catch (SQLException ex) {
             LOG.error("Could not insert into database " + databaseEntry);
+            LOG.error(ex);
         }
     }
 
@@ -71,7 +72,7 @@ public class MysqlDao implements Dao {
             stmt.execute(queryCreator.UpsertQuery(databaseEntry));
         }
         catch (SQLException ex) {
-            LOG.error("Could not create table " + databaseEntry);
+            LOG.error("Could not upsert " + databaseEntry);
             LOG.error(ex);
         }
     }
@@ -91,5 +92,11 @@ public class MysqlDao implements Dao {
     @Override
     public void createTableAndInsert(DatabaseEntry databaseEntry) {
 
+    }
+
+    @Override
+    public void createTableAndUpsert(DatabaseEntry databaseEntry) {
+        createTable(databaseEntry);
+        upsert(databaseEntry);
     }
 }

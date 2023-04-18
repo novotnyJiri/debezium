@@ -82,4 +82,9 @@ public class PostgresDao implements Dao {
     public void createTableAndInsert(DatabaseEntry databaseEntry) {
 
     }
+
+    @Override
+    public void createTableAndUpsert(DatabaseEntry databaseEntry) {
+
+    }
 }

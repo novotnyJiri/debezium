@@ -22,4 +22,6 @@ public interface Dao {
 
     void createTableAndInsert(DatabaseEntry databaseEntry);
 
+    void createTableAndUpsert(DatabaseEntry databaseEntry);
+
 }

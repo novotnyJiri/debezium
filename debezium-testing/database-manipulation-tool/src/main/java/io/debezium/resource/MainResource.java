@@ -60,4 +60,17 @@ public class MainResource {
             return Response.noContent().status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    @Path("CreateTableAndUpsert")
+    @POST
+    public Response CreateTableAndUpsert(JsonObject inputJsonObj) {
+        try {
+            DatabaseEntry dbEntity = new DatabaseEntry(inputJsonObj);
+            mainService.CreateTableAndUpsert(dbEntity);
+            return Response.ok().build();
+        }
+        catch (Exception ex) {
+            return Response.noContent().status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 }
