@@ -42,6 +42,12 @@ When Creating tables, the `payload` value determines the columns and their types
 
 You can enable/disable different databases with the `enabled` property. The database insertion filtering based on json key `databases` is not implemented yet. Every enabled database will try to execute the command.
 
+## Current REST endpoints
+
+ <summary><code>POST</code> <code><b>/Main/Insert</b></code> <code>(Inserts json into all enabled databases)</code></summary>
+<summary><code>POST</code> <code><b>/Main/CreateTable</b></code> <code>(Creates table/collection in every enabled database)</code></summary>
+<summary><code>POST</code> <code><b>/Main/Upsert</b></code> <code>(Upserts json into all databases)</code></summary>
+
 
 ## Running the application in dev mode
 
