@@ -75,6 +75,7 @@ public class PostgresDao implements Dao {
         }
         catch (SQLException ex) {
             LOG.error("Could not create table " + databaseEntry);
+            LOG.error(ex);
         }
     }
 
