@@ -4,9 +4,11 @@ import io.debezium.entity.DatabaseEntry;
 import io.debezium.entity.DatabaseTable;
 
 public interface QueryCreator {
-    String InsertQuery(DatabaseEntry databaseEntry);
+    String insertQuery(DatabaseEntry databaseEntry);
 
-    String CreateTableQuery(DatabaseTable databaseTable);
+    String createTableQuery(DatabaseTable databaseTable);
 
-    String UpsertQuery(DatabaseEntry databaseEntry);
+    String upsertQuery(DatabaseEntry databaseEntry);
+
+    String updateQuery(DatabaseEntry databaseEntry);
 }

@@ -11,7 +11,7 @@ public class PostgresQueryCreator extends AbstractBasicQueryCreator {
     }
 
     @Override
-    public String UpsertQuery(DatabaseEntry databaseEntry) {
+    public String upsertQuery(DatabaseEntry databaseEntry) {
         return null;
     }
 }

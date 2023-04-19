@@ -22,7 +22,7 @@ public class MainResource {
 
     @Path("Insert")
     @POST
-    public Response Insert(JsonObject inputJsonObj) {
+    public Response insert(JsonObject inputJsonObj) {
         try {
             DatabaseEntry dbEntity = new DatabaseEntry(inputJsonObj);
             mainService.insert(dbEntity);
@@ -36,7 +36,7 @@ public class MainResource {
 
     @Path("CreateTable")
     @POST
-    public Response CreateTable(JsonObject inputJsonObj) {
+    public Response createTable(JsonObject inputJsonObj) {
         try {
             DatabaseEntry dbEntity = new DatabaseEntry(inputJsonObj);
             mainService.createTable(dbEntity);
@@ -50,7 +50,7 @@ public class MainResource {
 
     @Path("Upsert")
     @POST
-    public Response Upsert(JsonObject inputJsonObj) {
+    public Response upsert(JsonObject inputJsonObj) {
         try {
             DatabaseEntry dbEntity = new DatabaseEntry(inputJsonObj);
             mainService.upsert(dbEntity);
@@ -61,9 +61,22 @@ public class MainResource {
         }
     }
 
+    @Path("Update")
+    @POST
+    public Response update(JsonObject inputJsonObj) {
+        try {
+            DatabaseEntry dbEntity = new DatabaseEntry(inputJsonObj);
+            mainService.update(dbEntity);
+            return Response.ok().build();
+        }
+        catch (Exception ex) {
+            return Response.noContent().status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
     @Path("CreateTableAndUpsert")
     @POST
-    public Response CreateTableAndUpsert(JsonObject inputJsonObj) {
+    public Response createTableAndUpsert(JsonObject inputJsonObj) {
         try {
             DatabaseEntry dbEntity = new DatabaseEntry(inputJsonObj);
             mainService.CreateTableAndUpsert(dbEntity);
@@ -73,4 +86,5 @@ public class MainResource {
             return Response.noContent().status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }
+
 }

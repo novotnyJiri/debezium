@@ -12,8 +12,8 @@ public class MysqlQueryCreator extends AbstractBasicQueryCreator {
     }
 
     @Override
-    public String UpsertQuery(DatabaseEntry databaseEntry) {
-        StringBuilder builder = new StringBuilder(InsertQuery(databaseEntry));
+    public String upsertQuery(DatabaseEntry databaseEntry) {
+        StringBuilder builder = new StringBuilder(insertQuery(databaseEntry));
         builder.append(" ON DUPLICATE KEY UPDATE ");
         for (DatabaseColumnEntry entry : databaseEntry.getColumnEntries()) {
             builder.append(entry.getColumnName())

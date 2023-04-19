@@ -6,6 +6,7 @@ import java.util.Optional;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
@@ -52,7 +53,15 @@ public class MongoDao implements Dao {
 
     @Override
     public void insert(DatabaseEntry databaseEntry) {
-
+        try {
+            MongoDatabase db = getDatabase();
+            Document insert = bsonCreator.insertDocument(databaseEntry);
+            db.getCollection(databaseEntry.getDatabaseTable().getName()).insertOne(insert);
+        }
+        catch (Exception me) {
+            LOG.error("Could not insert into database" + databaseEntry);
+            LOG.error(me);
+        }
     }
 
     @Override
@@ -62,7 +71,20 @@ public class MongoDao implements Dao {
 
     @Override
     public void update(DatabaseEntry databaseEntry) {
-
+        try {
+            MongoDatabase db = getDatabase();
+            Optional<DatabaseColumnEntry> primary = databaseEntry.getPrimaryColumnEntry();
+            if (primary.isEmpty()) {
+                throw new RuntimeException("Cannot update without primary key");
+            }
+            Bson filter = Filters.eq(primary.get().getColumnName(), primary.get().getValue());
+            Bson update = bsonCreator.updateBson(databaseEntry);
+            db.getCollection(databaseEntry.getDatabaseTable().getName()).updateOne(filter, update);
+        }
+        catch (Exception me) {
+            LOG.error("Could not update database" + databaseEntry);
+            LOG.error(me);
+        }
     }
 
     @Override

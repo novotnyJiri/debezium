@@ -23,7 +23,7 @@ public class MongoBsonCreator {
                         .collect(Collectors.toList()));
     }
 
-    public Bson insertBson(DatabaseEntry databaseEntry) {
+    public Document insertDocument(DatabaseEntry databaseEntry) {
         Document document = new Document();
         databaseEntry.getColumnEntries()
                 .forEach(columnEntry -> document.put(columnEntry.getColumnName(), columnEntry.getValue()));

@@ -45,7 +45,7 @@ public class PostgresDao implements Dao {
     public void insert(DatabaseEntry databaseEntry) {
         try (Connection conn = source.getConnection();
                 Statement stmt = conn.createStatement()) {
-            stmt.execute(queryCreator.InsertQuery(databaseEntry));
+            stmt.execute(queryCreator.insertQuery(databaseEntry));
         }
         catch (SQLException ex) {
             LOG.error("Could not insert into database " + databaseEntry);
@@ -57,9 +57,20 @@ public class PostgresDao implements Dao {
 
     }
 
+    @SuppressWarnings("DuplicatedCode")
     @Override
     public void update(DatabaseEntry databaseEntry) {
-
+        try (Connection conn = source.getConnection();
+                Statement stmt = conn.createStatement()) {
+            if (databaseEntry.getPrimaryColumnEntry().isEmpty()) {
+                throw new RuntimeException("Cannot update without primary key");
+            }
+            stmt.execute(queryCreator.updateQuery(databaseEntry));
+        }
+        catch (Exception ex) {
+            LOG.error("Could not update database " + databaseEntry);
+            LOG.error(ex);
+        }
     }
 
     @Override
@@ -71,7 +82,7 @@ public class PostgresDao implements Dao {
     public void createTable(DatabaseEntry databaseEntry) {
         try (Connection conn = source.getConnection();
                 Statement stmt = conn.createStatement()) {
-            stmt.execute(queryCreator.CreateTableQuery(databaseEntry.getDatabaseTable()));
+            stmt.execute(queryCreator.createTableQuery(databaseEntry.getDatabaseTable()));
         }
         catch (SQLException ex) {
             LOG.error("Could not create table " + databaseEntry);

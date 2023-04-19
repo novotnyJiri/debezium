@@ -30,6 +30,12 @@ public class MainService {
         }
     }
 
+    public void update(DatabaseEntry dbEntity) {
+        for (Dao dao : daoManager.getEnabledDbs()) {
+            dao.update(dbEntity);
+        }
+    }
+
     public void CreateTableAndUpsert(DatabaseEntry dbEntity) {
         for (Dao dao : daoManager.getEnabledDbs()) {
             dao.createTableAndUpsert(dbEntity);

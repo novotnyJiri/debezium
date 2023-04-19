@@ -10,7 +10,7 @@ This is currently in aplha state so there are not many features completed and th
 | Insert                  	 | X    	     | 	       | X   	   | 	        | 	           | 	     |
 | Create table and insert 	 | 	          | 	       | 	       | 	        | 	           | 	     |
 | Create table and upsert 	 | 	          | X	      | X	      | 	        | 	           | 	     |
-| Update                  	 | 	          | 	       | 	       | 	        | 	           | 	     |
+| Update                  	 | X	         | X	      | X 	     | 	        | 	           | 	     |
 | Upsert                  	 | 	          | X   	   | X   	   | 	        | 	           | 	     |
 | Delete                  	 | 	          | 	       | 	       | 	        | 	           | 	     |
 | Selects and Gets        	 | 	          | 	       | 	       | 	        | 	           | 	     |

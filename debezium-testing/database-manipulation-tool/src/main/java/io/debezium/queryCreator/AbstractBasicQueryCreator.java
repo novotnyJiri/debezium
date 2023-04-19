@@ -12,7 +12,7 @@ public abstract class AbstractBasicQueryCreator implements QueryCreator {
     private static final Logger LOG = Logger.getLogger(AbstractBasicQueryCreator.class);
 
     @Override
-    public String InsertQuery(DatabaseEntry databaseEntry) {
+    public String insertQuery(DatabaseEntry databaseEntry) {
         StringBuilder builder = new StringBuilder("INSERT INTO ")
                 .append(databaseEntry.getDatabaseTable().getName())
                 .append(" (");
@@ -38,7 +38,7 @@ public abstract class AbstractBasicQueryCreator implements QueryCreator {
     }
 
     @Override
-    public String CreateTableQuery(DatabaseTable databaseTable) {
+    public String createTableQuery(DatabaseTable databaseTable) {
         StringBuilder builder = new StringBuilder("CREATE TABLE IF NOT EXISTS ")
                 .append(databaseTable.getName())
                 .append(" (");
@@ -58,5 +58,31 @@ public abstract class AbstractBasicQueryCreator implements QueryCreator {
         return query;
     }
 
-    public abstract String UpsertQuery(DatabaseEntry databaseEntry);
+    /**
+     *
+     * @param databaseEntry with primary attribute
+     * @return Update query for databaseEntry
+     */
+    @Override
+    public String updateQuery(DatabaseEntry databaseEntry) {
+        StringBuilder builder = new StringBuilder("UPDATE ")
+                .append(databaseEntry.getDatabaseTable().getName())
+                .append(" SET ");
+        for (DatabaseColumnEntry columnEntry : databaseEntry.getColumnEntries()) {
+            builder.append(columnEntry.getColumnName())
+                    .append(" = '")
+                    .append(columnEntry.getValue())
+                    .append("', ");
+        }
+        builder.delete(builder.length() - 2, builder.length())
+                .append(" WHERE ")
+                .append(databaseEntry.getPrimaryColumnEntry().get().getColumnName())
+                .append(" = '")
+                .append(databaseEntry.getPrimaryColumnEntry().get().getValue())
+                .append("'");
+        LOG.debug("Update query created:" + builder);
+        return builder.toString();
+    }
+
+    public abstract String upsertQuery(DatabaseEntry databaseEntry);
 }
