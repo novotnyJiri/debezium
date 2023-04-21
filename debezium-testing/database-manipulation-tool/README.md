@@ -9,9 +9,9 @@ This is currently in aplha state so there are not many features completed and th
 | Create table            	 | X    	     | X   	   | X   	   | 	        | 	           | 	     |
 | Insert                  	 | X    	     | 	       | X   	   | 	        | 	           | 	     |
 | Create table and insert 	 | 	          | 	       | 	       | 	        | 	           | 	     |
-| Create table and upsert 	 | 	          | X	      | X	      | 	        | 	           | 	     |
+| Create table and upsert 	 | X	         | X	      | X	      | 	        | 	           | 	     |
 | Update                  	 | X	         | X	      | X 	     | 	        | 	           | 	     |
-| Upsert                  	 | 	          | X   	   | X   	   | 	        | 	           | 	     |
+| Upsert                  	 | X	         | X   	   | X   	   | 	        | 	           | 	     |
 | Delete                  	 | 	          | 	       | 	       | 	        | 	           | 	     |
 | Selects and Gets        	 | 	          | 	       | 	       | 	        | 	           | 	     |
 

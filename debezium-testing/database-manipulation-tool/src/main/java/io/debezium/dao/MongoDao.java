@@ -1,3 +1,8 @@
+/*
+ * Copyright Debezium Authors.
+ *
+ * Licensed under the Apache Software License version 2.0, available at http://www.apache.org/licenses/LICENSE-2.0
+ */
 package io.debezium.dao;
 
 import java.util.List;
@@ -100,6 +105,7 @@ public class MongoDao implements Dao {
             Bson update = bsonCreator.updateBson(databaseEntry);
             UpdateOptions options = new UpdateOptions().upsert(true);
             db.getCollection(databaseEntry.getDatabaseTable().getName()).updateOne(filter, update, options);
+            LOG.debug("Successful upsert " + databaseEntry);
         }
         catch (MongoException me) {
             LOG.error("Could not upsert " + databaseEntry);

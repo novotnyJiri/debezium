@@ -1,3 +1,8 @@
+/*
+ * Copyright Debezium Authors.
+ *
+ * Licensed under the Apache Software License version 2.0, available at http://www.apache.org/licenses/LICENSE-2.0
+ */
 package io.debezium.dao;
 
 import java.sql.Connection;
@@ -81,6 +86,7 @@ public class MysqlDao implements Dao {
         try (Connection conn = source.getConnection();
                 Statement stmt = conn.createStatement()) {
             stmt.execute(queryCreator.upsertQuery(databaseEntry));
+            LOG.debug("Successful upsert " + databaseEntry);
         }
         catch (SQLException ex) {
             LOG.error("Could not upsert " + databaseEntry);

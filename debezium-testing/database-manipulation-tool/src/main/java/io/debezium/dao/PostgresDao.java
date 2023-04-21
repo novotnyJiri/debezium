@@ -1,3 +1,8 @@
+/*
+ * Copyright Debezium Authors.
+ *
+ * Licensed under the Apache Software License version 2.0, available at http://www.apache.org/licenses/LICENSE-2.0
+ */
 package io.debezium.dao;
 
 import java.sql.Connection;
@@ -12,6 +17,7 @@ import javax.inject.Inject;
 import org.jboss.logging.Logger;
 
 import io.agroal.api.AgroalDataSource;
+import io.debezium.entity.DatabaseColumnEntry;
 import io.debezium.entity.DatabaseEntry;
 import io.debezium.queryCreator.PostgresQueryCreator;
 import io.quarkus.agroal.DataSource;
@@ -75,7 +81,20 @@ public class PostgresDao implements Dao {
 
     @Override
     public void upsert(DatabaseEntry databaseEntry) {
-
+        try (Connection conn = source.getConnection();
+                Statement stmt = conn.createStatement()) {
+            Optional<DatabaseColumnEntry> primary = databaseEntry.getPrimaryColumnEntry();
+            if (primary.isEmpty()) {
+                insert(databaseEntry);
+                return;
+            }
+            stmt.execute(queryCreator.upsertQuery(databaseEntry));
+            LOG.debug("Successful upsert " + databaseEntry);
+        }
+        catch (SQLException ex) {
+            LOG.error("Could not upsert " + databaseEntry);
+            LOG.error(ex);
+        }
     }
 
     @Override
@@ -97,6 +116,7 @@ public class PostgresDao implements Dao {
 
     @Override
     public void createTableAndUpsert(DatabaseEntry databaseEntry) {
-
+        createTable(databaseEntry);
+        upsert(databaseEntry);
     }
 }
