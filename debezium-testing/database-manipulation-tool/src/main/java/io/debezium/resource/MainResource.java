@@ -15,23 +15,32 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import io.debezium.entity.DatabaseEntry;
+import io.debezium.model.DatabaseEntry;
 import io.debezium.service.MainService;
+import io.debezium.utils.DatabaseEntryParser;
+import io.quarkus.runtime.annotations.RegisterForReflection;
+import org.jboss.logging.Logger;
 
 @Path("Main")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @ApplicationScoped
+@RegisterForReflection
 public class MainResource {
 
     @Inject
     MainService mainService;
 
+    @Inject
+    DatabaseEntryParser parser;
+
+    private static final Logger LOG = Logger.getLogger(MainResource.class);
+
     @Path("Insert")
     @POST
     public Response insert(JsonObject inputJsonObj) {
         try {
-            DatabaseEntry dbEntity = new DatabaseEntry(inputJsonObj);
+            DatabaseEntry dbEntity = parser.parse(inputJsonObj);
             mainService.insert(dbEntity);
             return Response.ok().build();
 
@@ -45,7 +54,7 @@ public class MainResource {
     @POST
     public Response createTable(JsonObject inputJsonObj) {
         try {
-            DatabaseEntry dbEntity = new DatabaseEntry(inputJsonObj);
+            DatabaseEntry dbEntity = parser.parse(inputJsonObj);
             mainService.createTable(dbEntity);
             return Response.ok().build();
 
@@ -59,7 +68,7 @@ public class MainResource {
     @POST
     public Response upsert(JsonObject inputJsonObj) {
         try {
-            DatabaseEntry dbEntity = new DatabaseEntry(inputJsonObj);
+            DatabaseEntry dbEntity = parser.parse(inputJsonObj);
             mainService.upsert(dbEntity);
             return Response.ok().build();
         }
@@ -72,7 +81,7 @@ public class MainResource {
     @POST
     public Response update(JsonObject inputJsonObj) {
         try {
-            DatabaseEntry dbEntity = new DatabaseEntry(inputJsonObj);
+            DatabaseEntry dbEntity = parser.parse(inputJsonObj);
             mainService.update(dbEntity);
             return Response.ok().build();
         }
@@ -84,12 +93,14 @@ public class MainResource {
     @Path("CreateTableAndUpsert")
     @POST
     public Response createTableAndUpsert(JsonObject inputJsonObj) {
+        LOG.debug("Received CREATE TABLE If does not exist and UPSERT request");
         try {
-            DatabaseEntry dbEntity = new DatabaseEntry(inputJsonObj);
-            mainService.CreateTableAndUpsert(dbEntity);
+            DatabaseEntry dbEntity = parser.parse(inputJsonObj);
+            mainService.upsert(dbEntity);
             return Response.ok().build();
         }
         catch (Exception ex) {
+            LOG.error(ex.getMessage());
             return Response.noContent().status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }

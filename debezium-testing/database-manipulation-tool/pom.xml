@@ -70,6 +70,14 @@
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-smallrye-fault-tolerance</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-micrometer-registry-prometheus</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
       <artifactId>quarkus-junit5</artifactId>
       <scope>test</scope>
     </dependency>
@@ -144,16 +152,16 @@
           <name>native</name>
         </property>
       </activation>
-<!--      <dependencies>-->
-<!--        <dependency>-->
-<!--          <groupId>io.quarkus</groupId>-->
-<!--          <artifactId>quarkus-kubernetes</artifactId>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--          <groupId>io.quarkus</groupId>-->
-<!--          <artifactId>quarkus-kubernetes-config</artifactId>-->
-<!--        </dependency>-->
-<!--      </dependencies>-->
+      <dependencies>
+        <dependency>
+          <groupId>io.quarkus</groupId>
+          <artifactId>quarkus-kubernetes</artifactId>
+        </dependency>
+        <dependency>
+          <groupId>io.quarkus</groupId>
+          <artifactId>quarkus-kubernetes-config</artifactId>
+        </dependency>
+      </dependencies>
       <properties>
         <skipITs>false</skipITs>
         <quarkus.package.type>native</quarkus.package.type>

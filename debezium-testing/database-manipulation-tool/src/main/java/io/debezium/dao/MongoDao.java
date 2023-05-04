@@ -14,6 +14,7 @@ import javax.inject.Inject;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.eclipse.microprofile.faulttolerance.Retry;
 import org.jboss.logging.Logger;
 
 import com.mongodb.MongoException;
@@ -22,8 +23,8 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.UpdateOptions;
 
-import io.debezium.entity.DatabaseColumnEntry;
-import io.debezium.entity.DatabaseEntry;
+import io.debezium.model.DatabaseColumnEntry;
+import io.debezium.model.DatabaseEntry;
 import io.debezium.queryCreator.MongoBsonCreator;
 import io.quarkus.arc.Unremovable;
 import io.quarkus.arc.lookup.LookupIfProperty;
@@ -32,6 +33,7 @@ import io.quarkus.mongodb.MongoClientName;
 @ApplicationScoped
 @LookupIfProperty(name = "quarkus.mongodb.main.enabled", stringValue = "true")
 @Unremovable
+@Retry
 public class MongoDao implements Dao {
 
     @ConfigProperty(name = "mongodb.database")
@@ -47,11 +49,6 @@ public class MongoDao implements Dao {
     private static final Logger LOG = Logger.getLogger(MongoDao.class);
 
     @Override
-    public Optional<DatabaseEntry> get(long id) {
-        return Optional.empty();
-    }
-
-    @Override
     public List<DatabaseEntry> getAll() {
         return null;
     }
@@ -65,7 +62,8 @@ public class MongoDao implements Dao {
         }
         catch (Exception me) {
             LOG.error("Could not insert into database" + databaseEntry);
-            LOG.error(me);
+            LOG.error(me.getMessage());
+            throw me;
         }
     }
 
@@ -82,13 +80,14 @@ public class MongoDao implements Dao {
             if (primary.isEmpty()) {
                 throw new RuntimeException("Cannot update without primary key");
             }
-            Bson filter = Filters.eq(primary.get().getColumnName(), primary.get().getValue());
+            Bson filter = Filters.eq(primary.get().columnName(), primary.get().value());
             Bson update = bsonCreator.updateBson(databaseEntry);
             db.getCollection(databaseEntry.getDatabaseTable().getName()).updateOne(filter, update);
         }
         catch (Exception me) {
             LOG.error("Could not update database" + databaseEntry);
-            LOG.error(me);
+            LOG.error(me.getMessage());
+            throw me;
         }
     }
 
@@ -101,15 +100,16 @@ public class MongoDao implements Dao {
                 insert(databaseEntry);
                 return;
             }
-            Bson filter = Filters.eq(primary.get().getColumnName(), primary.get().getValue());
+            Bson filter = Filters.eq(primary.get().columnName(), primary.get().value());
             Bson update = bsonCreator.updateBson(databaseEntry);
             UpdateOptions options = new UpdateOptions().upsert(true);
             db.getCollection(databaseEntry.getDatabaseTable().getName()).updateOne(filter, update, options);
             LOG.debug("Successful upsert " + databaseEntry);
         }
-        catch (MongoException me) {
+        catch (Exception me) {
             LOG.error("Could not upsert " + databaseEntry);
-            LOG.error(me);
+            LOG.error(me.getMessage());
+            throw me;
         }
     }
 
@@ -117,17 +117,13 @@ public class MongoDao implements Dao {
     public void createTable(DatabaseEntry databaseEntry) {
         try {
             MongoDatabase db = getDatabase();
-            db.createCollection(databaseEntry.getDatabaseTable().getName());
+//            db.createCollection(databaseEntry.getDatabaseTable().getName());
         }
         catch (MongoException me) {
             LOG.error("Could not create table " + databaseEntry);
-            LOG.error(me);
+            LOG.error(me.getMessage());
+            throw me;
         }
-    }
-
-    @Override
-    public void createTableAndInsert(DatabaseEntry databaseEntry) {
-
     }
 
     @Override

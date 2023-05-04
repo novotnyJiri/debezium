@@ -9,10 +9,10 @@ import javax.enterprise.context.ApplicationScoped;
 
 import org.jboss.logging.Logger;
 
-import io.debezium.entity.DatabaseColumn;
-import io.debezium.entity.DatabaseColumnEntry;
-import io.debezium.entity.DatabaseEntry;
-import io.debezium.entity.DatabaseTable;
+import io.debezium.model.DatabaseColumn;
+import io.debezium.model.DatabaseColumnEntry;
+import io.debezium.model.DatabaseEntry;
+import io.debezium.model.DatabaseTableMetadata;
 
 @ApplicationScoped
 public class PostgresQueryCreator extends AbstractBasicQueryCreator {
@@ -26,13 +26,13 @@ public class PostgresQueryCreator extends AbstractBasicQueryCreator {
     public String upsertQuery(DatabaseEntry databaseEntry) {
         StringBuilder builder = new StringBuilder(insertQuery(databaseEntry));
         builder.append(" ON CONFLICT (")
-                .append(databaseEntry.getPrimaryColumnEntry().get().getColumnName())
+                .append(databaseEntry.getPrimaryColumnEntry().get().columnName())
                 .append(") DO UPDATE SET ");
         for (DatabaseColumnEntry entry : databaseEntry.getColumnEntries()) {
-            builder.append(entry.getColumnName())
+            builder.append(entry.columnName())
                     .append(" = ")
                     .append('\'')
-                    .append(entry.getValue())
+                    .append(entry.value())
                     .append('\'')
                     .append(", ");
         }
@@ -40,18 +40,18 @@ public class PostgresQueryCreator extends AbstractBasicQueryCreator {
     }
 
     @Override
-    public String createTableQuery(DatabaseTable databaseTable) {
+    public String createTableQuery(DatabaseTableMetadata databaseTableMetadata) {
         StringBuilder builder = new StringBuilder("CREATE TABLE IF NOT EXISTS ")
-                .append(databaseTable.getName())
+                .append(databaseTableMetadata.getName())
                 .append(" (");
 
-        for (DatabaseColumn column : databaseTable.getColumns()) {
+        for (DatabaseColumn column : databaseTableMetadata.getColumns()) {
             builder.append(column.getName())
                     .append(" ")
                     .append(convertDouble(column.getDataType()))
                     .append(", ");
         }
-        databaseTable.getPrimary().ifPresent(column -> builder.append("PRIMARY KEY (").append(column.getName()).append("), "));
+        databaseTableMetadata.getPrimary().ifPresent(column -> builder.append("PRIMARY KEY (").append(column.getName()).append("), "));
 
         builder.delete(builder.length() - 2, builder.length())
                 .append(")");

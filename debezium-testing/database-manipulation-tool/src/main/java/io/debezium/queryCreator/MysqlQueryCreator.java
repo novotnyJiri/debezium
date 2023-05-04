@@ -7,8 +7,8 @@ package io.debezium.queryCreator;
 
 import javax.enterprise.context.ApplicationScoped;
 
-import io.debezium.entity.DatabaseColumnEntry;
-import io.debezium.entity.DatabaseEntry;
+import io.debezium.model.DatabaseColumnEntry;
+import io.debezium.model.DatabaseEntry;
 
 @ApplicationScoped
 public class MysqlQueryCreator extends AbstractBasicQueryCreator {
@@ -21,10 +21,10 @@ public class MysqlQueryCreator extends AbstractBasicQueryCreator {
         StringBuilder builder = new StringBuilder(insertQuery(databaseEntry));
         builder.append(" ON DUPLICATE KEY UPDATE ");
         for (DatabaseColumnEntry entry : databaseEntry.getColumnEntries()) {
-            builder.append(entry.getColumnName())
+            builder.append(entry.columnName())
                     .append(" = ")
                     .append('\'')
-                    .append(entry.getValue())
+                    .append(entry.value())
                     .append('\'')
                     .append(", ");
         }

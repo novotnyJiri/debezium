@@ -7,14 +7,14 @@ package io.debezium.queryCreator;
 
 import org.jboss.logging.Logger;
 
-import io.debezium.entity.DatabaseColumn;
-import io.debezium.entity.DatabaseColumnEntry;
-import io.debezium.entity.DatabaseEntry;
-import io.debezium.entity.DatabaseTable;
+import io.debezium.model.DatabaseColumn;
+import io.debezium.model.DatabaseColumnEntry;
+import io.debezium.model.DatabaseEntry;
+import io.debezium.model.DatabaseTableMetadata;
 
 public abstract class AbstractBasicQueryCreator implements QueryCreator {
 
-    private static final Logger LOG = Logger.getLogger(AbstractBasicQueryCreator.class);
+    private final Logger LOG = Logger.getLogger(getClass());
 
     @Override
     public String insertQuery(DatabaseEntry databaseEntry) {
@@ -31,7 +31,7 @@ public abstract class AbstractBasicQueryCreator implements QueryCreator {
 
         for (DatabaseColumnEntry entry : databaseEntry.getColumnEntries()) {
             builder.append('\'')
-                    .append(entry.getValue())
+                    .append(entry.value())
                     .append('\'')
                     .append(", ");
         }
@@ -43,18 +43,18 @@ public abstract class AbstractBasicQueryCreator implements QueryCreator {
     }
 
     @Override
-    public String createTableQuery(DatabaseTable databaseTable) {
+    public String createTableQuery(DatabaseTableMetadata databaseTableMetadata) {
         StringBuilder builder = new StringBuilder("CREATE TABLE IF NOT EXISTS ")
-                .append(databaseTable.getName())
+                .append(databaseTableMetadata.getName())
                 .append(" (");
 
-        for (DatabaseColumn column : databaseTable.getColumns()) {
+        for (DatabaseColumn column : databaseTableMetadata.getColumns()) {
             builder.append(column.getName())
                     .append(" ")
                     .append(column.getDataType())
                     .append(", ");
         }
-        databaseTable.getPrimary().ifPresent(column -> builder.append("PRIMARY KEY (").append(column.getName()).append("), "));
+        databaseTableMetadata.getPrimary().ifPresent(column -> builder.append("PRIMARY KEY (").append(column.getName()).append("), "));
 
         builder.delete(builder.length() - 2, builder.length())
                 .append(")");
@@ -74,16 +74,16 @@ public abstract class AbstractBasicQueryCreator implements QueryCreator {
                 .append(databaseEntry.getDatabaseTable().getName())
                 .append(" SET ");
         for (DatabaseColumnEntry columnEntry : databaseEntry.getColumnEntries()) {
-            builder.append(columnEntry.getColumnName())
+            builder.append(columnEntry.columnName())
                     .append(" = '")
-                    .append(columnEntry.getValue())
+                    .append(columnEntry.value())
                     .append("', ");
         }
         builder.delete(builder.length() - 2, builder.length())
                 .append(" WHERE ")
-                .append(databaseEntry.getPrimaryColumnEntry().get().getColumnName())
+                .append(databaseEntry.getPrimaryColumnEntry().get().columnName())
                 .append(" = '")
-                .append(databaseEntry.getPrimaryColumnEntry().get().getValue())
+                .append(databaseEntry.getPrimaryColumnEntry().get().value())
                 .append("'");
         LOG.debug("Update query created:" + builder);
         return builder.toString();

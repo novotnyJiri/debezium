@@ -2,18 +2,17 @@
 
 ## Working features
 
-This is currently in aplha state so there are not many features completed and the ones that are finished aren't tested properly.
+This is currently in alpha state so there are not many features completed and the ones that are finished aren't tested properly.
 
 | Database/feature        	 | Postgres 	 | Mongo 	 | Mysql 	 | Oracle 	 | SqlServer 	 | Db2 	 |
 |---------------------------|------------|---------|---------|----------|-------------|-------|
 | Create table            	 | X    	     | X   	   | X   	   | 	        | 	           | 	     |
 | Insert                  	 | X    	     | 	       | X   	   | 	        | 	           | 	     |
-| Create table and insert 	 | 	          | 	       | 	       | 	        | 	           | 	     |
 | Create table and upsert 	 | X	         | X	      | X	      | 	        | 	           | 	     |
 | Update                  	 | X	         | X	      | X 	     | 	        | 	           | 	     |
 | Upsert                  	 | X	         | X   	   | X   	   | 	        | 	           | 	     |
 | Delete                  	 | 	          | 	       | 	       | 	        | 	           | 	     |
-| Selects and Gets        	 | 	          | 	       | 	       | 	        | 	           | 	     |
+| Drop table        	       | 	          | 	       | 	       | 	        | 	           | 	     |
 
 There is some error handling and debug logging, but it is not complete. 
 ## Json insertion schema
@@ -45,10 +44,13 @@ You can enable/disable different databases with the `enabled` property. The data
 
 ## Current REST endpoints
 
- <summary><code>POST</code> <code><b>/Main/Insert</b></code> <code>(Inserts json into all enabled databases)</code></summary>
+<summary><code>POST</code> <code><b>/Main/Insert</b></code> <code>(Inserts json into all enabled databases)</code></summary>
 <summary><code>POST</code> <code><b>/Main/CreateTable</b></code> <code>(Creates table/collection in every enabled database)</code></summary>
 <summary><code>POST</code> <code><b>/Main/Upsert</b></code> <code>(Upserts json into all databases)</code></summary>
 <summary><code>POST</code> <code><b>/Main/CreateTableAndUpsert</b></code> <code>(Upserts json into all databases and creates tables if they did not exist)</code></summary>
+<summary><code>POST</code> <code><b>/Main/Update</b></code> <code>(Updates databases based on primary key)</code></summary>
+
+<summary><code>GET</code> <code><b>/Utility/GetAll</b></code> <code>(Gets all created tables and their current state)</code></summary>
 
 
 ## Running the application in dev mode

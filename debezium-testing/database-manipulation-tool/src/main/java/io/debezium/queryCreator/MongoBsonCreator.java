@@ -15,7 +15,7 @@ import org.jboss.logging.Logger;
 
 import com.mongodb.client.model.Updates;
 
-import io.debezium.entity.DatabaseEntry;
+import io.debezium.model.DatabaseEntry;
 
 @ApplicationScoped
 public class MongoBsonCreator {
@@ -24,14 +24,14 @@ public class MongoBsonCreator {
     public Bson updateBson(DatabaseEntry databaseEntry) {
         return Updates.combine(
                 databaseEntry.getColumnEntries().stream()
-                        .map(columnEntry -> Updates.set(columnEntry.getColumnName(), columnEntry.getValue()))
+                        .map(columnEntry -> Updates.set(columnEntry.columnName(), columnEntry.value()))
                         .collect(Collectors.toList()));
     }
 
     public Document insertDocument(DatabaseEntry databaseEntry) {
         Document document = new Document();
         databaseEntry.getColumnEntries()
-                .forEach(columnEntry -> document.put(columnEntry.getColumnName(), columnEntry.getValue()));
+                .forEach(columnEntry -> document.put(columnEntry.columnName(), columnEntry.value()));
         return document;
     }
 }

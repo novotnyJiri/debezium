@@ -8,10 +8,9 @@ package io.debezium.dao;
 import java.util.List;
 import java.util.Optional;
 
-import io.debezium.entity.DatabaseEntry;
+import io.debezium.model.DatabaseEntry;
 
 public interface Dao {
-    Optional<DatabaseEntry> get(long id);
 
     List<DatabaseEntry> getAll();
 
@@ -21,11 +20,10 @@ public interface Dao {
 
     void update(DatabaseEntry databaseEntry);
 
+    @Deprecated
     void upsert(DatabaseEntry databaseEntry);
 
     void createTable(DatabaseEntry databaseEntry);
-
-    void createTableAndInsert(DatabaseEntry databaseEntry);
 
     void createTableAndUpsert(DatabaseEntry databaseEntry);
 

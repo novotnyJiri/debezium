@@ -5,13 +5,13 @@
  */
 package io.debezium.queryCreator;
 
-import io.debezium.entity.DatabaseEntry;
-import io.debezium.entity.DatabaseTable;
+import io.debezium.model.DatabaseEntry;
+import io.debezium.model.DatabaseTableMetadata;
 
 public interface QueryCreator {
     String insertQuery(DatabaseEntry databaseEntry);
 
-    String createTableQuery(DatabaseTable databaseTable);
+    String createTableQuery(DatabaseTableMetadata databaseTableMetadata);
 
     String upsertQuery(DatabaseEntry databaseEntry);
 

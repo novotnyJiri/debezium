@@ -7,6 +7,7 @@ package io.debezium.dao;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.spi.CDI;
@@ -34,5 +35,17 @@ public class DaoManager {
 
     public List<Dao> getEnabledDbs() {
         return enabledDbs;
+    }
+
+    public List<String> getEnabledDbsNames()
+    {
+        return enabledDbs.stream().map(
+                dao -> prettifyDaoName(dao.getClass().getSimpleName()))
+                .collect(Collectors.toList());
+    }
+
+    private String prettifyDaoName(String daoName){
+        String split = daoName.split("_")[0];
+        return split.substring(0, split.length() - 3);
     }
 }
