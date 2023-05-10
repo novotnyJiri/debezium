@@ -13,7 +13,10 @@ public interface QueryCreator {
 
     String createTableQuery(DatabaseTableMetadata databaseTableMetadata);
 
+    @Deprecated
     String upsertQuery(DatabaseEntry databaseEntry);
 
     String updateQuery(DatabaseEntry databaseEntry);
+
+    String alterTableQuery(DatabaseTableMetadata current, DatabaseTableMetadata target);
 }

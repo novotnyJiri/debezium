@@ -11,7 +11,7 @@ services:
       retries: 5
     ports:
       - "5432:5432"
-    container_name: postgres-quarkus
+    container_name: postgres-dmt
     environment:
       - POSTGRES_USER=quarkus_user
       - POSTGRES_PASSWORD=quarkus_test
@@ -29,7 +29,7 @@ services:
 #      - SYS_NICE
     ports:
       - '3306:3306'
-    container_name: mysql-quarkus
+    container_name: mysql-dmt
     environment:
       MYSQL_DATABASE: "quarkus_test"
       MYSQL_USER: "quarkus_user"
@@ -49,12 +49,30 @@ services:
       start_period: 20s
     ports:
       - '27017:27017'
-    container_name: mongo-quarkus
+    container_name: mongo-dmt
     environment:
       MONGO_INITDB_ROOT_USERNAME: "quarkus_user"
       MONGO_INITDB_ROOT_PASSWORD: "quarkus_test"
       MONGO_INITDB_DATABASE: "quarkus_test"
 
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus-dmt
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yaml'
+    restart: unless-stopped
+    volumes:
+      - ./prometheus.yaml:/etc/prometheus/prometheus.yaml
+    network_mode: "host"
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana-dmt
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    network_mode: "host"
 
 
 

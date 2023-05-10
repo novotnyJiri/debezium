@@ -1,16 +1,16 @@
 package io.debezium.dao;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import io.debezium.model.DatabaseTableMetadata;
+import org.jboss.logging.Logger;
+
 import io.debezium.dataSource.DataSourceWrapper;
 import io.debezium.exception.RuntimeSQLException;
 import io.debezium.model.DatabaseEntry;
 import io.debezium.queryCreator.QueryCreator;
-import org.jboss.logging.Logger;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.List;
-import java.util.Optional;
 
 public abstract class AbstractBasicDao implements Dao {
 
@@ -25,14 +25,9 @@ public abstract class AbstractBasicDao implements Dao {
     }
 
     @Override
-    public List<DatabaseEntry> getAll() {
-        return null;
-    }
-
-    @Override
     public void insert(DatabaseEntry databaseEntry) {
         try (Connection conn = source.getConnection();
-             Statement stmt = conn.createStatement()) {
+                Statement stmt = conn.createStatement()) {
             stmt.execute(queryCreator.insertQuery(databaseEntry));
         }
         catch (SQLException ex) {
@@ -43,13 +38,9 @@ public abstract class AbstractBasicDao implements Dao {
     }
 
     @Override
-    public abstract void delete(DatabaseEntry databaseEntry);
-
-    @SuppressWarnings("DuplicatedCode")
-    @Override
     public void update(DatabaseEntry databaseEntry) {
         try (Connection conn = source.getConnection();
-             Statement stmt = conn.createStatement()) {
+                Statement stmt = conn.createStatement()) {
             if (databaseEntry.getPrimaryColumnEntry().isEmpty()) {
                 throw new RuntimeException("Cannot update without primary key");
             }
@@ -65,7 +56,7 @@ public abstract class AbstractBasicDao implements Dao {
     @Override
     public void upsert(DatabaseEntry databaseEntry) {
         try (Connection conn = source.getConnection();
-             Statement stmt = conn.createStatement()) {
+                Statement stmt = conn.createStatement()) {
             stmt.execute(queryCreator.upsertQuery(databaseEntry));
             LOG.debug("Successful upsert " + databaseEntry);
         }
@@ -77,13 +68,13 @@ public abstract class AbstractBasicDao implements Dao {
     }
 
     @Override
-    public void createTable(DatabaseEntry databaseEntry) {
+    public void createTable(DatabaseTableMetadata metadata) {
         try (Connection conn = source.getConnection();
-             Statement stmt = conn.createStatement()) {
-            stmt.execute(queryCreator.createTableQuery(databaseEntry.getDatabaseTable()));
+                Statement stmt = conn.createStatement()) {
+            stmt.execute(queryCreator.createTableQuery(metadata));
         }
         catch (SQLException ex) {
-            LOG.error("Could not create table " + databaseEntry);
+            LOG.error("Could not create table " + metadata);
             LOG.error(ex);
             throw new RuntimeSQLException(ex);
         }
@@ -91,7 +82,20 @@ public abstract class AbstractBasicDao implements Dao {
 
     @Override
     public void createTableAndUpsert(DatabaseEntry databaseEntry) {
-        createTable(databaseEntry);
+        createTable(databaseEntry.getDatabaseTableMetadata());
         upsert(databaseEntry);
+    }
+
+    @Override
+    public void alterTable(DatabaseTableMetadata current, DatabaseTableMetadata target) {
+        try (Connection conn = source.getConnection();
+             Statement stmt = conn.createStatement()) {
+            stmt.execute(queryCreator.alterTableQuery(current, target));
+        }
+        catch (SQLException ex) {
+            LOG.error("Could not alter table with this target " + target);
+            LOG.error(ex);
+            throw new RuntimeSQLException(ex);
+        }
     }
 }

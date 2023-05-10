@@ -5,15 +5,9 @@
  */
 package io.debezium.model;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-
-import javax.json.JsonArray;
-import javax.json.JsonException;
-import javax.json.JsonObject;
-import javax.json.JsonValue;
 
 import org.jboss.logging.Logger;
 
@@ -49,7 +43,7 @@ public class DatabaseEntry {
         return databaseTableMetadata.getColumns();
     }
 
-    public DatabaseTableMetadata getDatabaseTable() {
+    public DatabaseTableMetadata getDatabaseTableMetadata() {
         return databaseTableMetadata;
     }
 
@@ -76,8 +70,10 @@ public class DatabaseEntry {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         DatabaseEntry that = (DatabaseEntry) o;
         return columnEntries.equals(that.columnEntries);
     }

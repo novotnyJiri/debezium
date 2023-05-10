@@ -53,8 +53,10 @@ public class DatabaseColumn {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         DatabaseColumn that = (DatabaseColumn) o;
         return primary == that.primary && Objects.equals(name, that.name) && Objects.equals(dataType, that.dataType);
     }

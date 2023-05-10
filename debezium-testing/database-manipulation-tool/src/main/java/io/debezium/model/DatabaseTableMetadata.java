@@ -60,8 +60,10 @@ public class DatabaseTableMetadata {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         DatabaseTableMetadata that = (DatabaseTableMetadata) o;
         return Objects.equals(name, that.name) && Objects.equals(columns, that.columns);
     }
@@ -73,6 +75,16 @@ public class DatabaseTableMetadata {
 
     public boolean isSubsetOf(DatabaseTableMetadata b) {
         return new HashSet<>(b.columns).containsAll(columns);
+    }
 
+    /**
+     * @param b DatabaseTableMetadata which we need to find the missing columns for
+     * @return list of columns that are in this object and not in b
+     */
+    public List<DatabaseColumn> getMissingColumns(DatabaseTableMetadata b) {
+        List<DatabaseColumn> result = new ArrayList<>(columns);
+        result.removeAll(b.columns);
+
+        return result;
     }
 }

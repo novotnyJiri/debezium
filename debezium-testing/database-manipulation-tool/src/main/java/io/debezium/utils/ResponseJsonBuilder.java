@@ -1,12 +1,13 @@
 package io.debezium.utils;
 
-import io.debezium.model.*;
+import java.util.List;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
-import java.util.List;
+
+import io.debezium.model.*;
 
 public class ResponseJsonBuilder {
     JsonObjectBuilder mainBuilder;
@@ -48,7 +49,7 @@ public class ResponseJsonBuilder {
 
         JsonArrayBuilder rowsBuilder = Json.createArrayBuilder();
         int rowNumber = 1;
-        for (DatabaseEntry row: table.getRows()) {
+        for (DatabaseEntry row : table.getRows()) {
             JsonObjectBuilder rowBuilder = Json.createObjectBuilder();
             rowBuilder.add("rowNumber", rowNumber++);
             JsonArrayBuilder columnsBuilder = Json.createArrayBuilder();

@@ -8,12 +8,17 @@ package io.debezium.service;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import io.debezium.model.DatabaseColumn;
+import io.debezium.model.DatabaseTableMetadata;
+import org.jboss.logging.Logger;
+
 import io.debezium.dao.Dao;
 import io.debezium.dao.DaoManager;
+import io.debezium.exception.InnerDatabaseException;
 import io.debezium.model.Database;
 import io.debezium.model.DatabaseEntry;
-import io.debezium.exception.InnerDatabaseException;
-import org.jboss.logging.Logger;
+
+import java.util.List;
 
 @ApplicationScoped
 public class MainService {
@@ -28,7 +33,8 @@ public class MainService {
     public void insert(DatabaseEntry dbEntity) {
         try {
             database.insertEntry(dbEntity);
-        } catch (InnerDatabaseException ex) {
+        }
+        catch (InnerDatabaseException ex) {
             LOG.error("Error when inserting entry into inner database");
             LOG.error(ex.getMessage());
             return;
@@ -37,29 +43,35 @@ public class MainService {
     }
 
     public void createTable(DatabaseEntry dbEntity) {
-            database.createTableIfNotExists(dbEntity.getDatabaseTable());
-            for (Dao dao : daoManager.getEnabledDbs()) {
-                dao.createTable(dbEntity);
-            }
+        DatabaseTableMetadata current = database.getTable(dbEntity.getDatabaseTableMetadata().getName()).getMetadata();
+        List<DatabaseColumn> changedColumns = database.createOrAlterTable(dbEntity.getDatabaseTableMetadata());
+        if (changedColumns == null) {
+            LOG.debug("Creating table in Dbs " + dbEntity.getDatabaseTableMetadata());
+            createTableToDao(dbEntity);
+            return;
+        }
+
+        if (!changedColumns.isEmpty()) {
+            LOG.debug("Altering table in Dbs " + dbEntity.getDatabaseTableMetadata());
+            alterTableToDao(current, dbEntity.getDatabaseTableMetadata());
+        }
     }
 
     public void upsert(DatabaseEntry dbEntity) {
         boolean update;
-        boolean tableExists;
         try {
-            tableExists = database.tableExists(dbEntity.getDatabaseTable().getName());
+            createTable(dbEntity);
             update = database.upsertEntry(dbEntity);
-        } catch (InnerDatabaseException ex) {
+        }
+        catch (InnerDatabaseException ex) {
             LOG.error("Error when upserting entry into inner database");
             LOG.error(ex.getMessage());
-            return;
-        }
-        if (!tableExists) {
-            createTable(dbEntity);
+            throw ex;
         }
         if (update) {
             updateToDao(dbEntity);
-        } else {
+        }
+        else {
             insertToDao(dbEntity);
         }
     }
@@ -79,4 +91,17 @@ public class MainService {
             dao.update(dbEntity);
         }
     }
+
+    private void createTableToDao(DatabaseEntry dbEntity) {
+        for (Dao dao : daoManager.getEnabledDbs()) {
+            dao.createTable(dbEntity.getDatabaseTableMetadata());
+        }
+    }
+
+    private void alterTableToDao(DatabaseTableMetadata current, DatabaseTableMetadata target) {
+        for (Dao dao : daoManager.getEnabledDbs()) {
+            dao.alterTable(current, target);
+        }
+    }
+
 }

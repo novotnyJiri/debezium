@@ -1,29 +1,29 @@
 package io.debezium.utils;
 
-
-import io.debezium.model.DatabaseColumn;
-import io.debezium.model.DatabaseColumnEntry;
-import io.debezium.model.DatabaseEntry;
-import io.debezium.model.DatabaseTableMetadata;
-import io.debezium.service.MainService;
-import org.jboss.logging.Logger;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.json.JsonArray;
 import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.jboss.logging.Logger;
+
+import io.debezium.model.DatabaseColumn;
+import io.debezium.model.DatabaseColumnEntry;
+import io.debezium.model.DatabaseEntry;
+import io.debezium.model.DatabaseTableMetadata;
+import io.debezium.service.MainService;
 
 @ApplicationScoped
 public class DatabaseEntryParser implements DataParser<DatabaseEntry> {
 
     private static final Logger LOG = Logger.getLogger(MainService.class);
 
-
     @Override
-    public DatabaseEntry parse(JsonObject inputJsonObject) {
+    public DatabaseEntry parse(JsonObject inputJsonObject) throws JsonException {
         DatabaseEntry databaseEntry;
         try {
             List<DatabaseColumnEntry> entries = new ArrayList<>();

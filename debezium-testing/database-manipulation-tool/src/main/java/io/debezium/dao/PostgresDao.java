@@ -8,13 +8,13 @@ package io.debezium.dao;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import io.debezium.dataSource.PostgresDataSource;
+import org.eclipse.microprofile.faulttolerance.Retry;
 
+import io.debezium.dataSource.PostgresDataSource;
 import io.debezium.model.DatabaseEntry;
 import io.debezium.queryCreator.PostgresQueryCreator;
 import io.quarkus.arc.Unremovable;
 import io.quarkus.arc.lookup.LookupIfProperty;
-import org.eclipse.microprofile.faulttolerance.Retry;
 
 @Singleton
 @LookupIfProperty(name = "quarkus.datasource.postgresql.enabled", stringValue = "true")

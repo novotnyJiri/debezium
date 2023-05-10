@@ -1,13 +1,15 @@
 package io.debezium.model;
 
-import io.debezium.exception.InnerDatabaseException;
-import org.jboss.logging.Logger;
-
-import javax.enterprise.context.ApplicationScoped;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.enterprise.context.ApplicationScoped;
+
+import org.jboss.logging.Logger;
+
+import io.debezium.exception.InnerDatabaseException;
 
 @ApplicationScoped
 public class Database {
@@ -15,39 +17,49 @@ public class Database {
 
     private static final Logger LOG = Logger.getLogger(Database.class);
 
-
     public Database() {
         tables = new HashMap<>();
     }
 
-    public boolean tableExists (String name) {
+    public boolean tableExists(String name) {
         return tables.containsKey(name);
     }
 
-    public DatabaseTable getTable (String name) {
+    public DatabaseTable getTable(String name) {
         return tables.get(name);
     }
 
-    public boolean entryExists (DatabaseEntry entry) {
-        String tableName = entry.getDatabaseTable().getName();
+    public boolean entryExists(DatabaseEntry entry) {
+        String tableName = entry.getDatabaseTableMetadata().getName();
         return tableExists(tableName) && getTable(tableName).rowExists(entry);
     }
 
-public void createTableIfNotExists(DatabaseTableMetadata tableMetadata) {
+    /**
+     * @param tableMetadata
+     * @return false if table exists, true if it was created.
+     */
+    public boolean createTableIfNotExists(DatabaseTableMetadata tableMetadata) {
         if (tableExists(tableMetadata.getName())) {
-            return;
+            return false;
         }
-        LOG.debug("Creating table in inner database");
-        tables.put(tableMetadata.getName(), new DatabaseTable(tableMetadata));
+        LOG.debug("Creating table in inner database: " + tableMetadata.getName());
+        createTable(tableMetadata);
+        return true;
     }
 
-    //Not Working
-//    public void updateTable(DatabaseTableMetadata tableMetadata) {
-//        if (!tableExists(tableMetadata.getName())) {
-//            throw new DatabaseException("Cannot update database if it does not exist");
-//        }
-//        tables.replace(tableMetadata.getName(), new DatabaseTable(tableMetadata));
-//    }
+    /**
+     * @param tableMetadata contains columns that are required in the database table
+     * @return List of columns added. Is empty table did not need alteration. Null the table was created.
+     */
+     public List<DatabaseColumn> createOrAlterTable(DatabaseTableMetadata tableMetadata) {
+         if (createTableIfNotExists(tableMetadata)) {
+             return null;
+         }
+         DatabaseTableMetadata current = tables.get(tableMetadata.getName()).getMetadata();
+         List<DatabaseColumn> missingColumns = tableMetadata.getMissingColumns(current);
+         missingColumns.forEach(current::addColumn);
+         return missingColumns;
+     }
 
     public void dropTable(String name) {
         tables.remove(name);
@@ -57,32 +69,28 @@ public void createTableIfNotExists(DatabaseTableMetadata tableMetadata) {
      * @param entry
      * @return true if updated, false if inserted
      */
-    public boolean upsertEntry (DatabaseEntry entry) {
-        String tableName = entry.getDatabaseTable().getName();
-        createTableIfNotExists(entry.getDatabaseTable());
-        LOG.debug("Initiating table check" );
-        if (!entry.getDatabaseTable().isSubsetOf(getTable(tableName).getMetadata())) {
+    public boolean upsertEntry(DatabaseEntry entry) {
+        String tableName = entry.getDatabaseTableMetadata().getName();
+        if (!entry.getDatabaseTableMetadata().isSubsetOf(getTable(tableName).getMetadata())) {
             throw new InnerDatabaseException("Entry contains columns the database table does not");
         }
-        //TODO: HERE WILL THE ALTER TABLE BE
-        LOG.debug("finished checking table" );
         return getTable(tableName).putRow(entry);
     }
 
-    public void insertEntry (DatabaseEntry entry) {
-        String tableName = entry.getDatabaseTable().getName();
-        createTableIfNotExists(entry.getDatabaseTable());
+    public void insertEntry(DatabaseEntry entry) {
+        String tableName = entry.getDatabaseTableMetadata().getName();
+        createTableIfNotExists(entry.getDatabaseTableMetadata());
         if (entryExists(entry)) {
             throw new InnerDatabaseException("Table already contains entry");
         }
-        if (!entry.getDatabaseTable().isSubsetOf(getTable(tableName).getMetadata())) {
+        if (!entry.getDatabaseTableMetadata().isSubsetOf(getTable(tableName).getMetadata())) {
             throw new InnerDatabaseException("Entry contains columns the database does not");
         }
         getTable(tableName).putRow(entry);
     }
 
-    public void deleteEntry (DatabaseEntry entry) {
-        DatabaseTable table = tables.get(entry.getDatabaseTable().getName());
+    public void deleteEntry(DatabaseEntry entry) {
+        DatabaseTable table = tables.get(entry.getDatabaseTableMetadata().getName());
         if (table == null) {
             LOG.debug("Table does not exist -> not deleting entry " + entry);
             return;
@@ -91,7 +99,10 @@ public void createTableIfNotExists(DatabaseTableMetadata tableMetadata) {
     }
 
     public List<DatabaseTable> getTables() {
-        return  new ArrayList<>(tables.values());
+        return new ArrayList<>(tables.values());
     }
 
+    private void createTable(DatabaseTableMetadata tableMetadata) {
+        tables.put(tableMetadata.getName(), new DatabaseTable(tableMetadata));
+    }
 }

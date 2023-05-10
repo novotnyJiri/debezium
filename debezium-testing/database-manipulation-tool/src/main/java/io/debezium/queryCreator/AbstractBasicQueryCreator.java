@@ -19,7 +19,7 @@ public abstract class AbstractBasicQueryCreator implements QueryCreator {
     @Override
     public String insertQuery(DatabaseEntry databaseEntry) {
         StringBuilder builder = new StringBuilder("INSERT INTO ")
-                .append(databaseEntry.getDatabaseTable().getName())
+                .append(databaseEntry.getDatabaseTableMetadata().getName())
                 .append(" (");
 
         for (DatabaseColumn column : databaseEntry.getColumns()) {
@@ -71,7 +71,7 @@ public abstract class AbstractBasicQueryCreator implements QueryCreator {
     @Override
     public String updateQuery(DatabaseEntry databaseEntry) {
         StringBuilder builder = new StringBuilder("UPDATE ")
-                .append(databaseEntry.getDatabaseTable().getName())
+                .append(databaseEntry.getDatabaseTableMetadata().getName())
                 .append(" SET ");
         for (DatabaseColumnEntry columnEntry : databaseEntry.getColumnEntries()) {
             builder.append(columnEntry.columnName())
@@ -89,5 +89,15 @@ public abstract class AbstractBasicQueryCreator implements QueryCreator {
         return builder.toString();
     }
 
-    public abstract String upsertQuery(DatabaseEntry databaseEntry);
+    public String alterTableQuery(DatabaseTableMetadata current, DatabaseTableMetadata target) {
+        StringBuilder builder = new StringBuilder("ALTER TABLE " + current.getName());
+        for (DatabaseColumn column: current.getMissingColumns(target)) {
+            builder.append("ADD COLUMN ")
+                    .append(column.getName())
+                    .append(" ")
+                    .append(column.getDataType())
+                    .append(", ");
+        }
+        return builder.delete(builder.length() - 2, builder.length()).toString();
+    }
 }

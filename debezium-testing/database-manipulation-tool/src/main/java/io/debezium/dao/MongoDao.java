@@ -5,12 +5,12 @@
  */
 package io.debezium.dao;
 
-import java.util.List;
 import java.util.Optional;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import io.debezium.model.DatabaseTableMetadata;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -49,16 +49,11 @@ public class MongoDao implements Dao {
     private static final Logger LOG = Logger.getLogger(MongoDao.class);
 
     @Override
-    public List<DatabaseEntry> getAll() {
-        return null;
-    }
-
-    @Override
     public void insert(DatabaseEntry databaseEntry) {
         try {
             MongoDatabase db = getDatabase();
             Document insert = bsonCreator.insertDocument(databaseEntry);
-            db.getCollection(databaseEntry.getDatabaseTable().getName()).insertOne(insert);
+            db.getCollection(databaseEntry.getDatabaseTableMetadata().getName()).insertOne(insert);
         }
         catch (Exception me) {
             LOG.error("Could not insert into database" + databaseEntry);
@@ -82,7 +77,7 @@ public class MongoDao implements Dao {
             }
             Bson filter = Filters.eq(primary.get().columnName(), primary.get().value());
             Bson update = bsonCreator.updateBson(databaseEntry);
-            db.getCollection(databaseEntry.getDatabaseTable().getName()).updateOne(filter, update);
+            db.getCollection(databaseEntry.getDatabaseTableMetadata().getName()).updateOne(filter, update);
         }
         catch (Exception me) {
             LOG.error("Could not update database" + databaseEntry);
@@ -103,7 +98,7 @@ public class MongoDao implements Dao {
             Bson filter = Filters.eq(primary.get().columnName(), primary.get().value());
             Bson update = bsonCreator.updateBson(databaseEntry);
             UpdateOptions options = new UpdateOptions().upsert(true);
-            db.getCollection(databaseEntry.getDatabaseTable().getName()).updateOne(filter, update, options);
+            db.getCollection(databaseEntry.getDatabaseTableMetadata().getName()).updateOne(filter, update, options);
             LOG.debug("Successful upsert " + databaseEntry);
         }
         catch (Exception me) {
@@ -114,17 +109,26 @@ public class MongoDao implements Dao {
     }
 
     @Override
-    public void createTable(DatabaseEntry databaseEntry) {
+    public void createTable(DatabaseTableMetadata metadata) {
         try {
             MongoDatabase db = getDatabase();
-//            db.createCollection(databaseEntry.getDatabaseTable().getName());
+             db.createCollection(metadata.getName());
         }
         catch (MongoException me) {
-            LOG.error("Could not create table " + databaseEntry);
+            LOG.error("Could not create table " + metadata);
             LOG.error(me.getMessage());
             throw me;
         }
     }
+
+
+    /**
+     * Since Mongo does table creation automatically this method does not need to do anything. Due to implementing the DAO interface the method must be here even though is empty.
+     * @param current does nothing
+     * @param target does nothing
+     */
+    @Override
+    public void alterTable(DatabaseTableMetadata current, DatabaseTableMetadata target) {}
 
     @Override
     public void createTableAndUpsert(DatabaseEntry databaseEntry) {

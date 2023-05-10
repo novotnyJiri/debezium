@@ -114,6 +114,21 @@
         </configuration>
       </plugin>
       <plugin>
+        <groupId>net.revelc.code</groupId>
+        <artifactId>impsort-maven-plugin</artifactId>
+        <version>${version.impsort}</version>
+        <configuration>
+          <groups>java.,jakarta.,javax.,org.,com.,io.</groups>
+          <staticGroups>*</staticGroups>
+          <staticAfter>false</staticAfter>
+<!--          Exclude records files because impsort cannot handle them and fails. -->
+          <excludes>
+            <exclude>**/DatabaseColumnEntry.java</exclude>
+          </excludes>
+          <removeUnused>true</removeUnused>
+        </configuration>
+      </plugin>
+      <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${surefire-plugin.version}</version>
         <configuration>

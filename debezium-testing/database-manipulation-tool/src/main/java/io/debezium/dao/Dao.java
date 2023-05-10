@@ -5,14 +5,10 @@
  */
 package io.debezium.dao;
 
-import java.util.List;
-import java.util.Optional;
-
 import io.debezium.model.DatabaseEntry;
+import io.debezium.model.DatabaseTableMetadata;
 
 public interface Dao {
-
-    List<DatabaseEntry> getAll();
 
     void insert(DatabaseEntry databaseEntry);
 
@@ -23,7 +19,9 @@ public interface Dao {
     @Deprecated
     void upsert(DatabaseEntry databaseEntry);
 
-    void createTable(DatabaseEntry databaseEntry);
+    void createTable(DatabaseTableMetadata metadata);
+
+    void alterTable(DatabaseTableMetadata current, DatabaseTableMetadata target);
 
     void createTableAndUpsert(DatabaseEntry databaseEntry);
 

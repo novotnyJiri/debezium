@@ -15,11 +15,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.jboss.logging.Logger;
+
 import io.debezium.model.DatabaseEntry;
 import io.debezium.service.MainService;
 import io.debezium.utils.DatabaseEntryParser;
 import io.quarkus.runtime.annotations.RegisterForReflection;
-import org.jboss.logging.Logger;
 
 @Path("Main")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -100,7 +101,6 @@ public class MainResource {
             return Response.ok().build();
         }
         catch (Exception ex) {
-            LOG.error(ex.getMessage());
             return Response.noContent().status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }

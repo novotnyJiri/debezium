@@ -1,5 +1,7 @@
-# database-manipulation-tool
-
+# Database-manipulation-tool
+Java quarkus application used for idempotent upsertion of a single entity into multiple different databases.
+Main functionality is the upsert with table creation/alteration. You send a http request with JSON body (example below)
+and the tables will be either created or altered so the schema corresponds with the JSON. Then it proceeds to either insert or update the row into all the databases.  
 ## Working features
 
 This is currently in alpha state so there are not many features completed and the ones that are finished aren't tested properly.

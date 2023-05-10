@@ -1,16 +1,16 @@
 package io.debezium.model;
 
-import io.debezium.exception.InnerDatabaseException;
+import java.util.*;
+
 import org.jboss.logging.Logger;
 
-import java.util.*;
+import io.debezium.exception.InnerDatabaseException;
 
 public class DatabaseTable {
     private Map<String, DatabaseEntry> rows;
     private DatabaseTableMetadata metadata;
 
     private static final Logger LOG = Logger.getLogger(DatabaseTable.class);
-
 
     public DatabaseTable() {
         rows = new HashMap<>();
@@ -22,27 +22,28 @@ public class DatabaseTable {
         this.metadata = metadata;
     }
 
-    public boolean putRow (DatabaseEntry row) {
+    public boolean putRow(DatabaseEntry row) {
         boolean updated = rowExists(row);
         String primary = getPrimary(row);
         rows.put(primary, row);
         return updated;
     }
 
-    public void deleteRow (DatabaseEntry row) {
+    public void deleteRow(DatabaseEntry row) {
         String primary = getPrimary(row);
         if (rows.remove(primary) == null) {
             LOG.debug("Row did not exist -> not deleting entry " + row);
-        } else {
+        }
+        else {
             LOG.debug("Row successfully deleted " + row);
         }
     }
 
-    public boolean rowExists (DatabaseEntry row) {
+    public boolean rowExists(DatabaseEntry row) {
         return rows.containsKey(getPrimary(row));
     }
 
-    private String getPrimary (DatabaseEntry row) {
+    private String getPrimary(DatabaseEntry row) {
         Optional<DatabaseColumnEntry> primary = row.getPrimaryColumnEntry();
         if (primary.isPresent()) {
             return primary.get().value();

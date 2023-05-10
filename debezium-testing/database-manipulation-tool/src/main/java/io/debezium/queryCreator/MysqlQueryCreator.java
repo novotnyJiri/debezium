@@ -7,8 +7,10 @@ package io.debezium.queryCreator;
 
 import javax.enterprise.context.ApplicationScoped;
 
+import io.debezium.model.DatabaseColumn;
 import io.debezium.model.DatabaseColumnEntry;
 import io.debezium.model.DatabaseEntry;
+import io.debezium.model.DatabaseTableMetadata;
 
 @ApplicationScoped
 public class MysqlQueryCreator extends AbstractBasicQueryCreator {

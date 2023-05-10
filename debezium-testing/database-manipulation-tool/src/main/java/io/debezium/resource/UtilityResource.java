@@ -1,15 +1,16 @@
 package io.debezium.resource;
 
-import io.debezium.service.UtilityService;
-import io.quarkus.runtime.annotations.RegisterForReflection;
-import org.jboss.logging.Logger;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.json.JsonObject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import org.jboss.logging.Logger;
+
+import io.debezium.service.UtilityService;
+import io.quarkus.runtime.annotations.RegisterForReflection;
 
 @Path("Utility")
 @Produces(MediaType.APPLICATION_JSON)

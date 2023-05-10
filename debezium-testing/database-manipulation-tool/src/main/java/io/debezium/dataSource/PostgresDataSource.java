@@ -1,12 +1,13 @@
 package io.debezium.dataSource;
 
-import io.agroal.api.AgroalDataSource;
-import io.quarkus.agroal.DataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import java.sql.Connection;
-import java.sql.SQLException;
+
+import io.agroal.api.AgroalDataSource;
+import io.quarkus.agroal.DataSource;
 
 @ApplicationScoped
 public class PostgresDataSource implements DataSourceWrapper {
