@@ -5,11 +5,11 @@
  */
 package io.debezium.dao;
 
+import java.util.List;
+
 import io.debezium.model.DatabaseColumn;
 import io.debezium.model.DatabaseEntry;
 import io.debezium.model.DatabaseTableMetadata;
-
-import java.util.List;
 
 public interface Dao {
 

@@ -1,3 +1,8 @@
+/*
+ * Copyright Debezium Authors.
+ *
+ * Licensed under the Apache Software License version 2.0, available at http://www.apache.org/licenses/LICENSE-2.0
+ */
 package io.debezium.dao;
 
 import java.sql.Connection;
@@ -5,13 +10,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 
-import io.debezium.model.DatabaseColumn;
-import io.debezium.model.DatabaseTableMetadata;
 import org.jboss.logging.Logger;
 
 import io.debezium.dataSource.DataSourceWrapper;
 import io.debezium.exception.RuntimeSQLException;
+import io.debezium.model.DatabaseColumn;
 import io.debezium.model.DatabaseEntry;
+import io.debezium.model.DatabaseTableMetadata;
 import io.debezium.queryCreator.QueryCreator;
 
 public abstract class AbstractBasicDao implements Dao {
@@ -83,9 +88,15 @@ public abstract class AbstractBasicDao implements Dao {
     }
 
     @Override
+    public void createTableAndUpsert(DatabaseEntry databaseEntry) {
+        createTable(databaseEntry.getDatabaseTableMetadata());
+        upsert(databaseEntry);
+    }
+
+    @Override
     public void alterTable(List<DatabaseColumn> columns, DatabaseTableMetadata metadata) {
         try (Connection conn = source.getConnection();
-             Statement stmt = conn.createStatement()) {
+                Statement stmt = conn.createStatement()) {
             stmt.execute(queryCreator.addColumnsQuery(columns, metadata.getName()));
         }
         catch (SQLException ex) {

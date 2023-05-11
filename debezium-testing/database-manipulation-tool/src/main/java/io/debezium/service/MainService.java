@@ -5,17 +5,20 @@
  */
 package io.debezium.service;
 
+import java.util.List;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import io.debezium.model.*;
 import org.jboss.logging.Logger;
 
 import io.debezium.dao.Dao;
 import io.debezium.dao.DaoManager;
 import io.debezium.exception.InnerDatabaseException;
-
-import java.util.List;
+import io.debezium.model.Database;
+import io.debezium.model.DatabaseColumn;
+import io.debezium.model.DatabaseEntry;
+import io.debezium.model.DatabaseTableMetadata;
 
 @ApplicationScoped
 public class MainService {
@@ -40,7 +43,6 @@ public class MainService {
     }
 
     public void createTable(DatabaseEntry dbEntity) {
-        DatabaseTable current = database.getTable(dbEntity.getDatabaseTableMetadata().getName());
         List<DatabaseColumn> changedColumns = database.createOrAlterTable(dbEntity.getDatabaseTableMetadata());
         if (changedColumns == null) {
             LOG.debug("Creating table in Dbs " + dbEntity.getDatabaseTableMetadata());

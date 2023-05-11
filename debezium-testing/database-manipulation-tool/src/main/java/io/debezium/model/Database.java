@@ -1,3 +1,8 @@
+/*
+ * Copyright Debezium Authors.
+ *
+ * Licensed under the Apache Software License version 2.0, available at http://www.apache.org/licenses/LICENSE-2.0
+ */
 package io.debezium.model;
 
 import java.util.ArrayList;
@@ -51,15 +56,15 @@ public class Database {
      * @param tableMetadata contains columns that are required in the database table
      * @return List of columns added. Is empty table did not need alteration. Null the table was created.
      */
-     public List<DatabaseColumn> createOrAlterTable(DatabaseTableMetadata tableMetadata) {
-         if (createTableIfNotExists(tableMetadata)) {
-             return null;
-         }
-         DatabaseTableMetadata current = tables.get(tableMetadata.getName()).getMetadata();
-         List<DatabaseColumn> missingColumns = tableMetadata.getMissingColumns(current);
-         missingColumns.forEach(current::addColumn);
-         return missingColumns;
-     }
+    public List<DatabaseColumn> createOrAlterTable(DatabaseTableMetadata tableMetadata) {
+        if (createTableIfNotExists(tableMetadata)) {
+            return null;
+        }
+        DatabaseTableMetadata current = tables.get(tableMetadata.getName()).getMetadata();
+        List<DatabaseColumn> missingColumns = tableMetadata.getMissingColumns(current);
+        missingColumns.forEach(current::addColumn);
+        return missingColumns;
+    }
 
     public void dropTable(String name) {
         tables.remove(name);

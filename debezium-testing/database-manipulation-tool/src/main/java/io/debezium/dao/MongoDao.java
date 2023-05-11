@@ -11,8 +11,6 @@ import java.util.Optional;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import io.debezium.model.DatabaseColumn;
-import io.debezium.model.DatabaseTableMetadata;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -25,8 +23,10 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.UpdateOptions;
 
+import io.debezium.model.DatabaseColumn;
 import io.debezium.model.DatabaseColumnEntry;
 import io.debezium.model.DatabaseEntry;
+import io.debezium.model.DatabaseTableMetadata;
 import io.debezium.queryCreator.MongoBsonCreator;
 import io.quarkus.arc.Unremovable;
 import io.quarkus.arc.lookup.LookupIfProperty;
@@ -114,7 +114,7 @@ public class MongoDao implements Dao {
     public void createTable(DatabaseTableMetadata metadata) {
         try {
             MongoDatabase db = getDatabase();
-             db.createCollection(metadata.getName());
+            db.createCollection(metadata.getName());
         }
         catch (MongoException me) {
             LOG.error("Could not create table " + metadata);
@@ -129,8 +129,8 @@ public class MongoDao implements Dao {
      * @param metadata does nothing
      */
     @Override
-    public void alterTable(List<DatabaseColumn> columns, DatabaseTableMetadata metadata) {}
-
+    public void alterTable(List<DatabaseColumn> columns, DatabaseTableMetadata metadata) {
+    }
 
     @Override
     public void createTableAndUpsert(DatabaseEntry databaseEntry) {

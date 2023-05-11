@@ -5,7 +5,11 @@
  */
 package io.debezium.model;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 public class DatabaseTableMetadata {
     private String name;
@@ -60,10 +64,12 @@ public class DatabaseTableMetadata {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (o == null || getClass() != o.getClass())
+        }
+        if (o == null || getClass() != o.getClass()) {
             return false;
+        }
         DatabaseTableMetadata that = (DatabaseTableMetadata) o;
         return Objects.equals(name, that.name) && Objects.equals(columns, that.columns);
     }

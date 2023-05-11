@@ -20,8 +20,12 @@ public record DatabaseColumnEntry(String value, String columnName, String dataTy
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         DatabaseColumnEntry entry = (DatabaseColumnEntry) o;
         return Objects.equals(value, entry.value) && Objects.equals(columnName, entry.columnName) && Objects.equals(dataType, entry.dataType);
     }

@@ -5,14 +5,14 @@
  */
 package io.debezium.queryCreator;
 
+import java.util.List;
+
 import org.jboss.logging.Logger;
 
 import io.debezium.model.DatabaseColumn;
 import io.debezium.model.DatabaseColumnEntry;
 import io.debezium.model.DatabaseEntry;
 import io.debezium.model.DatabaseTableMetadata;
-
-import java.util.List;
 
 public abstract class AbstractBasicQueryCreator implements QueryCreator {
 
@@ -95,7 +95,7 @@ public abstract class AbstractBasicQueryCreator implements QueryCreator {
 
     public String addColumnsQuery(List<DatabaseColumn> columns, String databaseName) {
         StringBuilder builder = new StringBuilder("ALTER TABLE " + databaseName);
-        for (DatabaseColumn column: columns) {
+        for (DatabaseColumn column : columns) {
             builder.append(" ADD COLUMN ")
                     .append(column.getName())
                     .append(" ")

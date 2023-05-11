@@ -1,3 +1,8 @@
+/*
+ * Copyright Debezium Authors.
+ *
+ * Licensed under the Apache Software License version 2.0, available at http://www.apache.org/licenses/LICENSE-2.0
+ */
 package io.debezium.utils;
 
 import java.util.List;
@@ -7,7 +12,11 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
-import io.debezium.model.*;
+import io.debezium.model.Database;
+import io.debezium.model.DatabaseColumn;
+import io.debezium.model.DatabaseColumnEntry;
+import io.debezium.model.DatabaseEntry;
+import io.debezium.model.DatabaseTable;
 
 public class ResponseJsonBuilder {
     JsonObjectBuilder mainBuilder;
