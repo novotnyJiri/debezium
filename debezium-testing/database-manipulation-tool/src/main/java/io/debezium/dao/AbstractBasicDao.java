@@ -3,7 +3,9 @@ package io.debezium.dao;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 
+import io.debezium.model.DatabaseColumn;
 import io.debezium.model.DatabaseTableMetadata;
 import org.jboss.logging.Logger;
 
@@ -81,19 +83,13 @@ public abstract class AbstractBasicDao implements Dao {
     }
 
     @Override
-    public void createTableAndUpsert(DatabaseEntry databaseEntry) {
-        createTable(databaseEntry.getDatabaseTableMetadata());
-        upsert(databaseEntry);
-    }
-
-    @Override
-    public void alterTable(DatabaseTableMetadata current, DatabaseTableMetadata target) {
+    public void alterTable(List<DatabaseColumn> columns, DatabaseTableMetadata metadata) {
         try (Connection conn = source.getConnection();
              Statement stmt = conn.createStatement()) {
-            stmt.execute(queryCreator.alterTableQuery(current, target));
+            stmt.execute(queryCreator.addColumnsQuery(columns, metadata.getName()));
         }
         catch (SQLException ex) {
-            LOG.error("Could not alter table with this target " + target);
+            LOG.error("Could not add columns " + columns + " to table " + metadata.getName());
             LOG.error(ex);
             throw new RuntimeSQLException(ex);
         }

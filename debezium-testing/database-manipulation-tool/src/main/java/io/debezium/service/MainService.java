@@ -8,15 +8,12 @@ package io.debezium.service;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import io.debezium.model.DatabaseColumn;
-import io.debezium.model.DatabaseTableMetadata;
+import io.debezium.model.*;
 import org.jboss.logging.Logger;
 
 import io.debezium.dao.Dao;
 import io.debezium.dao.DaoManager;
 import io.debezium.exception.InnerDatabaseException;
-import io.debezium.model.Database;
-import io.debezium.model.DatabaseEntry;
 
 import java.util.List;
 
@@ -43,7 +40,7 @@ public class MainService {
     }
 
     public void createTable(DatabaseEntry dbEntity) {
-        DatabaseTableMetadata current = database.getTable(dbEntity.getDatabaseTableMetadata().getName()).getMetadata();
+        DatabaseTable current = database.getTable(dbEntity.getDatabaseTableMetadata().getName());
         List<DatabaseColumn> changedColumns = database.createOrAlterTable(dbEntity.getDatabaseTableMetadata());
         if (changedColumns == null) {
             LOG.debug("Creating table in Dbs " + dbEntity.getDatabaseTableMetadata());
@@ -53,7 +50,7 @@ public class MainService {
 
         if (!changedColumns.isEmpty()) {
             LOG.debug("Altering table in Dbs " + dbEntity.getDatabaseTableMetadata());
-            alterTableToDao(current, dbEntity.getDatabaseTableMetadata());
+            alterTableToDao(changedColumns, dbEntity.getDatabaseTableMetadata());
         }
     }
 
@@ -65,6 +62,11 @@ public class MainService {
         }
         catch (InnerDatabaseException ex) {
             LOG.error("Error when upserting entry into inner database");
+            LOG.error(ex.getMessage());
+            throw ex;
+        }
+        catch (Exception ex) {
+            LOG.error("Error when upserting entry into databases");
             LOG.error(ex.getMessage());
             throw ex;
         }
@@ -98,9 +100,9 @@ public class MainService {
         }
     }
 
-    private void alterTableToDao(DatabaseTableMetadata current, DatabaseTableMetadata target) {
+    private void alterTableToDao(List<DatabaseColumn> columns, DatabaseTableMetadata metadata) {
         for (Dao dao : daoManager.getEnabledDbs()) {
-            dao.alterTable(current, target);
+            dao.alterTable(columns, metadata);
         }
     }
 

@@ -65,19 +65,6 @@ public class MainResource {
         }
     }
 
-    @Path("Upsert")
-    @POST
-    public Response upsert(JsonObject inputJsonObj) {
-        try {
-            DatabaseEntry dbEntity = parser.parse(inputJsonObj);
-            mainService.upsert(dbEntity);
-            return Response.ok().build();
-        }
-        catch (Exception ex) {
-            return Response.noContent().status(Response.Status.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
     @Path("Update")
     @POST
     public Response update(JsonObject inputJsonObj) {

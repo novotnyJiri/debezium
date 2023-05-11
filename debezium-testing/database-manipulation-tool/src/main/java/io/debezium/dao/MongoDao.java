@@ -5,11 +5,13 @@
  */
 package io.debezium.dao;
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import io.debezium.model.DatabaseColumn;
 import io.debezium.model.DatabaseTableMetadata;
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -121,14 +123,14 @@ public class MongoDao implements Dao {
         }
     }
 
-
     /**
-     * Since Mongo does table creation automatically this method does not need to do anything. Due to implementing the DAO interface the method must be here even though is empty.
-     * @param current does nothing
-     * @param target does nothing
+     * Since Mongo does table alteration automatically this method does not need to do anything. Due to implementing the DAO interface the method must be here even though is empty.
+     * @param columns does nothing
+     * @param metadata does nothing
      */
     @Override
-    public void alterTable(DatabaseTableMetadata current, DatabaseTableMetadata target) {}
+    public void alterTable(List<DatabaseColumn> columns, DatabaseTableMetadata metadata) {}
+
 
     @Override
     public void createTableAndUpsert(DatabaseEntry databaseEntry) {

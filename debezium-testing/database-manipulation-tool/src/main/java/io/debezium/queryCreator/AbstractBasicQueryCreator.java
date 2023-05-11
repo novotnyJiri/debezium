@@ -12,6 +12,8 @@ import io.debezium.model.DatabaseColumnEntry;
 import io.debezium.model.DatabaseEntry;
 import io.debezium.model.DatabaseTableMetadata;
 
+import java.util.List;
+
 public abstract class AbstractBasicQueryCreator implements QueryCreator {
 
     private final Logger LOG = Logger.getLogger(getClass());
@@ -38,7 +40,7 @@ public abstract class AbstractBasicQueryCreator implements QueryCreator {
         builder.delete(builder.length() - 2, builder.length())
                 .append(")");
         String query = builder.toString();
-        LOG.debug("CREATED INSERT QUERY: " + query);
+        LOG.debug("Created INSERT query: " + query);
         return query;
     }
 
@@ -59,7 +61,7 @@ public abstract class AbstractBasicQueryCreator implements QueryCreator {
         builder.delete(builder.length() - 2, builder.length())
                 .append(")");
         String query = builder.toString();
-        LOG.debug("CREATED TABLE CREATE QUERY: " + query);
+        LOG.debug("Created TABLE CREATE query: " + query);
         return query;
     }
 
@@ -85,19 +87,24 @@ public abstract class AbstractBasicQueryCreator implements QueryCreator {
                 .append(" = '")
                 .append(databaseEntry.getPrimaryColumnEntry().get().value())
                 .append("'");
-        LOG.debug("Update query created:" + builder);
-        return builder.toString();
+
+        String query = builder.toString();
+        LOG.debug("Created UPDATE query: " + query);
+        return query;
     }
 
-    public String alterTableQuery(DatabaseTableMetadata current, DatabaseTableMetadata target) {
-        StringBuilder builder = new StringBuilder("ALTER TABLE " + current.getName());
-        for (DatabaseColumn column: current.getMissingColumns(target)) {
-            builder.append("ADD COLUMN ")
+    public String addColumnsQuery(List<DatabaseColumn> columns, String databaseName) {
+        StringBuilder builder = new StringBuilder("ALTER TABLE " + databaseName);
+        for (DatabaseColumn column: columns) {
+            builder.append(" ADD COLUMN ")
                     .append(column.getName())
                     .append(" ")
                     .append(column.getDataType())
                     .append(", ");
         }
-        return builder.delete(builder.length() - 2, builder.length()).toString();
+        builder.delete(builder.length() - 2, builder.length());
+        String query = builder.toString();
+        LOG.debug("Created ALTER TABLE query: " + query);
+        return query;
     }
 }

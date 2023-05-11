@@ -5,8 +5,11 @@
  */
 package io.debezium.queryCreator;
 
+import io.debezium.model.DatabaseColumn;
 import io.debezium.model.DatabaseEntry;
 import io.debezium.model.DatabaseTableMetadata;
+
+import java.util.List;
 
 public interface QueryCreator {
     String insertQuery(DatabaseEntry databaseEntry);
@@ -18,5 +21,5 @@ public interface QueryCreator {
 
     String updateQuery(DatabaseEntry databaseEntry);
 
-    String alterTableQuery(DatabaseTableMetadata current, DatabaseTableMetadata target);
+    String addColumnsQuery(List<DatabaseColumn> columns, String databaseName);
 }

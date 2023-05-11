@@ -5,8 +5,11 @@
  */
 package io.debezium.dao;
 
+import io.debezium.model.DatabaseColumn;
 import io.debezium.model.DatabaseEntry;
 import io.debezium.model.DatabaseTableMetadata;
+
+import java.util.List;
 
 public interface Dao {
 
@@ -21,7 +24,7 @@ public interface Dao {
 
     void createTable(DatabaseTableMetadata metadata);
 
-    void alterTable(DatabaseTableMetadata current, DatabaseTableMetadata target);
+    void alterTable(List<DatabaseColumn> columns, DatabaseTableMetadata metadata);
 
     void createTableAndUpsert(DatabaseEntry databaseEntry);
 

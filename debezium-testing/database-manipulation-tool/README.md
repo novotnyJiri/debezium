@@ -1,20 +1,19 @@
 # Database-manipulation-tool
 Java quarkus application used for idempotent upsertion of a single entity into multiple different databases.
 Main functionality is the upsert with table creation/alteration. You send a http request with JSON body (example below)
-and the tables will be either created or altered so the schema corresponds with the JSON. Then it proceeds to either insert or update the row into all the databases.  
+and the tables will be either created or altered (columns will be added to he table) so the schema corresponds with the JSON. Then it proceeds to either insert or update the row into all the databases.  
 ## Working features
 
 This is currently in alpha state so there are not many features completed and the ones that are finished aren't tested properly.
 
-| Database/feature        	 | Postgres 	 | Mongo 	 | Mysql 	 | Oracle 	 | SqlServer 	 | Db2 	 |
-|---------------------------|------------|---------|---------|----------|-------------|-------|
-| Create table            	 | X    	     | X   	   | X   	   | 	        | 	           | 	     |
-| Insert                  	 | X    	     | 	       | X   	   | 	        | 	           | 	     |
-| Create table and upsert 	 | X	         | X	      | X	      | 	        | 	           | 	     |
-| Update                  	 | X	         | X	      | X 	     | 	        | 	           | 	     |
-| Upsert                  	 | X	         | X   	   | X   	   | 	        | 	           | 	     |
-| Delete                  	 | 	          | 	       | 	       | 	        | 	           | 	     |
-| Drop table        	       | 	          | 	       | 	       | 	        | 	           | 	     |
+| Database/feature        	       | Postgres 	 | Mongo 	 | Mysql 	 | Oracle 	 | SqlServer 	 | Db2 	 |
+|---------------------------------|------------|---------|---------|----------|-------------|-------|
+| Create table            	       | X    	     | X   	   | X   	   | 	        | 	           | 	     |
+| Insert                  	       | X    	     | X	      | X   	   | 	        | 	           | 	     |
+| Upsert and alter/create table 	 | X	         | X	      | X	      | 	        | 	           | 	     |
+| Update                  	       | X	         | X	      | X 	     | 	        | 	           | 	     |
+| Delete                  	       | 	          | 	       | 	       | 	        | 	           | 	     |
+| Drop table        	             | 	          | 	       | 	       | 	        | 	           | 	     |
 
 There is some error handling and debug logging, but it is not complete. 
 ## Json insertion schema
@@ -48,10 +47,10 @@ You can enable/disable different databases with the `enabled` property. The data
 
 <summary><code>POST</code> <code><b>/Main/Insert</b></code> <code>(Inserts json into all enabled databases)</code></summary>
 <summary><code>POST</code> <code><b>/Main/CreateTable</b></code> <code>(Creates table/collection in every enabled database)</code></summary>
-<summary><code>POST</code> <code><b>/Main/Upsert</b></code> <code>(Upserts json into all databases)</code></summary>
-<summary><code>POST</code> <code><b>/Main/CreateTableAndUpsert</b></code> <code>(Upserts json into all databases and creates tables if they did not exist)</code></summary>
+<summary><code>POST</code> <code><b>/Main/CreateTableAndUpsert</b></code> <code>(Upserts json into all databases and creates tables if they did not exist or adds columns so the json can be upserted)</code></summary>
 <summary><code>POST</code> <code><b>/Main/Update</b></code> <code>(Updates databases based on primary key)</code></summary>
 
+<br />
 <summary><code>GET</code> <code><b>/Utility/GetAll</b></code> <code>(Gets all created tables and their current state)</code></summary>
 
 
