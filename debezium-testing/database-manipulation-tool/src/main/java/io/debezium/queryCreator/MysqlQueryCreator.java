@@ -15,20 +15,4 @@ public class MysqlQueryCreator extends AbstractBasicQueryCreator {
 
     public MysqlQueryCreator() {
     }
-
-    @Override
-    public String upsertQuery(DatabaseEntry databaseEntry) {
-        StringBuilder builder = new StringBuilder(insertQuery(databaseEntry));
-        builder.append(" ON DUPLICATE KEY UPDATE ");
-        for (DatabaseColumnEntry entry : databaseEntry.getColumnEntries()) {
-            builder.append(entry.columnName())
-                    .append(" = ")
-                    .append('\'')
-                    .append(entry.value())
-                    .append('\'')
-                    .append(", ");
-        }
-        return builder.delete(builder.length() - 2, builder.length()).toString();
-
-    }
 }

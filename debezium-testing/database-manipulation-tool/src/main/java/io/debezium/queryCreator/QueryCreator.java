@@ -16,9 +16,6 @@ public interface QueryCreator {
 
     String createTableQuery(DatabaseTableMetadata databaseTableMetadata);
 
-    @Deprecated
-    String upsertQuery(DatabaseEntry databaseEntry);
-
     String updateQuery(DatabaseEntry databaseEntry);
 
     String addColumnsQuery(List<DatabaseColumn> columns, String databaseName);

@@ -89,28 +89,6 @@ public class MongoDao implements Dao {
     }
 
     @Override
-    public void upsert(DatabaseEntry databaseEntry) {
-        try {
-            MongoDatabase db = getDatabase();
-            Optional<DatabaseColumnEntry> primary = databaseEntry.getPrimaryColumnEntry();
-            if (primary.isEmpty()) {
-                insert(databaseEntry);
-                return;
-            }
-            Bson filter = Filters.eq(primary.get().columnName(), primary.get().value());
-            Bson update = bsonCreator.updateBson(databaseEntry);
-            UpdateOptions options = new UpdateOptions().upsert(true);
-            db.getCollection(databaseEntry.getDatabaseTableMetadata().getName()).updateOne(filter, update, options);
-            LOG.debug("Successful upsert " + databaseEntry);
-        }
-        catch (Exception me) {
-            LOG.error("Could not upsert " + databaseEntry);
-            LOG.error(me.getMessage());
-            throw me;
-        }
-    }
-
-    @Override
     public void createTable(DatabaseTableMetadata metadata) {
         try {
             MongoDatabase db = getDatabase();
@@ -133,8 +111,8 @@ public class MongoDao implements Dao {
     }
 
     @Override
-    public void createTableAndUpsert(DatabaseEntry databaseEntry) {
-        upsert(databaseEntry);
+    public void dropTable(DatabaseTableMetadata metadata) {
+
     }
 
     private MongoDatabase getDatabase() {

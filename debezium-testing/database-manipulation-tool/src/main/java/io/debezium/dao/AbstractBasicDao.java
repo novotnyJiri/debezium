@@ -61,20 +61,6 @@ public abstract class AbstractBasicDao implements Dao {
     }
 
     @Override
-    public void upsert(DatabaseEntry databaseEntry) {
-        try (Connection conn = source.getConnection();
-                Statement stmt = conn.createStatement()) {
-            stmt.execute(queryCreator.upsertQuery(databaseEntry));
-            LOG.debug("Successful upsert " + databaseEntry);
-        }
-        catch (SQLException ex) {
-            LOG.error("Could not upsert " + databaseEntry);
-            LOG.error(ex);
-            throw new RuntimeSQLException(ex);
-        }
-    }
-
-    @Override
     public void createTable(DatabaseTableMetadata metadata) {
         try (Connection conn = source.getConnection();
                 Statement stmt = conn.createStatement()) {
@@ -88,12 +74,6 @@ public abstract class AbstractBasicDao implements Dao {
     }
 
     @Override
-    public void createTableAndUpsert(DatabaseEntry databaseEntry) {
-        createTable(databaseEntry.getDatabaseTableMetadata());
-        upsert(databaseEntry);
-    }
-
-    @Override
     public void alterTable(List<DatabaseColumn> columns, DatabaseTableMetadata metadata) {
         try (Connection conn = source.getConnection();
                 Statement stmt = conn.createStatement()) {
@@ -104,5 +84,10 @@ public abstract class AbstractBasicDao implements Dao {
             LOG.error(ex);
             throw new RuntimeSQLException(ex);
         }
+    }
+
+    @Override
+    public void dropTable(DatabaseTableMetadata metadata) {
+
     }
 }

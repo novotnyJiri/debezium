@@ -19,13 +19,10 @@ public interface Dao {
 
     void update(DatabaseEntry databaseEntry);
 
-    @Deprecated
-    void upsert(DatabaseEntry databaseEntry);
-
     void createTable(DatabaseTableMetadata metadata);
 
     void alterTable(List<DatabaseColumn> columns, DatabaseTableMetadata metadata);
 
-    void createTableAndUpsert(DatabaseEntry databaseEntry);
+    void dropTable(DatabaseTableMetadata metadata);
 
 }

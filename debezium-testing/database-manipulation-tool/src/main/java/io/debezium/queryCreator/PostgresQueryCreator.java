@@ -23,23 +23,6 @@ public class PostgresQueryCreator extends AbstractBasicQueryCreator {
     }
 
     @Override
-    public String upsertQuery(DatabaseEntry databaseEntry) {
-        StringBuilder builder = new StringBuilder(insertQuery(databaseEntry));
-        builder.append(" ON CONFLICT (")
-                .append(databaseEntry.getPrimaryColumnEntry().get().columnName())
-                .append(") DO UPDATE SET ");
-        for (DatabaseColumnEntry entry : databaseEntry.getColumnEntries()) {
-            builder.append(entry.columnName())
-                    .append(" = ")
-                    .append('\'')
-                    .append(entry.value())
-                    .append('\'')
-                    .append(", ");
-        }
-        return builder.delete(builder.length() - 2, builder.length()).toString();
-    }
-
-    @Override
     public String createTableQuery(DatabaseTableMetadata databaseTableMetadata) {
         StringBuilder builder = new StringBuilder("CREATE TABLE IF NOT EXISTS ")
                 .append(databaseTableMetadata.getName())
@@ -59,6 +42,7 @@ public class PostgresQueryCreator extends AbstractBasicQueryCreator {
         LOG.debug("CREATED TABLE CREATE QUERY: " + query);
         return query;
     }
+
 
     private String convertDouble(String dataType) {
         if (dataType.equalsIgnoreCase("double")) {
