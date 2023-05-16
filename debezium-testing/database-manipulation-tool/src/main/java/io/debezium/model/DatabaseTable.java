@@ -67,4 +67,8 @@ public class DatabaseTable {
     public List<DatabaseEntry> getRows() {
         return new ArrayList<>(rows.values());
     }
+
+    public Map<String, DatabaseEntry> getRowsAsMap() {
+        return rows;
+    }
 }
