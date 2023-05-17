@@ -19,4 +19,6 @@ public interface QueryCreator {
     String updateQuery(DatabaseEntry databaseEntry);
 
     String addColumnsQuery(List<DatabaseColumn> columns, String databaseName);
+
+    String dropTable(DatabaseTableMetadata databaseTableMetadata);
 }

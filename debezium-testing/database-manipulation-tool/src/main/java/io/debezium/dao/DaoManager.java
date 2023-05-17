@@ -15,7 +15,7 @@ import javax.enterprise.inject.spi.CDI;
 import org.jboss.logging.Logger;
 
 @ApplicationScoped
-public class DaoManager {
+public final class DaoManager {
     List<Dao> enabledDbs;
 
     private static final Logger LOG = Logger.getLogger(DaoManager.class);

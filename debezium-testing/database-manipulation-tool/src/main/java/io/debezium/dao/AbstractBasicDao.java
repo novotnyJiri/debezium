@@ -39,7 +39,7 @@ public abstract class AbstractBasicDao implements Dao {
         }
         catch (SQLException ex) {
             LOG.error("Could not insert into database " + databaseEntry);
-            LOG.error(ex);
+            LOG.error(ex.getMessage());
             throw new RuntimeSQLException(ex);
         }
     }
@@ -55,7 +55,7 @@ public abstract class AbstractBasicDao implements Dao {
         }
         catch (Exception ex) {
             LOG.error("Could not update database " + databaseEntry);
-            LOG.error(ex);
+            LOG.error(ex.getMessage());
             throw new RuntimeSQLException(ex);
         }
     }
@@ -68,7 +68,7 @@ public abstract class AbstractBasicDao implements Dao {
         }
         catch (SQLException ex) {
             LOG.error("Could not create table " + metadata);
-            LOG.error(ex);
+            LOG.error(ex.getMessage());
             throw new RuntimeSQLException(ex);
         }
     }
@@ -81,13 +81,26 @@ public abstract class AbstractBasicDao implements Dao {
         }
         catch (SQLException ex) {
             LOG.error("Could not add columns " + columns + " to table " + metadata.getName());
-            LOG.error(ex);
+            LOG.error(ex.getMessage());
             throw new RuntimeSQLException(ex);
         }
     }
 
     @Override
     public void dropTable(DatabaseTableMetadata metadata) {
+        try (Connection conn = source.getConnection();
+             Statement stmt = conn.createStatement()) {
+            stmt.execute(queryCreator.dropTable(metadata));
+        }
+        catch (SQLException ex) {
+            LOG.error("Could not drop table " + metadata.getName());
+            LOG.error(ex.getMessage());
+            throw new RuntimeSQLException(ex);
+        }
+    }
+
+    @Override
+    public void delete(DatabaseEntry databaseEntry) {
 
     }
 }

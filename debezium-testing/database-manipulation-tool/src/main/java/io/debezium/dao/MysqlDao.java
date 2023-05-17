@@ -11,7 +11,6 @@ import javax.inject.Singleton;
 import org.eclipse.microprofile.faulttolerance.Retry;
 
 import io.debezium.dataSource.MysqlDataSource;
-import io.debezium.model.DatabaseEntry;
 import io.debezium.queryCreator.MysqlQueryCreator;
 import io.quarkus.arc.Unremovable;
 import io.quarkus.arc.lookup.LookupIfProperty;
@@ -20,15 +19,10 @@ import io.quarkus.arc.lookup.LookupIfProperty;
 @LookupIfProperty(name = "quarkus.datasource.mysql.enabled", stringValue = "true")
 @Unremovable
 @Retry
-public class MysqlDao extends AbstractBasicDao {
+public final class MysqlDao extends AbstractBasicDao {
 
     @Inject
     public MysqlDao(MysqlDataSource source, MysqlQueryCreator queryCreator) {
         super(source, queryCreator);
-    }
-
-    @Override
-    public void delete(DatabaseEntry databaseEntry) {
-
     }
 }

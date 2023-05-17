@@ -17,11 +17,9 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.faulttolerance.Retry;
 import org.jboss.logging.Logger;
 
-import com.mongodb.MongoException;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.UpdateOptions;
 
 import io.debezium.model.DatabaseColumn;
 import io.debezium.model.DatabaseColumnEntry;
@@ -36,7 +34,7 @@ import io.quarkus.mongodb.MongoClientName;
 @LookupIfProperty(name = "quarkus.mongodb.main.enabled", stringValue = "true")
 @Unremovable
 @Retry
-public class MongoDao implements Dao {
+public final class MongoDao implements Dao {
 
     @ConfigProperty(name = "mongodb.database")
     String databaseName;
@@ -94,7 +92,7 @@ public class MongoDao implements Dao {
             MongoDatabase db = getDatabase();
             db.createCollection(metadata.getName());
         }
-        catch (MongoException me) {
+        catch (Exception me) {
             LOG.error("Could not create table " + metadata);
             LOG.error(me.getMessage());
             throw me;
@@ -112,7 +110,15 @@ public class MongoDao implements Dao {
 
     @Override
     public void dropTable(DatabaseTableMetadata metadata) {
-
+        try {
+            MongoDatabase db = getDatabase();
+            db.getCollection(metadata.getName()).drop();
+        }
+        catch (Exception me) {
+            LOG.error("Could not drop table " + metadata);
+            LOG.error(me.getMessage());
+            throw me;
+        }
     }
 
     private MongoDatabase getDatabase() {

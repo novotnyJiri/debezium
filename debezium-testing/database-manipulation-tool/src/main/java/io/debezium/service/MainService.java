@@ -80,6 +80,18 @@ public class MainService {
         }
     }
 
+    public void dropTable(DatabaseEntry dbEntity) {
+        try {
+            database.dropTable(dbEntity.getDatabaseTableMetadata().getName());
+        }
+        catch (InnerDatabaseException ex) {
+            LOG.error("Error when dropping table from inner database");
+            LOG.error(ex.getMessage());
+            return;
+        }
+        dropTableToDao(dbEntity);
+    }
+
     public void update(DatabaseEntry dbEntity) {
         updateToDao(dbEntity);
     }
@@ -105,6 +117,12 @@ public class MainService {
     private void alterTableToDao(List<DatabaseColumn> columns, DatabaseTableMetadata metadata) {
         for (Dao dao : daoManager.getEnabledDbs()) {
             dao.alterTable(columns, metadata);
+        }
+    }
+
+    private void dropTableToDao(DatabaseEntry dbEntity) {
+        for (Dao dao : daoManager.getEnabledDbs()) {
+            dao.dropTable(dbEntity.getDatabaseTableMetadata());
         }
     }
 

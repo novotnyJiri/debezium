@@ -11,7 +11,6 @@ import javax.inject.Singleton;
 import org.eclipse.microprofile.faulttolerance.Retry;
 
 import io.debezium.dataSource.PostgresDataSource;
-import io.debezium.model.DatabaseEntry;
 import io.debezium.queryCreator.PostgresQueryCreator;
 import io.quarkus.arc.Unremovable;
 import io.quarkus.arc.lookup.LookupIfProperty;
@@ -20,16 +19,10 @@ import io.quarkus.arc.lookup.LookupIfProperty;
 @LookupIfProperty(name = "quarkus.datasource.postgresql.enabled", stringValue = "true")
 @Unremovable
 @Retry
-public class PostgresDao extends AbstractBasicDao {
+public final class PostgresDao extends AbstractBasicDao {
 
     @Inject
     public PostgresDao(PostgresDataSource source, PostgresQueryCreator queryCreator) {
         super(source, queryCreator);
     }
-
-    @Override
-    public void delete(DatabaseEntry databaseEntry) {
-
-    }
-
 }

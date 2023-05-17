@@ -93,6 +93,7 @@ public abstract class AbstractBasicQueryCreator implements QueryCreator {
         return query;
     }
 
+    @Override
     public String addColumnsQuery(List<DatabaseColumn> columns, String databaseName) {
         StringBuilder builder = new StringBuilder("ALTER TABLE " + databaseName);
         for (DatabaseColumn column : columns) {
@@ -105,6 +106,13 @@ public abstract class AbstractBasicQueryCreator implements QueryCreator {
         builder.delete(builder.length() - 2, builder.length());
         String query = builder.toString();
         LOG.debug("Created ALTER TABLE query: " + query);
+        return query;
+    }
+
+    @Override
+    public String dropTable(DatabaseTableMetadata databaseTableMetadata) {
+        String query = "DROP TABLE IF EXISTS " + databaseTableMetadata.getName();
+        LOG.debug("Created DROP TABLE query: " + query);
         return query;
     }
 }
