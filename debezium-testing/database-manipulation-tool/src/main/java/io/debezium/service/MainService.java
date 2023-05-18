@@ -6,6 +6,7 @@
 package io.debezium.service;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -30,37 +31,37 @@ public class MainService {
 
     private static final Logger LOG = Logger.getLogger(MainService.class);
 
-    public void insert(DatabaseEntry dbEntity) {
+    public void insert(DatabaseEntry databaseEntry) {
         try {
-            database.insertEntry(dbEntity);
+            database.insertEntry(databaseEntry);
         }
         catch (InnerDatabaseException ex) {
             LOG.error("Error when inserting entry into inner database");
             LOG.error(ex.getMessage());
             return;
         }
-        insertToDao(dbEntity);
+        executeToDaos((dao) -> dao.insert(databaseEntry));
     }
 
-    public void createTable(DatabaseEntry dbEntity) {
-        List<DatabaseColumn> changedColumns = database.createOrAlterTable(dbEntity.getDatabaseTableMetadata());
+    public void createTable(DatabaseEntry databaseEntry) {
+        List<DatabaseColumn> changedColumns = database.createOrAlterTable(databaseEntry.getDatabaseTableMetadata());
         if (changedColumns == null) {
-            LOG.debug("Creating table in Dbs " + dbEntity.getDatabaseTableMetadata());
-            createTableToDao(dbEntity);
+            LOG.debug("Creating table in Dbs " + databaseEntry.getDatabaseTableMetadata());
+            executeToDaos((dao) -> dao.createTable(databaseEntry));
             return;
         }
 
         if (!changedColumns.isEmpty()) {
-            LOG.debug("Altering table in Dbs " + dbEntity.getDatabaseTableMetadata());
-            alterTableToDao(changedColumns, dbEntity.getDatabaseTableMetadata());
+            LOG.debug("Altering table in Dbs " + databaseEntry.getDatabaseTableMetadata());
+            alterTableToDao(changedColumns, databaseEntry.getDatabaseTableMetadata());
         }
     }
 
-    public void upsert(DatabaseEntry dbEntity) {
+    public void upsert(DatabaseEntry databaseEntry) {
         boolean update;
         try {
-            createTable(dbEntity);
-            update = database.upsertEntry(dbEntity);
+            createTable(databaseEntry);
+            update = database.upsertEntry(databaseEntry);
         }
         catch (InnerDatabaseException ex) {
             LOG.error("Error when upserting entry into inner database");
@@ -73,56 +74,50 @@ public class MainService {
             throw ex;
         }
         if (update) {
-            updateToDao(dbEntity);
+            executeToDaos((dao) -> dao.update(databaseEntry));
         }
         else {
-            insertToDao(dbEntity);
+            executeToDaos((dao) -> dao.insert(databaseEntry));
         }
     }
 
-    public void dropTable(DatabaseEntry dbEntity) {
+    public void dropTable(DatabaseEntry databaseEntry) {
         try {
-            database.dropTable(dbEntity.getDatabaseTableMetadata().getName());
+            database.dropTable(databaseEntry.getDatabaseTableMetadata().getName());
         }
         catch (InnerDatabaseException ex) {
             LOG.error("Error when dropping table from inner database");
             LOG.error(ex.getMessage());
             return;
         }
-        dropTableToDao(dbEntity);
-    }
-
-    public void update(DatabaseEntry dbEntity) {
-        updateToDao(dbEntity);
-    }
-
-    private void insertToDao(DatabaseEntry dbEntity) {
-        for (Dao dao : daoManager.getEnabledDbs()) {
-            dao.insert(dbEntity);
-        }
-    }
-
-    private void updateToDao(DatabaseEntry dbEntity) {
-        for (Dao dao : daoManager.getEnabledDbs()) {
-            dao.update(dbEntity);
-        }
-    }
-
-    private void createTableToDao(DatabaseEntry dbEntity) {
-        for (Dao dao : daoManager.getEnabledDbs()) {
-            dao.createTable(dbEntity.getDatabaseTableMetadata());
-        }
+        executeToDaos((dao) -> dao.dropTable(databaseEntry));
     }
 
     private void alterTableToDao(List<DatabaseColumn> columns, DatabaseTableMetadata metadata) {
+        RuntimeException exception = null;
         for (Dao dao : daoManager.getEnabledDbs()) {
-            dao.alterTable(columns, metadata);
+            try {
+                dao.alterTable(columns, metadata);
+            } catch (RuntimeException ex) {
+                exception = ex;
+            }
+        }
+        if (exception != null) {
+            throw exception;
         }
     }
 
-    private void dropTableToDao(DatabaseEntry dbEntity) {
+    private void executeToDaos(Consumer<Dao> func) {
+        RuntimeException exception = null;
         for (Dao dao : daoManager.getEnabledDbs()) {
-            dao.dropTable(dbEntity.getDatabaseTableMetadata());
+            try {
+                func.accept(dao);
+            } catch (RuntimeException ex) {
+                exception = ex;
+            }
+        }
+        if (exception != null) {
+            throw exception;
         }
     }
 

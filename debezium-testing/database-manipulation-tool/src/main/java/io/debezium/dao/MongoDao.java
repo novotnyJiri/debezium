@@ -87,7 +87,8 @@ public final class MongoDao implements Dao {
     }
 
     @Override
-    public void createTable(DatabaseTableMetadata metadata) {
+    public void createTable(DatabaseEntry databaseEntry) {
+        DatabaseTableMetadata metadata = databaseEntry.getDatabaseTableMetadata();
         try {
             MongoDatabase db = getDatabase();
             db.createCollection(metadata.getName());
@@ -109,13 +110,27 @@ public final class MongoDao implements Dao {
     }
 
     @Override
-    public void dropTable(DatabaseTableMetadata metadata) {
+    public void dropTable(DatabaseEntry databaseEntry) {
+        DatabaseTableMetadata metadata = databaseEntry.getDatabaseTableMetadata();
         try {
             MongoDatabase db = getDatabase();
             db.getCollection(metadata.getName()).drop();
         }
         catch (Exception me) {
             LOG.error("Could not drop table " + metadata);
+            LOG.error(me.getMessage());
+            throw me;
+        }
+    }
+
+    @Override
+    public void resetDatabase() {
+        try {
+            MongoDatabase db = getDatabase();
+            db.listCollectionNames().forEach(name -> db.getCollection(name).drop());
+        }
+        catch (Exception me) {
+            LOG.error("Could not reset database");
             LOG.error(me.getMessage());
             throw me;
         }

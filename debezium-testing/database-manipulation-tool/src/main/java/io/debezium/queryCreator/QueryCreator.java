@@ -21,4 +21,6 @@ public interface QueryCreator {
     String addColumnsQuery(List<DatabaseColumn> columns, String databaseName);
 
     String dropTable(DatabaseTableMetadata databaseTableMetadata);
+
+    String resetDatabase(String schema);
 }

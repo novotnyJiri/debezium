@@ -16,7 +16,7 @@ import io.debezium.model.DatabaseTableMetadata;
 
 public abstract class AbstractBasicQueryCreator implements QueryCreator {
 
-    private final Logger LOG = Logger.getLogger(getClass());
+    protected final Logger LOG = Logger.getLogger(getClass());
 
     @Override
     public String insertQuery(DatabaseEntry databaseEntry) {

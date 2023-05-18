@@ -11,11 +11,10 @@ This is currently in alpha state so there are not many features completed and th
 | Create table            	       | X    	     | X   	   | X   	   | 	        | 	           | 	     |
 | Insert                  	       | X    	     | X	      | X   	   | 	        | 	           | 	     |
 | Upsert and alter/create table 	 | X	         | X	      | X	      | 	        | 	           | 	     |
-| Update                  	       | X	         | X	      | X 	     | 	        | 	           | 	     |
 | Delete                  	       | 	          | 	       | 	       | 	        | 	           | 	     |
 | Drop table        	             | X	         | X	      | X	      | 	        | 	           | 	     |
+| Drop all tables        	        | 	          | 	       | 	       | 	        | 	           | 	     |
 
-There is some error handling and debug logging, but it is not complete. 
 ## Json insertion schema
 ```
 {
@@ -48,7 +47,6 @@ You can enable/disable different databases with the `enabled` property. The data
 <summary><code>POST</code> <code><b>/Main/Insert</b></code> <code>(Inserts json into all enabled databases)</code></summary>
 <summary><code>POST</code> <code><b>/Main/CreateTable</b></code> <code>(Creates table/collection in every enabled database)</code></summary>
 <summary><code>POST</code> <code><b>/Main/CreateTableAndUpsert</b></code> <code>(Upserts json into all databases and creates tables if they did not exist or adds columns so the json can be upserted)</code></summary>
-<summary><code>POST</code> <code><b>/Main/Update</b></code> <code>(Updates databases based on primary key)</code></summary>
 <summary><code>PUT</code> <code><b>/Main/DropTable</b></code> <code>(Drops table/collection in every enabled database)</code></summary>
 
 <br />

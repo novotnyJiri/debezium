@@ -61,7 +61,8 @@ public abstract class AbstractBasicDao implements Dao {
     }
 
     @Override
-    public void createTable(DatabaseTableMetadata metadata) {
+    public void createTable(DatabaseEntry databaseEntry) {
+        DatabaseTableMetadata metadata = databaseEntry.getDatabaseTableMetadata();
         try (Connection conn = source.getConnection();
                 Statement stmt = conn.createStatement()) {
             stmt.execute(queryCreator.createTableQuery(metadata));
@@ -87,7 +88,8 @@ public abstract class AbstractBasicDao implements Dao {
     }
 
     @Override
-    public void dropTable(DatabaseTableMetadata metadata) {
+    public void dropTable(DatabaseEntry databaseEntry) {
+        DatabaseTableMetadata metadata = databaseEntry.getDatabaseTableMetadata();
         try (Connection conn = source.getConnection();
              Statement stmt = conn.createStatement()) {
             stmt.execute(queryCreator.dropTable(metadata));

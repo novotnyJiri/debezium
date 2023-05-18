@@ -19,10 +19,12 @@ public interface Dao {
 
     void update(DatabaseEntry databaseEntry);
 
-    void createTable(DatabaseTableMetadata metadata);
+    void createTable(DatabaseEntry databaseEntry);
 
     void alterTable(List<DatabaseColumn> columns, DatabaseTableMetadata metadata);
 
-    void dropTable(DatabaseTableMetadata metadata);
+    void dropTable(DatabaseEntry databaseEntry);
+
+    void resetDatabase();
 
 }

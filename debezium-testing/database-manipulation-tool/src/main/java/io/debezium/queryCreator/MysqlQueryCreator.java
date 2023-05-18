@@ -7,12 +7,16 @@ package io.debezium.queryCreator;
 
 import javax.enterprise.context.ApplicationScoped;
 
-import io.debezium.model.DatabaseColumnEntry;
-import io.debezium.model.DatabaseEntry;
-
 @ApplicationScoped
-public class MysqlQueryCreator extends AbstractBasicQueryCreator {
+public final class MysqlQueryCreator extends AbstractBasicQueryCreator {
 
     public MysqlQueryCreator() {
+    }
+
+    @Override
+    public String resetDatabase(String schema) {
+        String query = "DROP SCHEMA IF EXISTS" + schema + "; CREATE SCHEMA " + schema;
+        LOG.debug("Created DATABASE RESET query: " + query);
+        return query;
     }
 }

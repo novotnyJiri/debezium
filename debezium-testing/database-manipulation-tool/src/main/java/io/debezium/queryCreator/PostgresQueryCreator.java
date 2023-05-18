@@ -43,6 +43,13 @@ public class PostgresQueryCreator extends AbstractBasicQueryCreator {
         return query;
     }
 
+    @Override
+    public String resetDatabase(String schema) {
+        String query = "DROP SCHEMA IF EXISTS " + schema +
+                " CASCADE; CREATE SCHEMA " + schema;
+        LOG.debug("Created DATABASE RESET query: " + query);
+        return query;
+    }
 
     private String convertDouble(String dataType) {
         if (dataType.equalsIgnoreCase("double")) {

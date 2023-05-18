@@ -64,20 +64,6 @@ public class MainResource {
         }
     }
 
-    @Path("Update")
-    @POST
-    public Response update(JsonObject inputJsonObj) {
-        LOG.debug("Received UPDATE request");
-        try {
-            DatabaseEntry dbEntity = parser.parse(inputJsonObj);
-            mainService.update(dbEntity);
-            return Response.ok().build();
-        }
-        catch (Exception ex) {
-            return Response.noContent().status(Response.Status.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
     @Path("CreateTableAndUpsert")
     @POST
     public Response createTableAndUpsert(JsonObject inputJsonObj) {
