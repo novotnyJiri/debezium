@@ -13,7 +13,7 @@ This is currently in alpha state so there are not many features completed and th
 | Upsert and alter/create table 	 | X	         | X	      | X	      | 	        | 	           | 	     |
 | Delete                  	       | 	          | 	       | 	       | 	        | 	           | 	     |
 | Drop table        	             | X	         | X	      | X	      | 	        | 	           | 	     |
-| Drop all tables        	        | 	          | 	       | 	       | 	        | 	           | 	     |
+| Reset Database        	         | X	         | 	X      | X	      | 	        | 	           | 	     |
 
 ## Json insertion schema
 ```
@@ -42,12 +42,15 @@ When Creating tables, the `payload` value determines the columns and their types
 
 You can enable/disable different databases with the `enabled` property. The database insertion filtering based on json key `databases` is not implemented yet. Every enabled database will try to execute the command.
 
+You can reset all databases on DMT start with property `onstart.reset.database`.
+
 ## Current REST endpoints
 
 <summary><code>POST</code> <code><b>/Main/Insert</b></code> <code>(Inserts json into all enabled databases)</code></summary>
 <summary><code>POST</code> <code><b>/Main/CreateTable</b></code> <code>(Creates table/collection in every enabled database)</code></summary>
 <summary><code>POST</code> <code><b>/Main/CreateTableAndUpsert</b></code> <code>(Upserts json into all databases and creates tables if they did not exist or adds columns so the json can be upserted)</code></summary>
-<summary><code>PUT</code> <code><b>/Main/DropTable</b></code> <code>(Drops table/collection in every enabled database)</code></summary>
+<summary><code>DELETE</code> <code><b>/Main/DropTable</b></code> <code>(Drops table/collection in every enabled database)</code></summary>
+<summary><code>DELETE</code> <code><b>/Main/ResetDatabase</b></code> <code>(Drops all databases/schemas and creates them again)</code></summary>
 
 <br />
 <summary><code>GET</code> <code><b>/Utility/GetAll</b></code> <code>(Gets all created tables and their current state)</code></summary>

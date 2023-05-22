@@ -8,13 +8,13 @@ package io.debezium.dataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import io.agroal.api.AgroalDataSource;
 import io.quarkus.agroal.DataSource;
 
-@ApplicationScoped
+@Dependent
 public class MysqlDataSource implements DataSourceWrapper {
     @Inject
     @DataSource("mysql")

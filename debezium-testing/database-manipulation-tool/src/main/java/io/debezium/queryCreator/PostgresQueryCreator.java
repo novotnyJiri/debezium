@@ -10,8 +10,6 @@ import javax.enterprise.context.ApplicationScoped;
 import org.jboss.logging.Logger;
 
 import io.debezium.model.DatabaseColumn;
-import io.debezium.model.DatabaseColumnEntry;
-import io.debezium.model.DatabaseEntry;
 import io.debezium.model.DatabaseTableMetadata;
 
 @ApplicationScoped
@@ -44,10 +42,16 @@ public class PostgresQueryCreator extends AbstractBasicQueryCreator {
     }
 
     @Override
-    public String resetDatabase(String schema) {
-        String query = "DROP SCHEMA IF EXISTS " + schema +
-                " CASCADE; CREATE SCHEMA " + schema;
-        LOG.debug("Created DATABASE RESET query: " + query);
+    public String dropDatabase(String schema) {
+        String query = "DROP SCHEMA IF EXISTS " + schema + " CASCADE";
+        LOG.debug("Created DROP SCHEMA query: " + query);
+        return query;
+    }
+
+    @Override
+    public String createDatabase(String schema) {
+        String query = "CREATE SCHEMA " + schema;
+        LOG.debug("Created CREATE SCHEMA query: " + query);
         return query;
     }
 

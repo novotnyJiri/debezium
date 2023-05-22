@@ -22,5 +22,7 @@ public interface QueryCreator {
 
     String dropTable(DatabaseTableMetadata databaseTableMetadata);
 
-    String resetDatabase(String schema);
+    String dropDatabase(String schema);
+
+    String createDatabase(String schema);
 }

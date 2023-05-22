@@ -47,7 +47,7 @@ public class DatabaseEntryParser implements DataParser<DatabaseEntry> {
             databaseEntry = new DatabaseEntry(entries, table);
         }
         catch (Exception ex) {
-            LOG.error("Could not parse DatabaseEntity from Json object");
+            LOG.error("Could not parse DatabaseEntity from Json object " + inputJsonObject);
             throw new JsonException("Could not parse DatabaseEntity from Json object", ex.getCause());
         }
         return databaseEntry;

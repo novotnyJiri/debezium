@@ -8,7 +8,7 @@ package io.debezium.dao;
 import java.util.List;
 import java.util.Optional;
 
-import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
 import org.bson.Document;
@@ -30,7 +30,7 @@ import io.quarkus.arc.Unremovable;
 import io.quarkus.arc.lookup.LookupIfProperty;
 import io.quarkus.mongodb.MongoClientName;
 
-@ApplicationScoped
+@RequestScoped
 @LookupIfProperty(name = "quarkus.mongodb.main.enabled", stringValue = "true")
 @Unremovable
 @Retry
@@ -127,7 +127,8 @@ public final class MongoDao implements Dao {
     public void resetDatabase() {
         try {
             MongoDatabase db = getDatabase();
-            db.listCollectionNames().forEach(name -> db.getCollection(name).drop());
+            db.drop();
+            getDatabase();
         }
         catch (Exception me) {
             LOG.error("Could not reset database");

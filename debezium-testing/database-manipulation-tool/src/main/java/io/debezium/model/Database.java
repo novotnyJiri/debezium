@@ -46,7 +46,7 @@ public class Database {
     }
 
     /**
-     * @param tableMetadata
+     * @param tableMetadata contains name that is checked
      * @return false if table exists, true if it was created.
      */
     public boolean createTableIfNotExists(DatabaseTableMetadata tableMetadata) {
@@ -74,6 +74,10 @@ public class Database {
 
     public void dropTable(String name) {
         tables.remove(name);
+    }
+
+    public void resetDatabase() {
+        tables.clear();
     }
 
     /**

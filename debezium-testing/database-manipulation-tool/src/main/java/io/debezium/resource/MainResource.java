@@ -6,12 +6,15 @@
 package io.debezium.resource;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.json.JsonObject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import io.quarkus.runtime.StartupEvent;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
 
 import io.debezium.model.DatabaseEntry;
@@ -31,6 +34,9 @@ public class MainResource {
 
     @Inject
     DatabaseEntryParser parser;
+
+    @ConfigProperty(name = "onstart.reset.database", defaultValue = "false")
+    boolean resetDatabase;
 
     private static final Logger LOG = Logger.getLogger(MainResource.class);
 
@@ -79,7 +85,7 @@ public class MainResource {
     }
 
     @Path("DropTable")
-    @PUT
+    @DELETE
     public Response dropTable(JsonObject inputJsonObj) {
         LOG.debug("Received DROP TABLE request");
         try {
@@ -89,6 +95,26 @@ public class MainResource {
         }
         catch (Exception ex) {
             return Response.noContent().status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @Path("ResetDatabase")
+    @DELETE
+    public Response resetDatabase() {
+        LOG.debug("Received RESET DATABASE request");
+        try {
+            mainService.resetDatabase();
+            return Response.ok().build();
+        }
+        catch (Exception ex) {
+            return Response.noContent().status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    void onStart(@Observes StartupEvent ev) {
+        if (resetDatabase) {
+            LOG.info("Restarting database on startup");
+            mainService.resetDatabase();
         }
     }
 

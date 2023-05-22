@@ -10,6 +10,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 
+import javax.enterprise.context.RequestScoped;
+
 import org.jboss.logging.Logger;
 
 import io.debezium.dataSource.DataSourceWrapper;
@@ -19,12 +21,17 @@ import io.debezium.model.DatabaseEntry;
 import io.debezium.model.DatabaseTableMetadata;
 import io.debezium.queryCreator.QueryCreator;
 
+@SuppressWarnings("CdiManagedBeanInconsistencyInspection")
+@RequestScoped
 public abstract class AbstractBasicDao implements Dao {
 
     protected DataSourceWrapper source;
     protected QueryCreator queryCreator;
 
     protected final Logger LOG = Logger.getLogger(getClass());
+
+    public AbstractBasicDao() {
+    }
 
     public AbstractBasicDao(DataSourceWrapper source, QueryCreator queryCreator) {
         this.source = source;
@@ -91,7 +98,7 @@ public abstract class AbstractBasicDao implements Dao {
     public void dropTable(DatabaseEntry databaseEntry) {
         DatabaseTableMetadata metadata = databaseEntry.getDatabaseTableMetadata();
         try (Connection conn = source.getConnection();
-             Statement stmt = conn.createStatement()) {
+                Statement stmt = conn.createStatement()) {
             stmt.execute(queryCreator.dropTable(metadata));
         }
         catch (SQLException ex) {
@@ -104,5 +111,13 @@ public abstract class AbstractBasicDao implements Dao {
     @Override
     public void delete(DatabaseEntry databaseEntry) {
 
+    }
+
+    public DataSourceWrapper getSource() {
+        return source;
+    }
+
+    public QueryCreator getQueryCreator() {
+        return queryCreator;
     }
 }

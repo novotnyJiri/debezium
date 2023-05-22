@@ -5,22 +5,22 @@
  */
 package io.debezium.dao;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-import io.debezium.exception.RuntimeSQLException;
-import org.eclipse.microprofile.faulttolerance.Retry;
-
-import io.debezium.dataSource.MysqlDataSource;
-import io.debezium.queryCreator.MysqlQueryCreator;
-import io.quarkus.arc.Unremovable;
-import io.quarkus.arc.lookup.LookupIfProperty;
-
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-@Singleton
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+
+import org.eclipse.microprofile.faulttolerance.Retry;
+
+import io.debezium.dataSource.MysqlDataSource;
+import io.debezium.exception.RuntimeSQLException;
+import io.debezium.queryCreator.MysqlQueryCreator;
+import io.quarkus.arc.Unremovable;
+import io.quarkus.arc.lookup.LookupIfProperty;
+
+@RequestScoped
 @LookupIfProperty(name = "quarkus.datasource.mysql.enabled", stringValue = "true")
 @Unremovable
 @Retry
@@ -34,9 +34,11 @@ public final class MysqlDao extends AbstractBasicDao {
     @Override
     public void resetDatabase() {
         try (Connection conn = source.getConnection();
-             Statement stmt = conn.createStatement()) {
+                Statement stmt = conn.createStatement()) {
             String schema = conn.getCatalog();
-            stmt.execute(queryCreator.resetDatabase(schema));
+            stmt.execute(queryCreator.dropDatabase(schema));
+            stmt.execute(queryCreator.createDatabase(schema));
+            stmt.execute(((MysqlQueryCreator) queryCreator).useDatabase(schema));
         }
         catch (SQLException ex) {
             LOG.error("Could not reset database");

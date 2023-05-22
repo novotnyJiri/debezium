@@ -8,7 +8,7 @@ package io.debezium.service;
 import java.util.List;
 import java.util.function.Consumer;
 
-import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
 import org.jboss.logging.Logger;
@@ -21,7 +21,7 @@ import io.debezium.model.DatabaseColumn;
 import io.debezium.model.DatabaseEntry;
 import io.debezium.model.DatabaseTableMetadata;
 
-@ApplicationScoped
+@RequestScoped
 public class MainService {
     @Inject
     DaoManager daoManager;
@@ -40,14 +40,22 @@ public class MainService {
             LOG.error(ex.getMessage());
             return;
         }
-        executeToDaos((dao) -> dao.insert(databaseEntry));
+        executeToDaos(dao -> dao.insert(databaseEntry));
     }
 
     public void createTable(DatabaseEntry databaseEntry) {
-        List<DatabaseColumn> changedColumns = database.createOrAlterTable(databaseEntry.getDatabaseTableMetadata());
+        List<DatabaseColumn> changedColumns;
+        try {
+            changedColumns = database.createOrAlterTable(databaseEntry.getDatabaseTableMetadata());
+
+        } catch (InnerDatabaseException ex) {
+            LOG.error("Error when creating table in database");
+            LOG.error(ex.getMessage());
+            return;
+        }
         if (changedColumns == null) {
             LOG.debug("Creating table in Dbs " + databaseEntry.getDatabaseTableMetadata());
-            executeToDaos((dao) -> dao.createTable(databaseEntry));
+            executeToDaos(dao -> dao.createTable(databaseEntry));
             return;
         }
 
@@ -58,7 +66,7 @@ public class MainService {
     }
 
     public void upsert(DatabaseEntry databaseEntry) {
-        boolean update;
+        boolean update = false;
         try {
             createTable(databaseEntry);
             update = database.upsertEntry(databaseEntry);
@@ -71,13 +79,12 @@ public class MainService {
         catch (Exception ex) {
             LOG.error("Error when upserting entry into databases");
             LOG.error(ex.getMessage());
-            throw ex;
         }
         if (update) {
-            executeToDaos((dao) -> dao.update(databaseEntry));
+            executeToDaos(dao -> dao.update(databaseEntry));
         }
         else {
-            executeToDaos((dao) -> dao.insert(databaseEntry));
+            executeToDaos(dao -> dao.insert(databaseEntry));
         }
     }
 
@@ -90,7 +97,12 @@ public class MainService {
             LOG.error(ex.getMessage());
             return;
         }
-        executeToDaos((dao) -> dao.dropTable(databaseEntry));
+        executeToDaos(dao -> dao.dropTable(databaseEntry));
+    }
+
+    public void resetDatabase() {
+        database.resetDatabase();
+        executeToDaos((Dao::resetDatabase));
     }
 
     private void alterTableToDao(List<DatabaseColumn> columns, DatabaseTableMetadata metadata) {
@@ -98,7 +110,8 @@ public class MainService {
         for (Dao dao : daoManager.getEnabledDbs()) {
             try {
                 dao.alterTable(columns, metadata);
-            } catch (RuntimeException ex) {
+            }
+            catch (RuntimeException ex) {
                 exception = ex;
             }
         }
@@ -112,7 +125,8 @@ public class MainService {
         for (Dao dao : daoManager.getEnabledDbs()) {
             try {
                 func.accept(dao);
-            } catch (RuntimeException ex) {
+            }
+            catch (RuntimeException ex) {
                 exception = ex;
             }
         }

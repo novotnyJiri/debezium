@@ -14,9 +14,22 @@ public final class MysqlQueryCreator extends AbstractBasicQueryCreator {
     }
 
     @Override
-    public String resetDatabase(String schema) {
-        String query = "DROP SCHEMA IF EXISTS" + schema + "; CREATE SCHEMA " + schema;
-        LOG.debug("Created DATABASE RESET query: " + query);
+    public String dropDatabase(String schema) {
+        String query = "DROP SCHEMA IF EXISTS " + schema;
+        LOG.debug("Created DROP DATABASE query: " + query);
+        return query;
+    }
+
+    @Override
+    public String createDatabase(String schema) {
+        String query = "CREATE SCHEMA " + schema;
+        LOG.debug("Created CREATE DATABASE query: " + query);
+        return query;
+    }
+
+    public String useDatabase(String schema) {
+        String query = "USE " + schema;
+        LOG.debug("Created USE DATABASE query: " + query);
         return query;
     }
 }

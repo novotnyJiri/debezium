@@ -9,12 +9,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.spi.CDI;
 
 import org.jboss.logging.Logger;
 
-@ApplicationScoped
+@RequestScoped
 public final class DaoManager {
     List<Dao> enabledDbs;
 
