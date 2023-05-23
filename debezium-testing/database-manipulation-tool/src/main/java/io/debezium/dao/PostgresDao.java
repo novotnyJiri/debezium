@@ -38,7 +38,6 @@ public final class PostgresDao extends AbstractBasicDao {
             String schema = "public";
             stmt.execute(queryCreator.dropDatabase(schema));
             stmt.execute(queryCreator.createDatabase(schema));
-//            stmt.execute(queryCreator.dropDatabase("public"));
         }
         catch (SQLException ex) {
             LOG.error("Could not reset database");

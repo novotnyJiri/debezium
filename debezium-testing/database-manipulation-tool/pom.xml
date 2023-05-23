@@ -7,8 +7,10 @@
     <artifactId>debezium-testing</artifactId>
     <version>2.2.0-SNAPSHOT</version>
   </parent>
+
   <artifactId>database-manipulation-tool</artifactId>
   <name>Tool used for manipulation with multiple different dbs at once</name>
+
   <properties>
     <compiler-plugin.version>3.10.1</compiler-plugin.version>
     <maven.compiler.release>17</maven.compiler.release>
@@ -20,6 +22,7 @@
     <skipITs>true</skipITs>
     <surefire-plugin.version>3.0.0-M7</surefire-plugin.version>
   </properties>
+
   <dependencyManagement>
     <dependencies>
       <dependency>

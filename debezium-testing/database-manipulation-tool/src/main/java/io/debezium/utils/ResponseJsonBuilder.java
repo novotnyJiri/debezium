@@ -43,9 +43,8 @@ public class ResponseJsonBuilder {
     public ResponseJsonBuilder addTable(DatabaseTable table) {
         JsonObjectBuilder tableBuilder = Json.createObjectBuilder();
         tableBuilder.add("tableName", table.getMetadata().getName());
-        if (table.getMetadata().getPrimary().isPresent()) {
-            tableBuilder.add("primary", table.getMetadata().getPrimary().get().getName());
-        }
+        tableBuilder.add("primary", table.getMetadata().getPrimary().getName());
+
 
         JsonArrayBuilder schemaBuilder = Json.createArrayBuilder();
         for (DatabaseColumn databaseColumn : table.getMetadata().getColumns()) {

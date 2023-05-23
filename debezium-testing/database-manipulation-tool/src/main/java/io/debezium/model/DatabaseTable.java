@@ -53,9 +53,9 @@ public class DatabaseTable {
     }
 
     private String getPrimary(DatabaseEntry row) {
-        Optional<DatabaseColumnEntry> primary = row.getPrimaryColumnEntry();
-        if (primary.isPresent()) {
-            return primary.get().value();
+        DatabaseColumnEntry primary = row.getPrimaryColumnEntry();
+        if (primary != null) {
+            return primary.value();
         }
         throw new InnerDatabaseException("Primary key is not set");
     }

@@ -71,11 +71,11 @@ public final class MongoDao implements Dao {
     public void update(DatabaseEntry databaseEntry) {
         try {
             MongoDatabase db = getDatabase();
-            Optional<DatabaseColumnEntry> primary = databaseEntry.getPrimaryColumnEntry();
-            if (primary.isEmpty()) {
+            DatabaseColumnEntry primary = databaseEntry.getPrimaryColumnEntry();
+            if (primary == null) {
                 throw new RuntimeException("Cannot update without primary key");
             }
-            Bson filter = Filters.eq(primary.get().columnName(), primary.get().value());
+            Bson filter = Filters.eq(primary.columnName(), primary.value());
             Bson update = bsonCreator.updateBson(databaseEntry);
             db.getCollection(databaseEntry.getDatabaseTableMetadata().getName()).updateOne(filter, update);
         }

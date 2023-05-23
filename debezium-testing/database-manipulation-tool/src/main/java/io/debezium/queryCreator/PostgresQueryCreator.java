@@ -32,7 +32,9 @@ public class PostgresQueryCreator extends AbstractBasicQueryCreator {
                     .append(convertDouble(column.getDataType()))
                     .append(", ");
         }
-        databaseTableMetadata.getPrimary().ifPresent(column -> builder.append("PRIMARY KEY (").append(column.getName()).append("), "));
+        builder.append("PRIMARY KEY (")
+                .append(databaseTableMetadata.getPrimary().getName())
+                .append("), ");
 
         builder.delete(builder.length() - 2, builder.length())
                 .append(")");

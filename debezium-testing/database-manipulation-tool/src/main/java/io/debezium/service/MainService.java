@@ -48,7 +48,8 @@ public class MainService {
         try {
             changedColumns = database.createOrAlterTable(databaseEntry.getDatabaseTableMetadata());
 
-        } catch (InnerDatabaseException ex) {
+        }
+        catch (InnerDatabaseException ex) {
             LOG.error("Error when creating table in database");
             LOG.error(ex.getMessage());
             return;
