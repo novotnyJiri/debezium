@@ -28,12 +28,12 @@ import org.junit.Test;
 
 import io.debezium.config.CommonConnectorConfig;
 import io.debezium.config.Configuration;
-import io.debezium.connector.mysql.MySqlConnectorConfig;
-import io.debezium.connector.mysql.MySqlOffsetContext;
-import io.debezium.connector.mysql.MySqlPartition;
-import io.debezium.connector.mysql.MySqlReadOnlyIncrementalSnapshotContext;
-import io.debezium.connector.mysql.SourceInfo;
-import io.debezium.connector.mysql.antlr.MySqlAntlrDdlParser;
+import io.debezium.connector.mariadb.MySqlConnectorConfig;
+import io.debezium.connector.mariadb.MySqlOffsetContext;
+import io.debezium.connector.mariadb.MySqlPartition;
+import io.debezium.connector.mariadb.MySqlReadOnlyIncrementalSnapshotContext;
+import io.debezium.connector.mariadb.SourceInfo;
+import io.debezium.connector.mariadb.antlr.MySqlAntlrDdlParser;
 import io.debezium.doc.FixFor;
 import io.debezium.junit.logging.LogInterceptor;
 import io.debezium.kafka.KafkaCluster;

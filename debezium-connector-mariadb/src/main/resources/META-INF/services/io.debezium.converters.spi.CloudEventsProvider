@@ -1,1 +1,1 @@
-io.debezium.connector.mysql.converters.MySqlCloudEventsProvider
+io.debezium.connector.mariadb.converters.MySqlCloudEventsProvider
