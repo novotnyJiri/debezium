@@ -178,12 +178,12 @@ public class MariadbTestConnection extends JdbcConnection {
                 databaseAsserts = new DatabaseDifferences() {
                     @Override
                     public boolean isCurrentDateTimeDefaultGenerated() {
-                        return true;
+                        return false;
                     }
 
                     @Override
                     public String currentDateTimeDefaultOptional(String isoString) {
-                        return null;
+                        return isoString;
                     }
                 };
             }
@@ -191,12 +191,12 @@ public class MariadbTestConnection extends JdbcConnection {
                 databaseAsserts = new DatabaseDifferences() {
                     @Override
                     public boolean isCurrentDateTimeDefaultGenerated() {
-                        return false;
+                        return true;
                     }
 
                     @Override
                     public String currentDateTimeDefaultOptional(String isoString) {
-                        return isoString;
+                        return null;
                     }
 
                 };
