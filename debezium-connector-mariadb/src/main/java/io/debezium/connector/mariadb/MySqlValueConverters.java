@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import io.debezium.connector.mariadb.antlr.MySqlAntlrDdlParser;
 import org.apache.kafka.connect.data.Decimal;
 import org.apache.kafka.connect.data.Field;
 import org.apache.kafka.connect.data.Schema;
@@ -42,6 +41,7 @@ import com.github.shyiko.mysql.binlog.event.deserialization.json.JsonBinary;
 import io.debezium.DebeziumException;
 import io.debezium.annotation.Immutable;
 import io.debezium.config.CommonConnectorConfig.BinaryHandlingMode;
+import io.debezium.connector.mariadb.antlr.MySqlAntlrDdlParser;
 import io.debezium.data.Json;
 import io.debezium.jdbc.JdbcValueConverters;
 import io.debezium.jdbc.TemporalPrecisionMode;

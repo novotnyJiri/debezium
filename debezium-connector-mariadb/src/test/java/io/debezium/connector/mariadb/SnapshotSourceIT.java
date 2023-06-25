@@ -268,11 +268,11 @@ public class SnapshotSourceIT extends AbstractConnectorTest {
                 .with(MySqlConnectorConfig.SNAPSHOT_LOCKING_MODE, MySqlConnectorConfig.SnapshotLockingMode.MINIMAL_PERCONA)
                 .build();
 
-        if (!MySqlTestConnection.isPerconaServer()) {
+        if (!MariadbTestConnection.isPerconaServer()) {
             return; // Skip these tests for non-Percona flavours of MySQL
         }
 
-        final MySqlTestConnection db = MySqlTestConnection.forTestDatabase(DATABASE.getDatabaseName());
+        final MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());
         final JdbcConnection connection = db.connect();
         final CountDownLatch latch = new CountDownLatch(1);
         Thread t = new Thread() {
@@ -382,7 +382,7 @@ public class SnapshotSourceIT extends AbstractConnectorTest {
         assertThat(orders.numberOfReads()).isEqualTo(5);
 
         try (
-                MySqlTestConnection db = MySqlTestConnection.forTestDatabase(DATABASE.getDatabaseName());
+                MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());
                 JdbcConnection connection = db.connect();
                 Connection jdbc = connection.connection();
                 Statement statement = jdbc.createStatement()) {
@@ -523,7 +523,7 @@ public class SnapshotSourceIT extends AbstractConnectorTest {
     }
 
     private String productsTableName() throws SQLException {
-        try (MySqlTestConnection db = MySqlTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
+        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
             return db.isTableIdCaseSensitive() ? "products" : "Products";
         }
     }
@@ -650,7 +650,7 @@ public class SnapshotSourceIT extends AbstractConnectorTest {
         start(MySqlConnector.class, config);
 
         try (
-                MySqlTestConnection db = MySqlTestConnection.forTestDatabase(DATABASE.getDatabaseName());
+                MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());
                 JdbcConnection connection = db.connect();
                 Connection jdbc = connection.connection();
                 Statement statement = jdbc.createStatement()) {
@@ -689,7 +689,7 @@ public class SnapshotSourceIT extends AbstractConnectorTest {
     @Test
     public void shouldSnapshotTablesInRowCountOrderAsc() throws Exception {
         try (
-                MySqlTestConnection db = MySqlTestConnection.forTestDatabase(DATABASE.getDatabaseName());
+                MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());
                 JdbcConnection connection = db.connect();
                 Connection jdbc = connection.connection();
                 Statement statement = jdbc.createStatement()) {
@@ -725,7 +725,7 @@ public class SnapshotSourceIT extends AbstractConnectorTest {
     @Test
     public void shouldSnapshotTablesInRowCountOrderDesc() throws Exception {
         try (
-                MySqlTestConnection db = MySqlTestConnection.forTestDatabase(DATABASE.getDatabaseName());
+                MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());
                 JdbcConnection connection = db.connect();
                 Connection jdbc = connection.connection();
                 Statement statement = jdbc.createStatement()) {

@@ -77,7 +77,7 @@ public class TransactionMetadataIT extends AbstractConnectorTest {
         assertConnectorIsRunning();
 
         waitForSnapshotToBeCompleted("mysql", DATABASE.getServerName());
-        try (MySqlTestConnection db = MySqlTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
+        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
             try (JdbcConnection connection = db.connect()) {
                 connection.setAutoCommit(false);
                 connection.execute(CUSTOMER_INSERT_STMT_1, PRODUCT_INSERT_STMT, ORDER_INSERT_STMT, CUSTOMER_INSERT_STMT_2);
@@ -125,7 +125,7 @@ public class TransactionMetadataIT extends AbstractConnectorTest {
         assertConnectorIsRunning();
 
         waitForSnapshotToBeCompleted("mysql", DATABASE.getServerName());
-        try (MySqlTestConnection db = MySqlTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
+        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
             try (JdbcConnection connection = db.connect()) {
                 connection.setAutoCommit(false);
                 connection.execute(CUSTOMER_INSERT_STMT_1, PRODUCT_INSERT_STMT, ORDER_INSERT_STMT, CUSTOMER_INSERT_STMT_2);
@@ -155,7 +155,7 @@ public class TransactionMetadataIT extends AbstractConnectorTest {
         assertConnectorIsRunning();
 
         waitForSnapshotToBeCompleted("mysql", DATABASE.getServerName());
-        try (MySqlTestConnection db = MySqlTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
+        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
             try (JdbcConnection connection = db.connect()) {
                 connection.setAutoCommit(false);
                 connection.execute(CUSTOMER_INSERT_STMT_1, PRODUCT_INSERT_STMT, ORDER_INSERT_STMT, CUSTOMER_INSERT_STMT_2);

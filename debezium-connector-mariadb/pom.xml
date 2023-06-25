@@ -133,24 +133,24 @@
         <!-- 
         Specify the properties for the various Docker containers.
         -->
-        <mysql.user>mysqluser</mysql.user>
-        <mysql.password>mysqlpw</mysql.password>
-        <mysql.replica.user>mysqlreplica</mysql.replica.user>
-        <mysql.replica.password>mysqlpw</mysql.replica.password>
-        <mysql.port>3306</mysql.port>
-        <mysql.percona.port>3306</mysql.percona.port>
-        <mysql.gtid.port>3306</mysql.gtid.port>
-        <mysql.gtid.replica.port>3306</mysql.gtid.replica.port>
-        <mysql.ssl.port>3306</mysql.ssl.port>
-        <mysql.replica.port>3306</mysql.replica.port> <!-- by default use primary as 'replica' -->
-        <mysql.init.timeout>60000</mysql.init.timeout> <!-- 60 seconds -->
+        <mariadb.user>mariauser</mariadb.user>
+        <mariadb.password>mariapw</mariadb.password>
+        <mariadb.replica.user>mariareplica</mariadb.replica.user>
+        <mariadb.replica.password>mariapw</mariadb.replica.password>
+        <mariadb.port>3306</mariadb.port>
+        <mariadb.percona.port>3306</mariadb.percona.port>
+        <mariadb.gtid.port>3306</mariadb.gtid.port>
+        <mariadb.gtid.replica.port>3306</mariadb.gtid.replica.port>
+        <mariadb.ssl.port>3306</mariadb.ssl.port>
+        <mariadb.replica.port>3306</mariadb.replica.port> <!-- by default use primary as 'replica' -->
+        <mariadb.init.timeout>60000</mariadb.init.timeout> <!-- 60 seconds -->
         <apicurio.port>8080</apicurio.port>
         <apicurio.init.timeout>60000</apicurio.init.timeout> <!-- 60 seconds -->
         <!--
         By default, we should use the docker image maintained by the MySQL team. This property is changed with different profiles.
         However, we run one container with GTIDs and one without.
         -->
-        <docker.dbs>debezium/mysql-server-test-database</docker.dbs>
+        <docker.dbs>debezium/mariadb-server-test-database</docker.dbs>
         <docker.filter>${docker.dbs}</docker.filter>
         <docker.skip>false</docker.skip>
         <docker.initimage>rm -f /etc/localtime; ln -s /usr/share/zoneinfo/US/Samoa /etc/localtime</docker.initimage>
@@ -170,27 +170,27 @@
                         Images based on "mysql/mysql-server" Docker image
                         -->
                         <image>
-                            <!-- A Docker image using a partial MySQL installation maintained by MySQL team. -->
-                            <name>debezium/mysql-server-test-database</name>
+                            <!-- A Docker image using a partial Mariadb installation maintained by mariadb team. -->
+                            <name>debezium/mariadb-server-test-database</name>
                             <run>
                                 <namingStrategy>none</namingStrategy>
                                 <env>
-                                    <MYSQL_ROOT_PASSWORD>debezium-rocks</MYSQL_ROOT_PASSWORD>
-                                    <MYSQL_DATABASE>mysql</MYSQL_DATABASE> <!-- database created upon init -->
-                                    <MYSQL_USER>${mysql.user}</MYSQL_USER>
-                                    <MYSQL_PASSWORD>${mysql.password}</MYSQL_PASSWORD>
+                                    <MARIADB_ROOT_PASSWORD>debezium-rocks</MARIADB_ROOT_PASSWORD>
+                                    <MARIADB_DATABASE>mysql</MARIADB_DATABASE> <!-- database created upon init -->
+                                    <MARIADB_USER>${mariadb.user}</MARIADB_USER>
+                                    <MARIADB_PASSWORD>${mariadb.password}</MARIADB_PASSWORD>
                                 </env>
                                 <ports>
-                                    <port>${mysql.port}:3306</port>
+                                    <port>${mariadb.port}:3306</port>
                                 </ports>
                                 <log>
-                                    <prefix>mysql</prefix>
+                                    <prefix>mariadb</prefix>
                                     <enabled>true</enabled>
                                     <color>yellow</color>
                                 </log>
                                 <wait>
                                     <log>MySQL init process done. Ready for start up.(?s)(.*)mysqld: ready for connections.</log>
-                                    <time>${mysql.init.timeout}</time>
+                                    <time>${mariadb.init.timeout}</time>
                                 </wait>
                             </run>
                             <build>
@@ -231,11 +231,11 @@
                                 <env>
                                     <MYSQL_ROOT_PASSWORD>debezium-rocks</MYSQL_ROOT_PASSWORD>
                                     <MYSQL_DATABASE>mysql</MYSQL_DATABASE> <!-- database created upon init -->
-                                    <MYSQL_USER>${mysql.user}</MYSQL_USER>
-                                    <MYSQL_PASSWORD>${mysql.password}</MYSQL_PASSWORD>
+                                    <MYSQL_USER>${mariadb.user}</MYSQL_USER>
+                                    <MYSQL_PASSWORD>${mariadb.password}</MYSQL_PASSWORD>
                                 </env>
                                 <ports>
-                                    <port>${mysql.ssl.port}:3306</port>
+                                    <port>${mariadb.ssl.port}:3306</port>
                                 </ports>
                                 <volumes>
                                     <bind>
@@ -249,7 +249,7 @@
                                 </log>
                                 <wait>
                                     <log>MySQL init process done. Ready for start up.(?s)(.*)mysqld: ready for connections.</log>
-                                    <time>${mysql.init.timeout}</time>
+                                    <time>${mariadb.init.timeout}</time>
                                 </wait>
                             </run>
                             <build>
@@ -294,11 +294,11 @@
                                 <env>
                                     <MYSQL_ROOT_PASSWORD>debezium-rocks</MYSQL_ROOT_PASSWORD>
                                     <MYSQL_DATABASE>mysql</MYSQL_DATABASE> <!-- database created upon init -->
-                                    <MYSQL_USER>${mysql.user}</MYSQL_USER>
-                                    <MYSQL_PASSWORD>${mysql.password}</MYSQL_PASSWORD>
+                                    <MYSQL_USER>${mariadb.user}</MYSQL_USER>
+                                    <MYSQL_PASSWORD>${mariadb.password}</MYSQL_PASSWORD>
                                 </env>
                                 <ports>
-                                    <port>${mysql.gtid.port}:3306</port>
+                                    <port>${mariadb.gtid.port}:3306</port>
                                 </ports>
                                 <log>
                                     <prefix>mysql-gtids</prefix>
@@ -307,7 +307,7 @@
                                 </log>
                                 <wait>
                                     <log>MySQL init process done. Ready for start up.(?s)(.*)mysqld: ready for connections.</log>
-                                    <time>${mysql.init.timeout}</time>
+                                    <time>${mariadb.init.timeout}</time>
                                 </wait>
                             </run>
                             <build>
@@ -349,14 +349,14 @@
                                 <namingStrategy>none</namingStrategy>
                                 <env>
                                     <MYSQL_ROOT_PASSWORD>debezium-rocks</MYSQL_ROOT_PASSWORD>
-                                    <MYSQL_USER>${mysql.replica.user}</MYSQL_USER>
-                                    <MYSQL_PASSWORD>${mysql.replica.password}</MYSQL_PASSWORD>
+                                    <MYSQL_USER>${mariadb.replica.user}</MYSQL_USER>
+                                    <MYSQL_PASSWORD>${mariadb.replica.password}</MYSQL_PASSWORD>
                                 </env>
                                 <links>
                                     <link>database-gtids</link>
                                 </links>
                                 <ports>
-                                    <port>${mysql.gtid.replica.port}:3306</port>
+                                    <port>${mariadb.gtid.replica.port}:3306</port>
                                 </ports>
                                 <log>
                                     <prefix>mysql-gtids-replica</prefix>
@@ -365,7 +365,7 @@
                                 </log>
                                 <wait>
                                     <log>MySQL init process done. Ready for start up.(?s)(.*)mysqld: ready for connections.</log>
-                                    <time>${mysql.init.timeout}</time>
+                                    <time>${mariadb.init.timeout}</time>
                                 </wait>
                             </run>
                             <build>
@@ -406,12 +406,12 @@
                                 <namingStrategy>none</namingStrategy>
                                 <env>
                                     <MYSQL_ROOT_PASSWORD>debezium-rocks</MYSQL_ROOT_PASSWORD>
-                                    <MYSQL_USER>${mysql.user}</MYSQL_USER>
-                                    <MYSQL_PASSWORD>${mysql.password}</MYSQL_PASSWORD>
+                                    <MYSQL_USER>${mariadb.user}</MYSQL_USER>
+                                    <MYSQL_PASSWORD>${mariadb.password}</MYSQL_PASSWORD>
                                     <TZ>Pacific/Pago_Pago</TZ>
                                 </env>
                                 <ports>
-                                    <port>${mysql.percona.port}:3306</port>
+                                    <port>${mariadb.percona.port}:3306</port>
                                 </ports>
                                 <log>
                                     <prefix>percona-server</prefix>
@@ -420,7 +420,7 @@
                                 </log>
                                 <wait>
                                     <log>MySQL init process done. Ready for start up.(?s)(.*)mysqld: ready for connections.</log>
-                                    <time>${mysql.init.timeout}</time>
+                                    <time>${mariadb.init.timeout}</time>
                                 </wait>
                             </run>
                             <build>
@@ -505,11 +505,11 @@
                     <systemPropertyVariables>
                         <!-- Make these available to the tests via system properties -->
                         <database.hostname>${docker.host.address}</database.hostname>
-                        <database.port>${mysql.port}</database.port>
-                        <database.user>${mysql.user}</database.user>
-                        <database.password>${mysql.password}</database.password>
+                        <database.port>${mariadb.port}</database.port>
+                        <database.user>${mariadb.user}</database.user>
+                        <database.password>${mariadb.password}</database.password>
                         <database.replica.hostname>${docker.host.address}</database.replica.hostname>
-                        <database.replica.port>${mysql.replica.port}</database.replica.port>
+                        <database.replica.port>${mariadb.replica.port}</database.replica.port>
                         <skipLongRunningTests>${skipLongRunningTests}</skipLongRunningTests>
                     </systemPropertyVariables>
                     <runOrder>${runOrder}</runOrder>
@@ -643,11 +643,11 @@
                             <systemPropertyVariables>
                                 <!-- Make these available to the tests via system properties -->
                                 <database.hostname>${docker.host.address}</database.hostname>
-                                <database.user>${mysql.user}</database.user>
-                                <database.password>${mysql.password}</database.password>
+                                <database.user>${mariadb.user}</database.user>
+                                <database.password>${mariadb.password}</database.password>
                                 <database.replica.hostname>${docker.host.address}</database.replica.hostname>
-                                <database.replica.user>${mysql.replica.user}</database.replica.user>
-                                <database.replica.password>${mysql.replica.password}</database.replica.password>
+                                <database.replica.user>${mariadb.replica.user}</database.replica.user>
+                                <database.replica.password>${mariadb.replica.password}</database.replica.password>
                                 <database.port>${mysql.port}</database.port>
                                 <database.replica.port>${mysql.port}</database.replica.port>
                                 <database.ssl.mode>disabled</database.ssl.mode>
@@ -773,8 +773,8 @@
                 <!-- Docker properties -->
                 <docker.dbs>debezium/mysql-server-gtids-test-database</docker.dbs>
                 <!-- Integration test properties -->
-                <database.port>${mysql.gtid.port}</database.port>
-                <database.replica.port>${mysql.gtid.port}</database.replica.port>
+                <database.port>${mariadb.gtid.port}</database.port>
+                <database.replica.port>${mariadb.gtid.port}</database.replica.port>
             </properties>
         </profile>
         <!--  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -793,8 +793,8 @@
                 <!-- Docker properties -->
                 <docker.dbs>debezium/percona-server-test-database</docker.dbs>
                 <!-- Integration test properties -->
-                <database.port>${mysql.percona.port}</database.port>
-                <database.replica.port>${mysql.percona.port}</database.replica.port>
+                <database.port>${mariadb.percona.port}</database.port>
+                <database.replica.port>${mariadb.percona.port}</database.replica.port>
                 <docker.initimage>ln -s /usr/share/zoneinfo/Pacific/Pago_Pago /etc/localtime</docker.initimage>
             </properties>
         </profile>
@@ -838,8 +838,8 @@
                 <!-- Docker properties -->
                 <docker.dbs>debezium/mysql-server-test-database-ssl</docker.dbs>
                 <!-- Integration test properties -->
-                <database.port>${mysql.ssl.port}</database.port>
-                <database.replica.port>${mysql.ssl.port}</database.replica.port>
+                <database.port>${mariadb.ssl.port}</database.port>
+                <database.replica.port>${mariadb.ssl.port}</database.replica.port>
                 <docker.initimage>ln -s /usr/share/zoneinfo/Pacific/Pago_Pago /etc/localtime</docker.initimage>
             </properties>
         </profile>

@@ -11,7 +11,6 @@ import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import io.debezium.connector.mariadb.converters.TinyIntOneToBooleanConverter;
 import org.apache.kafka.connect.data.Struct;
 import org.apache.kafka.connect.source.SourceRecord;
 import org.junit.After;
@@ -19,6 +18,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import io.debezium.config.Configuration;
+import io.debezium.connector.mariadb.converters.TinyIntOneToBooleanConverter;
 import io.debezium.doc.FixFor;
 import io.debezium.embedded.AbstractConnectorTest;
 import io.debezium.junit.EqualityCheck;
@@ -73,7 +73,7 @@ public class MySqlTinyIntIT extends AbstractConnectorTest {
 
         assertIntChangeRecord();
 
-        try (Connection conn = MySqlTestConnection.forTestDatabase(DATABASE.getDatabaseName()).connection()) {
+        try (Connection conn = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName()).connection()) {
             conn.createStatement().execute("INSERT INTO DBZ1773 VALUES (DEFAULT, 100, 5, 50, true)");
         }
         assertIntChangeRecord();
@@ -100,7 +100,7 @@ public class MySqlTinyIntIT extends AbstractConnectorTest {
 
         assertBooleanChangeRecord();
 
-        try (Connection conn = MySqlTestConnection.forTestDatabase(DATABASE.getDatabaseName()).connection()) {
+        try (Connection conn = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName()).connection()) {
             conn.createStatement().execute("INSERT INTO DBZ1773 VALUES (DEFAULT, 100, 5, 50, true)");
         }
         assertBooleanChangeRecord();
@@ -127,7 +127,7 @@ public class MySqlTinyIntIT extends AbstractConnectorTest {
 
         assertDefaultValueBooleanChangeRecord();
 
-        try (Connection conn = MySqlTestConnection.forTestDatabase(DATABASE.getDatabaseName()).connection()) {
+        try (Connection conn = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName()).connection()) {
             conn.createStatement().execute("INSERT INTO DBZ2085 VALUES (DEFAULT, true)");
         }
         assertDefaultValueBooleanChangeRecord();
@@ -154,7 +154,7 @@ public class MySqlTinyIntIT extends AbstractConnectorTest {
 
         assertUnsignedBooleanChangeRecord();
 
-        try (Connection conn = MySqlTestConnection.forTestDatabase(DATABASE.getDatabaseName()).connection()) {
+        try (Connection conn = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName()).connection()) {
             conn.createStatement().execute("INSERT INTO DBZ5236 VALUES (DEFAULT, 1, 1, 0)");
         }
         assertUnsignedBooleanChangeRecord();
@@ -183,7 +183,7 @@ public class MySqlTinyIntIT extends AbstractConnectorTest {
 
         assertUnsignedBooleanChangeRecord();
 
-        try (Connection conn = MySqlTestConnection.forTestDatabase(DATABASE.getDatabaseName()).connection()) {
+        try (Connection conn = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName()).connection()) {
             conn.createStatement().execute("INSERT INTO DBZ5236 VALUES (DEFAULT, 1, 1, 0)");
         }
         assertUnsignedBooleanChangeRecord();

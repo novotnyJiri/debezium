@@ -180,7 +180,7 @@ public class MySqlConnectorJsonIT extends AbstractConnectorTest {
         assertThat(recordsInitial.recordsForTopic(DATABASE.getServerName()).size()).isEqualTo(numCreateDatabase + numCreateTables);
         assertThat(recordsInitial.recordsForTopic(DATABASE.topicForTable("dbz_126_jsontable")).size()).isEqualTo(numDataRecords);
 
-        try (MySqlTestConnection conn = MySqlTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
+        try (MariadbTestConnection conn = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
             conn.execute(
                     "CREATE TABLE IF NOT EXISTS deals ( id int(11) unsigned NOT NULL AUTO_INCREMENT, company_id int(11) unsigned DEFAULT NULL, title varchar(255) DEFAULT NULL, custom_fields json DEFAULT NULL, PRIMARY KEY (id), KEY idx_company_id (company_id)) ENGINE=InnoDB DEFAULT CHARSET=utf8",
                     "INSERT INTO deals (title, custom_fields) VALUES ('test', '"

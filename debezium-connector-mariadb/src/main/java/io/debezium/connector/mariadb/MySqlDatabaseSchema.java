@@ -14,13 +14,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import io.debezium.connector.mariadb.antlr.MySqlAntlrDdlParser;
 import org.apache.kafka.connect.data.Schema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.debezium.annotation.NotThreadSafe;
 import io.debezium.connector.mariadb.MySqlSystemVariables.MySqlScope;
+import io.debezium.connector.mariadb.antlr.MySqlAntlrDdlParser;
 import io.debezium.relational.HistorizedRelationalDatabaseSchema;
 import io.debezium.relational.RelationalTableFilters;
 import io.debezium.relational.SystemVariables;

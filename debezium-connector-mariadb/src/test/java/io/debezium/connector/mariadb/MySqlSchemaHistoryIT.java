@@ -95,7 +95,7 @@ public class MySqlSchemaHistoryIT extends AbstractConnectorTest {
         // SET + USE + Drop DB + create DB + CREATE/DROP for each table
         SourceRecords records = consumeRecordsByTopic(1 + 1 + 1 + 1 + TABLE_COUNT * 2);
         assertDdls(records);
-        try (MySqlTestConnection connection = MySqlTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
+        try (MariadbTestConnection connection = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
             connection.execute("RENAME TABLE `t-1` TO `new-t-1`");
         }
         records = consumeRecordsByTopic(1);
@@ -122,7 +122,7 @@ public class MySqlSchemaHistoryIT extends AbstractConnectorTest {
         Testing.Print.enable();
         // SET + USE + Drop DB + create DB + CREATE/DROP for each table
         SourceRecords records = consumeRecordsByTopic(1 + 1 + 1 + 1 + TABLE_COUNT * 2);
-        try (MySqlTestConnection connection = MySqlTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
+        try (MariadbTestConnection connection = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
             connection.execute("RENAME TABLE `t-1` TO `new-t-1`, `t.2` TO `new.t.2`");
         }
         records = consumeRecordsByTopic(2);
@@ -150,7 +150,7 @@ public class MySqlSchemaHistoryIT extends AbstractConnectorTest {
         Testing.Print.enable();
         // SET + USE + Drop DB + create DB + CREATE/DROP for each table
         SourceRecords records = consumeRecordsByTopic(1 + 1 + 1 + 1 + TABLE_COUNT * 2);
-        try (MySqlTestConnection connection = MySqlTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
+        try (MariadbTestConnection connection = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
             connection.execute("ALTER TABLE `t-1` RENAME TO `new-t-1`");
         }
         records = consumeRecordsByTopic(1);

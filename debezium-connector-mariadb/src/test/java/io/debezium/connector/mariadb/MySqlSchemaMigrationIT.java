@@ -10,12 +10,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.nio.file.Path;
 import java.sql.SQLException;
 
-import io.debezium.connector.mariadb.antlr.listener.RenameTableParserListener;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import io.debezium.config.Configuration;
+import io.debezium.connector.mariadb.antlr.listener.RenameTableParserListener;
 import io.debezium.embedded.AbstractConnectorTest;
 import io.debezium.junit.logging.LogInterceptor;
 import io.debezium.relational.history.SchemaHistory;
@@ -62,7 +62,7 @@ public class MySqlSchemaMigrationIT extends AbstractConnectorTest {
                 .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("monitored") + "," + DATABASE.qualifiedTableName("_monitored_new"))
                 .build();
 
-        final MySqlTestConnection connection = MySqlTestConnection.forTestDatabase(DATABASE.getDatabaseName());
+        final MariadbTestConnection connection = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());
         connection.execute("create table monitored (id int auto_increment primary key, value1 varchar(100), value2 int)");
         connection.execute("insert into monitored values(default, 'a1', 1)");
 
@@ -103,7 +103,7 @@ public class MySqlSchemaMigrationIT extends AbstractConnectorTest {
                 .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("monitored"))
                 .build();
 
-        final MySqlTestConnection connection = MySqlTestConnection.forTestDatabase(DATABASE.getDatabaseName());
+        final MariadbTestConnection connection = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());
         connection.execute("create table monitored (id int auto_increment primary key, value1 varchar(100), value2 int)");
         connection.execute("insert into monitored values(default, 'a1', 1)");
 
@@ -154,7 +154,7 @@ public class MySqlSchemaMigrationIT extends AbstractConnectorTest {
                 .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("monitored"))
                 .build();
 
-        final MySqlTestConnection connection = MySqlTestConnection.forTestDatabase(DATABASE.getDatabaseName());
+        final MariadbTestConnection connection = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());
         connection.execute("create table monitored (id int auto_increment primary key, value1 varchar(100), value2 int)");
         connection.execute("insert into monitored values(default, 'a1', 1)");
 

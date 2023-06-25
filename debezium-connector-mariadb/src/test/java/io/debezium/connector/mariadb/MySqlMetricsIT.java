@@ -111,7 +111,7 @@ public class MySqlMetricsIT extends AbstractConnectorTest {
     @Test
     public void testSnapshotOnlyMetrics() throws Exception {
         // Setup
-        try (Connection connection = MySqlTestConnection.forTestDatabase(DATABASE.getDatabaseName()).connection()) {
+        try (Connection connection = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName()).connection()) {
             connection.createStatement().execute(INSERT1);
             connection.createStatement().execute(INSERT2);
         }
@@ -137,7 +137,7 @@ public class MySqlMetricsIT extends AbstractConnectorTest {
         final String TABLE_NAME = DATABASE.qualifiedTableName("simple");
         final String SIGNAL_TABLE_NAME = DATABASE.qualifiedTableName("debezium_signal");
 
-        try (Connection connection = MySqlTestConnection.forTestDatabase(DATABASE.getDatabaseName()).connection()) {
+        try (Connection connection = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName()).connection()) {
             for (int i = 1; i < NUM_RECORDS; i++) {
                 connection.createStatement().execute(String.format("INSERT INTO %s (val) VALUES (%d);", TABLE_NAME, i));
             }
@@ -166,7 +166,7 @@ public class MySqlMetricsIT extends AbstractConnectorTest {
             records.add(record);
         });
 
-        try (Connection connection = MySqlTestConnection.forTestDatabase(DATABASE.getDatabaseName()).connection()) {
+        try (Connection connection = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName()).connection()) {
             // Start incremental snapshot.
             connection.createStatement().execute(String.format(
                     "INSERT INTO debezium_signal VALUES('ad-hoc', 'execute-snapshot', '{\"data-collections\": [\"%s\"]}')", TABLE_NAME));
@@ -190,7 +190,7 @@ public class MySqlMetricsIT extends AbstractConnectorTest {
     @Test
     public void testSnapshotAndStreamingMetrics() throws Exception {
         // Setup
-        try (Connection connection = MySqlTestConnection.forTestDatabase(DATABASE.getDatabaseName()).connection()) {
+        try (Connection connection = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName()).connection()) {
             connection.createStatement().execute(INSERT1);
             connection.createStatement().execute(INSERT2);
         }
@@ -312,7 +312,7 @@ public class MySqlMetricsIT extends AbstractConnectorTest {
         waitForStreamingToStart();
 
         // Insert new records and wait for them to become available
-        try (Connection connection = MySqlTestConnection.forTestDatabase(DATABASE.getDatabaseName()).connection()) {
+        try (Connection connection = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName()).connection()) {
             connection.createStatement().execute(INSERT1);
             connection.createStatement().execute(INSERT2);
         }

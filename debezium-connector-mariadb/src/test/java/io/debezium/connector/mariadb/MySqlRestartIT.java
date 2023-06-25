@@ -57,7 +57,7 @@ public class MySqlRestartIT extends AbstractConnectorTest {
                 .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("restart_table"))
                 .build();
 
-        try (MySqlTestConnection db = MySqlTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
+        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
             try (JdbcConnection connection = db.connect()) {
                 connection.execute(
                         "CREATE TABLE restart_table (id INT PRIMARY KEY, val INT)",
@@ -75,7 +75,7 @@ public class MySqlRestartIT extends AbstractConnectorTest {
         SourceRecords records = consumeRecordsByTopic(15);
         assertThat(records.recordsForTopic(DATABASE.topicForTable("restart_table")).size()).isEqualTo(1);
 
-        try (MySqlTestConnection db = MySqlTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
+        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
             try (JdbcConnection connection = db.connect()) {
                 connection.connect().setAutoCommit(false);
                 connection.execute(

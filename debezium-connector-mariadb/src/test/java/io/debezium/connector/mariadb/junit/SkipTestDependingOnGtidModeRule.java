@@ -10,7 +10,7 @@ import java.sql.SQLException;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
-import io.debezium.connector.mariadb.MySqlTestConnection;
+import io.debezium.connector.mariadb.MariadbTestConnection;
 import io.debezium.junit.AnnotationBasedTestRule;
 
 /**
@@ -30,7 +30,7 @@ public class SkipTestDependingOnGtidModeRule extends AnnotationBasedTestRule {
     }
 
     public static SkipWhenGtidModeIs.GtidMode getGtidMode() {
-        try (MySqlTestConnection db = MySqlTestConnection.forTestDatabase("emptydb")) {
+        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase("emptydb")) {
             return db.queryAndMap(
                     "SHOW GLOBAL VARIABLES LIKE 'GTID_MODE'",
                     rs -> {

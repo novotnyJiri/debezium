@@ -9,8 +9,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.sql.SQLException;
 
-import io.debezium.connector.mariadb.junit.SkipTestDependingOnSslModeRule;
-import io.debezium.connector.mariadb.junit.SkipWhenSslModeIsNot;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -25,6 +23,8 @@ import org.testcontainers.utility.DockerImageName;
 
 import io.debezium.config.CommonConnectorConfig;
 import io.debezium.config.Configuration;
+import io.debezium.connector.mariadb.junit.SkipTestDependingOnSslModeRule;
+import io.debezium.connector.mariadb.junit.SkipWhenSslModeIsNot;
 import io.debezium.embedded.AbstractConnectorTest;
 import io.debezium.jdbc.JdbcConfiguration;
 import io.debezium.jdbc.JdbcConnection;
@@ -98,7 +98,7 @@ public class MySqlParserIT extends AbstractConnectorTest {
         // Start the connector ...
         start(MySqlConnector.class, config);
 
-        try (MySqlTestConnection db = MySqlTestConnection.forTestDatabase(DB_NAME, mySQLContainer.getUsername(), mySQLContainer.getPassword())) {
+        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DB_NAME, mySQLContainer.getUsername(), mySQLContainer.getPassword())) {
             try (JdbcConnection connection = db.connect()) {
                 connection.execute("SELECT VERSION();");
                 connection.execute("CREATE TABLE VISIBLE_COLUMN_TABLE (" +
@@ -122,7 +122,7 @@ public class MySqlParserIT extends AbstractConnectorTest {
         // Start the connector ...
         start(MySqlConnector.class, config);
 
-        try (MySqlTestConnection db = MySqlTestConnection.forTestDatabase(DB_NAME, mySQLContainer.getUsername(), mySQLContainer.getPassword())) {
+        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DB_NAME, mySQLContainer.getUsername(), mySQLContainer.getPassword())) {
             try (JdbcConnection connection = db.connect()) {
                 connection.execute("SELECT VERSION();");
                 connection.execute("CREATE TABLE INVISIBLE_COLUMN_TABLE (" +

@@ -16,12 +16,12 @@ import java.time.ZonedDateTime;
 import java.time.temporal.TemporalAdjuster;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import io.debezium.connector.mariadb.antlr.MySqlAntlrDdlParser;
 import org.apache.kafka.connect.data.Field;
 import org.junit.Test;
 
 import io.debezium.DebeziumException;
 import io.debezium.config.CommonConnectorConfig.BinaryHandlingMode;
+import io.debezium.connector.mariadb.antlr.MySqlAntlrDdlParser;
 import io.debezium.doc.FixFor;
 import io.debezium.jdbc.JdbcValueConverters;
 import io.debezium.jdbc.TemporalPrecisionMode;

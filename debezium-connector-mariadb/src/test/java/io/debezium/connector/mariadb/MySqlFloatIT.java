@@ -73,7 +73,7 @@ public class MySqlFloatIT extends AbstractConnectorTest {
         assertFloatChangeRecord(consumeInsert());
 
         // Clone the table `DBZ3865_2` and insert data
-        try (MySqlTestConnection db = MySqlTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
+        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
             try (JdbcConnection conn = db.connect()) {
                 String createDdl = "CREATE TABLE `DBZ3865_2` (\n"
                         + "  `id` INT NOT NULL AUTO_INCREMENT,\n"

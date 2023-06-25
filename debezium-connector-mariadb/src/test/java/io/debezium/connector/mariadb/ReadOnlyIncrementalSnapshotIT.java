@@ -18,8 +18,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-import io.debezium.connector.mariadb.junit.SkipTestDependingOnGtidModeRule;
-import io.debezium.connector.mariadb.junit.SkipWhenGtidModeIs;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -37,6 +35,8 @@ import org.junit.rules.TestRule;
 
 import io.debezium.config.CommonConnectorConfig;
 import io.debezium.config.Configuration;
+import io.debezium.connector.mariadb.junit.SkipTestDependingOnGtidModeRule;
+import io.debezium.connector.mariadb.junit.SkipWhenGtidModeIs;
 import io.debezium.doc.FixFor;
 import io.debezium.jdbc.JdbcConnection;
 import io.debezium.junit.logging.LogInterceptor;

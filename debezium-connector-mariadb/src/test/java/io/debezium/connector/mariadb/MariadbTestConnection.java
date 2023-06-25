@@ -21,17 +21,14 @@ import io.debezium.jdbc.JdbcConnection;
  *
  * @author Randall Hauch
  */
-public class MySqlTestConnection extends JdbcConnection {
+public class MariadbTestConnection extends JdbcConnection {
 
-    public enum MySqlVersion {
-        MYSQL_5_5,
-        MYSQL_5_6,
-        MYSQL_5_7,
-        MYSQL_8;
+    public enum MariaDbVersion {
+        MARIADB_10_3,
     }
 
     private DatabaseDifferences databaseAsserts;
-    private MySqlVersion mySqlVersion;
+    private MariaDbVersion mariaDbVersion;
 
     /**
      * Obtain a connection instance to the named test database.
@@ -39,8 +36,8 @@ public class MySqlTestConnection extends JdbcConnection {
      * @param databaseName the name of the test database
      * @return the MySQLConnection instance; never null
      */
-    public static MySqlTestConnection forTestDatabase(String databaseName) {
-        return new MySqlTestConnection(JdbcConfiguration.copy(
+    public static MariadbTestConnection forTestDatabase(String databaseName) {
+        return new MariadbTestConnection(JdbcConfiguration.copy(
                 Configuration.fromSystemProperties(DATABASE_CONFIG_PREFIX).merge(Configuration.fromSystemProperties(DRIVER_CONFIG_PREFIX)))
                 .withDatabase(databaseName)
                 .with("characterEncoding", "utf8")
@@ -53,13 +50,13 @@ public class MySqlTestConnection extends JdbcConnection {
      * @param urlProperties url properties
      * @return the MySQLConnection instance; never null
      */
-    public static MySqlTestConnection forTestDatabase(String databaseName, Map<String, Object> urlProperties) {
+    public static MariadbTestConnection forTestDatabase(String databaseName, Map<String, Object> urlProperties) {
         JdbcConfiguration.Builder builder = JdbcConfiguration.copy(
                 Configuration.fromSystemProperties(DATABASE_CONFIG_PREFIX).merge(Configuration.fromSystemProperties(DRIVER_CONFIG_PREFIX)))
                 .withDatabase(databaseName)
                 .with("characterEncoding", "utf8");
         urlProperties.forEach(builder::with);
-        return new MySqlTestConnection(builder.build());
+        return new MariadbTestConnection(builder.build());
     }
 
     /**
@@ -70,8 +67,8 @@ public class MySqlTestConnection extends JdbcConnection {
      * @param password the password
      * @return the MySQLConnection instance; never null
      */
-    public static MySqlTestConnection forTestDatabase(String databaseName, String username, String password) {
-        return new MySqlTestConnection(JdbcConfiguration.copy(
+    public static MariadbTestConnection forTestDatabase(String databaseName, String username, String password) {
+        return new MariadbTestConnection(JdbcConfiguration.copy(
                 Configuration.fromSystemProperties(DATABASE_CONFIG_PREFIX).merge(Configuration.fromSystemProperties(DRIVER_CONFIG_PREFIX)))
                 .withDatabase(databaseName)
                 .withUser(username)
@@ -85,14 +82,7 @@ public class MySqlTestConnection extends JdbcConnection {
      * @return true if the database version is 5.x; otherwise false.
      */
     public static boolean isMySQL5() {
-        switch (forTestDatabase("mysql").getMySqlVersion()) {
-            case MYSQL_5_5:
-            case MYSQL_5_6:
-            case MYSQL_5_7:
-                return true;
-            default:
-                return false;
-        }
+        return false;
     }
 
     /**
@@ -122,34 +112,25 @@ public class MySqlTestConnection extends JdbcConnection {
      *
      * @param config the configuration; may not be null
      */
-    public MySqlTestConnection(JdbcConfiguration config) {
+    public MariadbTestConnection(JdbcConfiguration config) {
         super(addDefaultSettings(config), FACTORY, "`", "`");
     }
 
-    public MySqlVersion getMySqlVersion() {
-        if (mySqlVersion == null) {
-            final String versionString = getMySqlVersionString();
-            if (versionString.startsWith("8.")) {
-                mySqlVersion = MySqlVersion.MYSQL_8;
-            }
-            else if (versionString.startsWith("5.5")) {
-                mySqlVersion = MySqlVersion.MYSQL_5_5;
-            }
-            else if (versionString.startsWith("5.6")) {
-                mySqlVersion = MySqlVersion.MYSQL_5_6;
-            }
-            else if (versionString.startsWith("5.7")) {
-                mySqlVersion = MySqlVersion.MYSQL_5_7;
+    public MariaDbVersion getMariaDbVersion() {
+        if (mariaDbVersion == null) {
+            final String versionString = getMariaDbVersionString();
+            if (versionString.startsWith("10.3")) {
+                mariaDbVersion = MariaDbVersion.MARIADB_10_3;
             }
             else {
                 throw new IllegalStateException("Couldn't resolve MySQL Server version");
             }
         }
 
-        return mySqlVersion;
+        return mariaDbVersion;
     }
 
-    public String getMySqlVersionString() {
+    public String getMariaDbVersionString() {
         String versionString;
         try {
             versionString = connect().queryAndMap("SHOW GLOBAL VARIABLES LIKE 'version'", rs -> {
@@ -158,7 +139,7 @@ public class MySqlTestConnection extends JdbcConnection {
             });
         }
         catch (SQLException e) {
-            throw new IllegalStateException("Couldn't obtain MySQL Server version", e);
+            throw new IllegalStateException("Couldn't obtain MariaDb Server version", e);
         }
         return versionString;
     }
@@ -193,7 +174,7 @@ public class MySqlTestConnection extends JdbcConnection {
 
     public DatabaseDifferences databaseAsserts() {
         if (databaseAsserts == null) {
-            if (getMySqlVersion() == MySqlVersion.MYSQL_8) {
+            if (getMariaDbVersion() == MariaDbVersion.MARIADB_10_3) {
                 databaseAsserts = new DatabaseDifferences() {
                     @Override
                     public boolean isCurrentDateTimeDefaultGenerated() {

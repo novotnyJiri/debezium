@@ -10,7 +10,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.nio.file.Path;
 import java.sql.SQLException;
 
-import io.debezium.connector.mariadb.converters.TinyIntOneToBooleanConverter;
 import org.apache.kafka.connect.data.Struct;
 import org.apache.kafka.connect.source.SourceRecord;
 import org.junit.After;
@@ -18,6 +17,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import io.debezium.config.Configuration;
+import io.debezium.connector.mariadb.converters.TinyIntOneToBooleanConverter;
 import io.debezium.embedded.AbstractConnectorTest;
 import io.debezium.jdbc.JdbcConnection;
 import io.debezium.util.Testing;
@@ -64,7 +64,7 @@ public class MysqlNonUtfDatabaseCharsetIT extends AbstractConnectorTest {
         assertThat(((Struct) record.value()).getStruct("after").getString("MESSAGE")).isEqualTo("Žluťoučký");
         assertThat(((Struct) record.value()).getStruct("after").getInt16("FLAG")).isEqualTo((short) 1);
 
-        try (MySqlTestConnection db = MySqlTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
+        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
             try (JdbcConnection connection = db.connect()) {
                 connection.execute("CREATE TABLE DATASTREAM (MESSAGE TEXT, FLAG TINYINT(1));");
                 connection.execute("INSERT INTO DATASTREAM VALUES ('Žluťoučký', 1);");
@@ -97,7 +97,7 @@ public class MysqlNonUtfDatabaseCharsetIT extends AbstractConnectorTest {
         assertThat(((Struct) record.value()).getStruct("after").getString("MESSAGE")).isEqualTo("Žluťoučký");
         assertThat(((Struct) record.value()).getStruct("after").getBoolean("FLAG")).isEqualTo(true);
 
-        try (MySqlTestConnection db = MySqlTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
+        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
             try (JdbcConnection connection = db.connect()) {
                 connection.execute("CREATE TABLE DATASTREAM (MESSAGE TEXT, FLAG TINYINT(1));");
                 connection.execute("INSERT INTO DATASTREAM VALUES ('Žluťoučký', 1);");

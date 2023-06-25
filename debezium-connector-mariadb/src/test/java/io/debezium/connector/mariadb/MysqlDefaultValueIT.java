@@ -380,7 +380,7 @@ public class MysqlDefaultValueIT extends AbstractConnectorTest {
         stopConnector();
         final String insert = "INSERT INTO STRING_TABLE\n"
                 + "VALUES (DEFAULT ,DEFAULT ,DEFAULT ,DEFAULT ,DEFAULT ,DEFAULT ,DEFAULT ,DEFAULT, NULL)";
-        try (MySqlTestConnection db = MySqlTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
+        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
             try (JdbcConnection connection = db.connect()) {
                 final Connection jdbc = connection.connection();
                 final Statement statement = jdbc.createStatement();
@@ -521,7 +521,7 @@ public class MysqlDefaultValueIT extends AbstractConnectorTest {
         // Testing.Print.enable();
 
         consumeRecordsByTopic(EVENT_COUNT);
-        try (Connection conn = MySqlTestConnection.forTestDatabase(DATABASE.getDatabaseName()).connection()) {
+        try (Connection conn = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName()).connection()) {
             conn.createStatement().execute("CREATE TABLE ti_boolean_table (" +
                     "  A TINYINT(1) NOT NULL DEFAULT TRUE," +
                     "  B TINYINT(2) NOT NULL DEFAULT FALSE" +
@@ -551,7 +551,7 @@ public class MysqlDefaultValueIT extends AbstractConnectorTest {
         Testing.Print.enable();
         waitForSnapshotToBeCompleted("mysql", DATABASE.getServerName());
         consumeRecordsByTopic(EVENT_COUNT);
-        try (Connection conn = MySqlTestConnection.forTestDatabase(DATABASE.getDatabaseName()).connection()) {
+        try (Connection conn = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName()).connection()) {
             conn.createStatement().execute("CREATE TABLE int_boolean_table (" +
                     "  A INT(1) NOT NULL DEFAULT TRUE," +
                     "  B INT(2) NOT NULL DEFAULT FALSE" +
@@ -718,7 +718,7 @@ public class MysqlDefaultValueIT extends AbstractConnectorTest {
         ZonedDateTime t5 = ZonedDateTime.ofInstant(Instant.EPOCH, ZoneOffset.UTC);
         String isoString5 = ZonedTimestamp.toIsoString(t5, ZoneOffset.UTC, MySqlValueConverters::adjustTemporal, null);
         assertThat(schemaJ.defaultValue()).isEqualTo(
-                MySqlTestConnection.forTestDatabase(DATABASE.getDatabaseName())
+                MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName())
                         .databaseAsserts()
                         .currentDateTimeDefaultOptional(isoString5));
         assertEmptyFieldValue(record, "K");
@@ -805,7 +805,7 @@ public class MysqlDefaultValueIT extends AbstractConnectorTest {
         assertThat(customerTypeSchema.defaultValue()).isEqualTo("b2c");
 
         // Connect to the DB and issue our insert statement to test.
-        try (MySqlTestConnection db = MySqlTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
+        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
             try (JdbcConnection connection = db.connect()) {
                 // Enable Query log option
                 connection.execute("SET binlog_rows_query_log_events=ON");
@@ -845,7 +845,7 @@ public class MysqlDefaultValueIT extends AbstractConnectorTest {
         assertThat(customerTypeSchema.defaultValue()).isEqualTo("b2c");
 
         // Connect to the DB and issue our insert statement to test.
-        try (MySqlTestConnection db = MySqlTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
+        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
             try (JdbcConnection connection = db.connect()) {
                 // Enable Query log option
                 connection.execute("SET binlog_rows_query_log_events=ON");
@@ -883,7 +883,7 @@ public class MysqlDefaultValueIT extends AbstractConnectorTest {
         Testing.Print.enable();
 
         // Connect to the DB and issue our insert statement to test.
-        try (MySqlTestConnection db = MySqlTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
+        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
             try (JdbcConnection connection = db.connect()) {
                 connection.execute("create table ALTER_DATE_TIME (ID int primary key);");
                 connection.execute("alter table ALTER_DATE_TIME add column (CREATED timestamp not null default current_timestamp, C time not null default '08:00')");
@@ -917,7 +917,7 @@ public class MysqlDefaultValueIT extends AbstractConnectorTest {
         waitForSnapshotToBeCompleted("mysql", DATABASE.getServerName());
 
         // Connect to the DB and issue our alter statement to test.
-        try (MySqlTestConnection db = MySqlTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
+        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
             try (JdbcConnection connection = db.connect()) {
                 String addColumnDdl = "CREATE TABLE DBZ_4822_DEFAULT_BOOLEAN (\n"
                         + "ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,\n"
@@ -962,7 +962,7 @@ public class MysqlDefaultValueIT extends AbstractConnectorTest {
         waitForSnapshotToBeCompleted("mysql", DATABASE.getServerName());
 
         // Connect to the DB and create our table and insert a value
-        try (MySqlTestConnection db = MySqlTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
+        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
             try (JdbcConnection connection = db.connect()) {
                 final String createTable = "CREATE TABLE DBZ_5241_DEFAULT_CS_INTRO (\n"
                         + "ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY, \n"

@@ -99,7 +99,7 @@ public class BinlogReaderBufferIT extends AbstractConnectorTest {
         // supported only for non-GTID setup
         // ---------------------------------------------------------------------------------------------------------------
         if (replicaIsMaster) {
-            try (MySqlTestConnection db = MySqlTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
+            try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
                 try (JdbcConnection connection = db.connect()) {
                     final Connection jdbc = connection.connection();
                     connection.setAutoCommit(false);
@@ -165,7 +165,7 @@ public class BinlogReaderBufferIT extends AbstractConnectorTest {
         // ---------------------------------------------------------------------------------------------------------------
         // Transaction with savepoint
         // ---------------------------------------------------------------------------------------------------------------
-        try (MySqlTestConnection db = MySqlTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
+        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
             try (JdbcConnection connection = db.connect()) {
                 final Connection jdbc = connection.connection();
                 connection.setAutoCommit(false);
@@ -228,7 +228,7 @@ public class BinlogReaderBufferIT extends AbstractConnectorTest {
         // ---------------------------------------------------------------------------------------------------------------
         // Transaction with many events
         // ---------------------------------------------------------------------------------------------------------------
-        try (MySqlTestConnection db = MySqlTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
+        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
             final int numRecords = 40;
             try (JdbcConnection connection = db.connect()) {
                 final Connection jdbc = connection.connection();
@@ -299,7 +299,7 @@ public class BinlogReaderBufferIT extends AbstractConnectorTest {
         // supported only for non-GTID setup
         // ---------------------------------------------------------------------------------------------------------------
         if (replicaIsMaster) {
-            try (MySqlTestConnection db = MySqlTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
+            try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
                 try (JdbcConnection connection = db.connect()) {
                     final Connection jdbc = connection.connection();
                     connection.setAutoCommit(false);
@@ -326,7 +326,7 @@ public class BinlogReaderBufferIT extends AbstractConnectorTest {
             int recordCount;
             int customerEventsCount;
             int topicCount;
-            if (MySqlTestConnection.isMySQL5() && !MySqlTestConnection.isPerconaServer()) {
+            if (MariadbTestConnection.isMySQL5() && !MariadbTestConnection.isPerconaServer()) {
                 // MySQL 5 contains events when the TX was effectively rolled-back
                 // INSERT + INSERT + ROLLBACK, SAVEPOINT filtered
                 recordCount = 3;

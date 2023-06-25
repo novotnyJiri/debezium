@@ -69,7 +69,7 @@ public class ReadBinLogIT implements Testing {
 
     private EventQueue counters;
     private BinaryLogClient client;
-    private MySqlTestConnection conn;
+    private MariadbTestConnection conn;
     private List<Event> events = new LinkedList<>();
     private JdbcConfiguration config;
 
@@ -84,7 +84,7 @@ public class ReadBinLogIT implements Testing {
 
         // Connect the normal SQL client ...
         DATABASE.createAndInitialize();
-        conn = MySqlTestConnection.forTestDatabase(DATABASE.getDatabaseName());
+        conn = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());
         conn.connect();
 
         // Get the configuration that we used ...
