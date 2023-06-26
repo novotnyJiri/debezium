@@ -815,7 +815,7 @@ public class MySqlConnectorRegressionIT extends AbstractConnectorTest {
             }
         });
 
-        try (MariadbTestConnection conn = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
+        try (MariaDBTestConnection conn = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
             final Struct rec1 = ((Struct) records.recordsForTopic(DATABASE.topicForTable("dbz_1318_zerovaluetest")).get(0).value()).getStruct("after");
             final Struct rec2 = ((Struct) records.recordsForTopic(DATABASE.topicForTable("dbz_1318_zerovaluetest")).get(1).value()).getStruct("after");
             assertThat(rec1.get("c1")).isNull();

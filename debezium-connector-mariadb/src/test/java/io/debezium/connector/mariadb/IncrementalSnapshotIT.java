@@ -109,7 +109,7 @@ public class IncrementalSnapshotIT extends AbstractIncrementalSnapshotWithSchema
 
     @Override
     protected JdbcConnection databaseConnection() {
-        return MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());
+        return MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName());
     }
 
     @Override

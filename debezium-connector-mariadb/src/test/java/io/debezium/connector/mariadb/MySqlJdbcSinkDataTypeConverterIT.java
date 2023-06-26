@@ -93,7 +93,7 @@ public class MySqlJdbcSinkDataTypeConverterIT extends AbstractConnectorTest {
         assertThat(after.get("b2")).isEqualTo((short) 1);
 
         // Create the table after-the-fact
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
             try (JdbcConnection conn = db.connect()) {
                 conn.execute("CREATE TABLE BOOLEAN_TEST2 (`id` INT NOT NULL AUTO_INCREMENT, " +
                         "`b1` boolean default true, `b2` boolean default false, " +
@@ -166,7 +166,7 @@ public class MySqlJdbcSinkDataTypeConverterIT extends AbstractConnectorTest {
         assertThat(after.get("r1")).isEqualTo(2.36d);
 
         // Create the table after-the-fact
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
             try (JdbcConnection conn = db.connect()) {
                 conn.execute("CREATE TABLE REAL_TEST2 (`id` INT NOT NULL AUTO_INCREMENT, " +
                         "`r1` real default 3.14, " +
@@ -247,7 +247,7 @@ public class MySqlJdbcSinkDataTypeConverterIT extends AbstractConnectorTest {
         assertThat(afterSchema.field("nc3").schema().parameters().get("__debezium.source.column.length")).isEqualTo("25");
 
         // Create the table after-the-fact
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
             try (JdbcConnection conn = db.connect()) {
                 conn.execute("CREATE TABLE NC_TEST2 (`id` INT NOT NULL AUTO_INCREMENT, " +
                         "`nc1` nchar, `nc2` nchar(5), `nc3` nvarchar(25), " +

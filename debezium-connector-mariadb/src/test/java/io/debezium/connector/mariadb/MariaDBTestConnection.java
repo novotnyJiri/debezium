@@ -21,7 +21,7 @@ import io.debezium.jdbc.JdbcConnection;
  *
  * @author Randall Hauch
  */
-public class MariadbTestConnection extends JdbcConnection {
+public class MariaDBTestConnection extends JdbcConnection {
 
     public enum MariaDbVersion {
         MARIADB_10_3,
@@ -36,8 +36,8 @@ public class MariadbTestConnection extends JdbcConnection {
      * @param databaseName the name of the test database
      * @return the MySQLConnection instance; never null
      */
-    public static MariadbTestConnection forTestDatabase(String databaseName) {
-        return new MariadbTestConnection(JdbcConfiguration.copy(
+    public static MariaDBTestConnection forTestDatabase(String databaseName) {
+        return new MariaDBTestConnection(JdbcConfiguration.copy(
                 Configuration.fromSystemProperties(DATABASE_CONFIG_PREFIX).merge(Configuration.fromSystemProperties(DRIVER_CONFIG_PREFIX)))
                 .withDatabase(databaseName)
                 .with("characterEncoding", "utf8")
@@ -50,13 +50,13 @@ public class MariadbTestConnection extends JdbcConnection {
      * @param urlProperties url properties
      * @return the MySQLConnection instance; never null
      */
-    public static MariadbTestConnection forTestDatabase(String databaseName, Map<String, Object> urlProperties) {
+    public static MariaDBTestConnection forTestDatabase(String databaseName, Map<String, Object> urlProperties) {
         JdbcConfiguration.Builder builder = JdbcConfiguration.copy(
                 Configuration.fromSystemProperties(DATABASE_CONFIG_PREFIX).merge(Configuration.fromSystemProperties(DRIVER_CONFIG_PREFIX)))
                 .withDatabase(databaseName)
                 .with("characterEncoding", "utf8");
         urlProperties.forEach(builder::with);
-        return new MariadbTestConnection(builder.build());
+        return new MariaDBTestConnection(builder.build());
     }
 
     /**
@@ -67,8 +67,8 @@ public class MariadbTestConnection extends JdbcConnection {
      * @param password the password
      * @return the MySQLConnection instance; never null
      */
-    public static MariadbTestConnection forTestDatabase(String databaseName, String username, String password) {
-        return new MariadbTestConnection(JdbcConfiguration.copy(
+    public static MariaDBTestConnection forTestDatabase(String databaseName, String username, String password) {
+        return new MariaDBTestConnection(JdbcConfiguration.copy(
                 Configuration.fromSystemProperties(DATABASE_CONFIG_PREFIX).merge(Configuration.fromSystemProperties(DRIVER_CONFIG_PREFIX)))
                 .withDatabase(databaseName)
                 .withUser(username)
@@ -112,7 +112,7 @@ public class MariadbTestConnection extends JdbcConnection {
      *
      * @param config the configuration; may not be null
      */
-    public MariadbTestConnection(JdbcConfiguration config) {
+    public MariaDBTestConnection(JdbcConfiguration config) {
         super(addDefaultSettings(config), FACTORY, "`", "`");
     }
 
@@ -174,8 +174,34 @@ public class MariadbTestConnection extends JdbcConnection {
 
     public DatabaseDifferences databaseAsserts() {
         if (databaseAsserts == null) {
-            if (getMariaDbVersion() == MariaDbVersion.MARIADB_10_3) {
-                databaseAsserts = new DatabaseDifferences() {
+//            if (getMariaDbVersion() == MariaDbVersion.MARIADB_10_3) {
+//                databaseAsserts = new DatabaseDifferences() {
+//                    @Override
+//                    public boolean isCurrentDateTimeDefaultGenerated() {
+//                        return false;
+//                    }
+//
+//                    @Override
+//                    public String currentDateTimeDefaultOptional(String isoString) {
+//                        return isoString;
+//                    }
+//                };
+//            }
+//            else {
+//                databaseAsserts = new DatabaseDifferences() {
+//                    @Override
+//                    public boolean isCurrentDateTimeDefaultGenerated() {
+//                        return true;
+//                    }
+//
+//                    @Override
+//                    public String currentDateTimeDefaultOptional(String isoString) {
+//                        return null;
+//                    }
+//
+//                };
+//            }
+            databaseAsserts = new DatabaseDifferences() {
                     @Override
                     public boolean isCurrentDateTimeDefaultGenerated() {
                         return false;
@@ -186,21 +212,6 @@ public class MariadbTestConnection extends JdbcConnection {
                         return isoString;
                     }
                 };
-            }
-            else {
-                databaseAsserts = new DatabaseDifferences() {
-                    @Override
-                    public boolean isCurrentDateTimeDefaultGenerated() {
-                        return true;
-                    }
-
-                    @Override
-                    public String currentDateTimeDefaultOptional(String isoString) {
-                        return null;
-                    }
-
-                };
-            }
         }
         return databaseAsserts;
     }

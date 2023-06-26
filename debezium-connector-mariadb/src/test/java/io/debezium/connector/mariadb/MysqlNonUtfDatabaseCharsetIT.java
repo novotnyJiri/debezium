@@ -64,7 +64,7 @@ public class MysqlNonUtfDatabaseCharsetIT extends AbstractConnectorTest {
         assertThat(((Struct) record.value()).getStruct("after").getString("MESSAGE")).isEqualTo("Žluťoučký");
         assertThat(((Struct) record.value()).getStruct("after").getInt16("FLAG")).isEqualTo((short) 1);
 
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
             try (JdbcConnection connection = db.connect()) {
                 connection.execute("CREATE TABLE DATASTREAM (MESSAGE TEXT, FLAG TINYINT(1));");
                 connection.execute("INSERT INTO DATASTREAM VALUES ('Žluťoučký', 1);");
@@ -97,7 +97,7 @@ public class MysqlNonUtfDatabaseCharsetIT extends AbstractConnectorTest {
         assertThat(((Struct) record.value()).getStruct("after").getString("MESSAGE")).isEqualTo("Žluťoučký");
         assertThat(((Struct) record.value()).getStruct("after").getBoolean("FLAG")).isEqualTo(true);
 
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
             try (JdbcConnection connection = db.connect()) {
                 connection.execute("CREATE TABLE DATASTREAM (MESSAGE TEXT, FLAG TINYINT(1));");
                 connection.execute("INSERT INTO DATASTREAM VALUES ('Žluťoučký', 1);");

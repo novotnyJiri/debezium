@@ -22,7 +22,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import io.debezium.config.Configuration;
-import io.debezium.connector.mariadb.MariadbTestConnection;
+import io.debezium.connector.mariadb.MariaDBTestConnection;
 import io.debezium.connector.mariadb.MySqlConnector;
 import io.debezium.connector.mariadb.MySqlConnectorConfig;
 import io.debezium.connector.mariadb.MySqlConnectorConfig.SnapshotMode;
@@ -69,7 +69,7 @@ public class ZZZGtidSetIT extends AbstractConnectorTest {
     }
 
     private boolean isGtidModeEnabled() throws SQLException {
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
             return db.queryAndMap(
                     "SHOW GLOBAL VARIABLES LIKE 'GTID_MODE'",
                     rs -> {
@@ -133,7 +133,7 @@ public class ZZZGtidSetIT extends AbstractConnectorTest {
     }
 
     private void purgeDatabaseLogs() throws SQLException {
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
             try (JdbcConnection connection = db.connect()) {
                 // make sure there's a new log file
                 connection.execute("FLUSH LOGS");
@@ -207,7 +207,7 @@ public class ZZZGtidSetIT extends AbstractConnectorTest {
 
         stopConnector();
 
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(database.getDatabaseName())) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(database.getDatabaseName())) {
             db.execute(
                     "INSERT INTO customers VALUES(default,1,1,1)",
                     "INSERT INTO customers VALUES(default,2,2,2)");
@@ -217,7 +217,7 @@ public class ZZZGtidSetIT extends AbstractConnectorTest {
         records = consumeRecordsByTopic(2);
         stopConnector();
 
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(database.getDatabaseName())) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(database.getDatabaseName())) {
             db.execute(
                     "INSERT INTO customers VALUES(default,3,3,3)",
                     "INSERT INTO customers VALUES(default,4,4,4)");
@@ -231,13 +231,13 @@ public class ZZZGtidSetIT extends AbstractConnectorTest {
         assertThat(records.ddlRecordsForDatabase(database.getDatabaseName()).size()).isEqualTo(11);
         stopConnector();
 
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(database.getDatabaseName())) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(database.getDatabaseName())) {
             db.execute(
                     "INSERT INTO customers VALUES(default,5,5,5)",
                     "INSERT INTO customers VALUES(default,6,6,6)");
         }
         purgeDatabaseLogs();
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(database.getDatabaseName())) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(database.getDatabaseName())) {
             db.execute(
                     "INSERT INTO customers VALUES(default,7,7,7)",
                     "INSERT INTO customers VALUES(default,8,8,8)");

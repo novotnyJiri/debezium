@@ -518,7 +518,7 @@ public class StreamingSourceIT extends AbstractConnectorTest {
                 .build();
 
         // Create the heartbeat table
-        try (MariadbTestConnection connection = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
+        try (MariaDBTestConnection connection = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
             connection.execute("CREATE TABLE test_heartbeat_table (text TEXT);");
         }
         // Start the connector ...
@@ -539,7 +539,7 @@ public class StreamingSourceIT extends AbstractConnectorTest {
                 .pollInterval(100, TimeUnit.MILLISECONDS)
                 .atMost(waitTimeForRecords() * 30, TimeUnit.SECONDS)
                 .until(() -> {
-                    try (MariadbTestConnection connection = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
+                    try (MariaDBTestConnection connection = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
                         int numOfHeartbeatActions = connection.queryAndMap(slotQuery, slotQueryMapper);
                         return numOfHeartbeatActions > 0;
                     }
@@ -578,7 +578,7 @@ public class StreamingSourceIT extends AbstractConnectorTest {
         start(MySqlConnector.class, config, (success, message, error) -> exception.set(error));
 
         try (
-                MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());
+                MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName());
                 JdbcConnection connection = db.connect();
                 Connection jdbc = connection.connection();
                 Statement statement = jdbc.createStatement()) {
@@ -608,7 +608,7 @@ public class StreamingSourceIT extends AbstractConnectorTest {
     }
 
     private String productsTableName() throws SQLException {
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
             return db.isTableIdCaseSensitive() ? "products" : "Products";
         }
     }

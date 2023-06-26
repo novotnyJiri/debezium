@@ -61,7 +61,7 @@ import io.debezium.util.Testing;
 /**
  * @author Roman Kuchár <kucharrom@gmail.com>.
  */
-public class MySqlAntlrDdlParserTest {
+public class MariaDBAntlrDdlParserTest {
 
     private DdlParser parser;
     private Tables tables;

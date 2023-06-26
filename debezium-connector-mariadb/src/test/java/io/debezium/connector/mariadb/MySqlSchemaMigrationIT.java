@@ -62,7 +62,7 @@ public class MySqlSchemaMigrationIT extends AbstractConnectorTest {
                 .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("monitored") + "," + DATABASE.qualifiedTableName("_monitored_new"))
                 .build();
 
-        final MariadbTestConnection connection = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());
+        final MariaDBTestConnection connection = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName());
         connection.execute("create table monitored (id int auto_increment primary key, value1 varchar(100), value2 int)");
         connection.execute("insert into monitored values(default, 'a1', 1)");
 
@@ -103,7 +103,7 @@ public class MySqlSchemaMigrationIT extends AbstractConnectorTest {
                 .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("monitored"))
                 .build();
 
-        final MariadbTestConnection connection = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());
+        final MariaDBTestConnection connection = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName());
         connection.execute("create table monitored (id int auto_increment primary key, value1 varchar(100), value2 int)");
         connection.execute("insert into monitored values(default, 'a1', 1)");
 
@@ -154,7 +154,7 @@ public class MySqlSchemaMigrationIT extends AbstractConnectorTest {
                 .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("monitored"))
                 .build();
 
-        final MariadbTestConnection connection = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());
+        final MariaDBTestConnection connection = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName());
         connection.execute("create table monitored (id int auto_increment primary key, value1 varchar(100), value2 int)");
         connection.execute("insert into monitored values(default, 'a1', 1)");
 

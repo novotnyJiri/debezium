@@ -83,7 +83,7 @@ public class MySqlTopicNamingStrategyIT extends AbstractConnectorTest {
         assertThat(schemaChangeEvents.size()).isEqualTo(12);
 
         // insert data
-        try (Connection conn = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName()).connection()) {
+        try (Connection conn = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName()).connection()) {
             conn.createStatement().execute("INSERT INTO dbz4180(a, b, c, d) VALUE (10.1, 10.2, 'strategy 1', 1290)");
         }
 
@@ -119,7 +119,7 @@ public class MySqlTopicNamingStrategyIT extends AbstractConnectorTest {
         waitForSnapshotToBeCompleted("mysql", DATABASE.getServerName());
 
         // insert data
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
             try (JdbcConnection conn = db.connect()) {
                 String shard0 = "INSERT INTO dbz_4180_00(a, b, c, d) VALUE (10.1, 10.2, 'shard 0', 10);";
                 String shard1 = "INSERT INTO dbz_4180_01(a, b, c, d) VALUE (10.1, 10.2, 'shard 1', 11);";
@@ -157,7 +157,7 @@ public class MySqlTopicNamingStrategyIT extends AbstractConnectorTest {
         waitForSnapshotToBeCompleted("mysql", DATABASE.getServerName());
 
         // insert data
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
             try (JdbcConnection conn = db.connect()) {
                 conn.setAutoCommit(false);
                 conn.execute("INSERT INTO dbz4180(a, b, c, d) VALUE (10.1, 10.2, 'test transaction', 1290)");

@@ -67,7 +67,7 @@ public class MySqlSkipMessagesWithoutChangeConfigIT extends AbstractConnectorTes
         start(MySqlConnector.class, config);
         waitForStreamingRunning("mysql", DATABASE.getServerName());
 
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
             try (JdbcConnection connection = db.connect()) {
                 connection.execute("insert into debezium_test(id, black, white) values(1, 1, 1)");
                 connection.execute("UPDATE debezium_test SET black=2 where id = 1");
@@ -108,7 +108,7 @@ public class MySqlSkipMessagesWithoutChangeConfigIT extends AbstractConnectorTes
         start(MySqlConnector.class, config);
         waitForStreamingRunning("mysql", DATABASE.getServerName());
 
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
             try (JdbcConnection connection = db.connect()) {
                 connection.execute("insert into debezium_test(id, black, white) values(1, 1, 1)");
                 connection.execute("UPDATE debezium_test SET black=2 where id = 1");
@@ -148,7 +148,7 @@ public class MySqlSkipMessagesWithoutChangeConfigIT extends AbstractConnectorTes
         start(MySqlConnector.class, config);
         waitForStreamingRunning("mysql", DATABASE.getServerName());
 
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
             try (JdbcConnection connection = db.connect()) {
                 connection.execute("insert into debezium_test(id, black, white) values(1, 1, 1)");
                 connection.execute("UPDATE debezium_test SET black=2 where id = 1");

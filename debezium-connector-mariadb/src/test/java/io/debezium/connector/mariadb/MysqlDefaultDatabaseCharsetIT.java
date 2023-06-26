@@ -62,7 +62,7 @@ public class MysqlDefaultDatabaseCharsetIT extends AbstractConnectorTest {
 
         assertThat(((Struct) record.value()).getStruct("after").getString("MESSAGE")).isEqualTo("Žluťoučký");
 
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
             try (JdbcConnection connection = db.connect()) {
                 connection.execute("CREATE TABLE DATASTREAM (MESSAGE TEXT);");
                 connection.execute("INSERT INTO DATASTREAM VALUES ('Žluťoučký');");

@@ -85,7 +85,7 @@ public class TransactionPayloadIT extends AbstractConnectorTest {
         assertThat(records).isNotNull();
         records.forEach(this::validate);
 
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
             try (JdbcConnection connection = db.connect()) {
                 connection.execute("set binlog_transaction_compression=ON;");
                 connection.execute(CUSTOMER_INSERT_STMT_1, CUSTOMER_INSERT_STMT_2, PRODUCT_INSERT_STMT_1,

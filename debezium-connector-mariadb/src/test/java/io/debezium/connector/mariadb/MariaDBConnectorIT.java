@@ -38,7 +38,7 @@ import io.debezium.config.CommonConnectorConfig;
 import io.debezium.config.Configuration;
 import io.debezium.config.EnumeratedValue;
 import io.debezium.config.Field;
-import io.debezium.connector.mariadb.MariadbTestConnection.MariaDbVersion;
+import io.debezium.connector.mariadb.MariaDBTestConnection.MariaDbVersion;
 import io.debezium.connector.mariadb.MySqlConnectorConfig.SecureConnectionMode;
 import io.debezium.connector.mariadb.MySqlConnectorConfig.SnapshotLockingMode;
 import io.debezium.connector.mariadb.MySqlConnectorConfig.SnapshotMode;
@@ -66,7 +66,7 @@ import io.debezium.util.Testing;
  * @author Randall Hauch
  */
 @SkipWhenDatabaseVersion(check = LESS_THAN, major = 5, minor = 6, reason = "DDL uses fractional second data types, not supported until MySQL 5.6")
-public class MySqlConnectorIT extends AbstractConnectorTest {
+public class MariaDBConnectorIT extends AbstractConnectorTest {
 
     private static final Path SCHEMA_HISTORY_PATH = Testing.Files.createTestingPath("file-schema-history-connect.txt").toAbsolutePath();
     private final UniqueDatabase DATABASE = new UniqueDatabase("myServer1", "connector_test")
@@ -349,7 +349,7 @@ public class MySqlConnectorIT extends AbstractConnectorTest {
         stopConnector();
 
         // Make some changes to data only while the connector is stopped ...
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
             try (JdbcConnection connection = db.connect()) {
                 connection.query("SELECT * FROM products", rs -> {
                     if (Testing.Print.isEnabled()) {
@@ -385,7 +385,7 @@ public class MySqlConnectorIT extends AbstractConnectorTest {
         // ---------------------------------------------------------------------------------------------------------------
         // Simple INSERT
         // ---------------------------------------------------------------------------------------------------------------
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
             try (JdbcConnection connection = db.connect()) {
                 connection.execute("INSERT INTO products VALUES (1001,'roy','old robot',1234.56);");
                 connection.query("SELECT * FROM products", rs -> {
@@ -409,7 +409,7 @@ public class MySqlConnectorIT extends AbstractConnectorTest {
         // ---------------------------------------------------------------------------------------------------------------
         // Changing the primary key of a row should result in 3 events: INSERT, DELETE, and TOMBSTONE
         // ---------------------------------------------------------------------------------------------------------------
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
             try (JdbcConnection connection = db.connect()) {
                 connection.execute("UPDATE products SET id=2001, description='really old robot' WHERE id=1001");
                 connection.query("SELECT * FROM products", rs -> {
@@ -443,7 +443,7 @@ public class MySqlConnectorIT extends AbstractConnectorTest {
         // ---------------------------------------------------------------------------------------------------------------
         // Simple UPDATE (with no schema changes)
         // ---------------------------------------------------------------------------------------------------------------
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
             try (JdbcConnection connection = db.connect()) {
                 connection.execute("UPDATE products SET weight=1345.67 WHERE id=2001");
                 connection.query("SELECT * FROM products", rs -> {
@@ -470,7 +470,7 @@ public class MySqlConnectorIT extends AbstractConnectorTest {
         // Change our schema with a fully-qualified name; we should still see this event
         // ---------------------------------------------------------------------------------------------------------------
         // Add a column with default to the 'products' table and explicitly update one record ...
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
             try (JdbcConnection connection = db.connect()) {
                 connection.execute(String.format(
                         "ALTER TABLE %s.products ADD COLUMN volume FLOAT, ADD COLUMN alias VARCHAR(30) NULL AFTER description",
@@ -499,7 +499,7 @@ public class MySqlConnectorIT extends AbstractConnectorTest {
         // DBZ-55 Change our schema using a different database and a fully-qualified name; we should still see this event
         // ---------------------------------------------------------------------------------------------------------------
         // Connect to a different database, but use the fully qualified name for a table in our database ...
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase("emptydb");) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase("emptydb");) {
             try (JdbcConnection connection = db.connect()) {
                 connection.execute(String.format("CREATE TABLE %s.stores ("
                         + " id INT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,"
@@ -522,7 +522,7 @@ public class MySqlConnectorIT extends AbstractConnectorTest {
         // ---------------------------------------------------------------------------------------------------------------
 
         // Do something completely different with a table we've not modified yet and then read that event.
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
             try (JdbcConnection connection = db.connect()) {
                 connection.execute("UPDATE products_on_hand SET quantity=20 WHERE product_id=109");
                 connection.query("SELECT * FROM products_on_hand", rs -> {
@@ -566,7 +566,7 @@ public class MySqlConnectorIT extends AbstractConnectorTest {
         BinlogPosition positionBeforeInserts = new BinlogPosition();
         BinlogPosition positionAfterInserts = new BinlogPosition();
         BinlogPosition positionAfterUpdate = new BinlogPosition();
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
             try (JdbcConnection connection = db.connect()) {
                 connection.query("SHOW MASTER STATUS", positionBeforeInserts::readFromDatabase);
                 connection.execute("INSERT INTO products(id,name,description,weight,volume,alias) VALUES "
@@ -630,7 +630,7 @@ public class MySqlConnectorIT extends AbstractConnectorTest {
             // Same binlog filename ...
             assertThat(persistedOffsetSource.binlogFilename()).isEqualTo(positionBeforeInserts.binlogFilename());
             assertThat(persistedOffsetSource.binlogFilename()).isEqualTo(positionAfterInserts.binlogFilename());
-            final MariaDbVersion mysqlVersion = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName()).getMariaDbVersion();
+            final MariaDbVersion mysqlVersion = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName()).getMariaDbVersion();
             // if (mysqlVersion == MariaDbVersion.MYSQL_5_5 || mysqlVersion == MariaDbVersion.MYSQL_5_6) {
             // // todo: for some reason on MySQL 5.6, the binlog position does not behave like it does on MySQL 5.7 - why?
             // assertThat(persistedOffsetSource.binlogPosition()).isGreaterThanOrEqualTo(positionBeforeInserts.binlogPosition());
@@ -815,7 +815,7 @@ public class MySqlConnectorIT extends AbstractConnectorTest {
         SourceRecords records = consumeRecordsByTopic(1 + 5);
         assertThat(records.ddlRecordsForDatabase(DATABASE.getDatabaseName()).size()).isEqualTo(5);
 
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
             try (JdbcConnection connection = db.connect()) {
                 connection.execute("ALTER TABLE orders ADD COLUMN (newcol INT)");
                 connection.execute("ALTER TABLE customers ADD COLUMN (newcol INT)");
@@ -886,7 +886,7 @@ public class MySqlConnectorIT extends AbstractConnectorTest {
         // Consume the first records due to startup and initialization of the database ...
         // Testing.Print.enable();
 
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
             try (JdbcConnection connection = db.connect()) {
                 connection.execute(
                         "create table migration_test (id varchar(20) null,mgb_no varchar(20) null)",
@@ -903,7 +903,7 @@ public class MySqlConnectorIT extends AbstractConnectorTest {
         assertThat(records.ddlRecordsForDatabase(DATABASE.getDatabaseName()).size()).isEqualTo(13);
 
         // Set column mgb_no to required, will treat this unique index column as primary key
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
             try (JdbcConnection connection = db.connect()) {
                 connection.execute(
                         "alter table migration_test change column mgb_no mgb_no varchar(20) not null",
@@ -944,7 +944,7 @@ public class MySqlConnectorIT extends AbstractConnectorTest {
         SourceRecords records = consumeRecordsByTopic(1 + 1 + 2 + 2 * 4);
         assertThat(records.ddlRecordsForDatabase(DATABASE.getDatabaseName()).size()).isEqualTo(1 + 2 + 2 * 4);
 
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
             try (JdbcConnection connection = db.connect()) {
                 connection.execute("ALTER TABLE orders ADD COLUMN (newcol INT)");
                 connection.execute("ALTER TABLE customers ADD COLUMN (newcol INT)");
@@ -973,7 +973,7 @@ public class MySqlConnectorIT extends AbstractConnectorTest {
                 .with(SchemaHistory.STORE_ONLY_CAPTURED_TABLES_DDL, true)
                 .build();
 
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
             try (JdbcConnection connection = db.connect()) {
                 connection.execute(
                         "CREATE TABLE nonmon (id INT)");
@@ -987,7 +987,7 @@ public class MySqlConnectorIT extends AbstractConnectorTest {
         SourceRecords records = consumeRecordsByTopic(6);
         assertThat(records.ddlRecordsForDatabase(DATABASE.getDatabaseName()).size()).isEqualTo(5);
 
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
             try (JdbcConnection connection = db.connect()) {
                 connection.execute(
                         "CREATE UNIQUE INDEX pk ON nonmon(id)",
@@ -1014,7 +1014,7 @@ public class MySqlConnectorIT extends AbstractConnectorTest {
 
         dropDatabases();
 
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase("mysql");) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase("mysql");) {
             try (JdbcConnection connection = db.connect()) {
                 connection.execute(
                         "CREATE DATABASE non_wh",
@@ -1091,7 +1091,7 @@ public class MySqlConnectorIT extends AbstractConnectorTest {
     }
 
     private void dropDatabases() throws SQLException {
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase("mysql");) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase("mysql");) {
             try (JdbcConnection connection = db.connect()) {
                 connection.query("SHOW DATABASES", rs -> {
                     while (rs.next()) {
@@ -1244,7 +1244,7 @@ public class MySqlConnectorIT extends AbstractConnectorTest {
     public void shouldConsumeEventsWithIncludedColumnsForKeywordNamedTable() throws SQLException, InterruptedException {
         Testing.Files.delete(SCHEMA_HISTORY_PATH);
 
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(RO_DATABASE.getDatabaseName())) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(RO_DATABASE.getDatabaseName())) {
             try (JdbcConnection connection = db.connect()) {
                 connection.execute(String.format("CREATE TABLE %s.`order` ("
                         + " id INT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,"
@@ -1473,7 +1473,7 @@ public class MySqlConnectorIT extends AbstractConnectorTest {
         SourceRecords records = consumeRecordsByTopic(INITIAL_EVENT_COUNT); // 6 DDL changes
         assertThat(records.recordsForTopic(DATABASE.topicForTable("orders")).size()).isEqualTo(5);
 
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
             try (JdbcConnection connection = db.connect()) {
                 connection.execute("UPDATE orders SET order_number=10101 WHERE order_number=10001");
             }
@@ -1486,7 +1486,7 @@ public class MySqlConnectorIT extends AbstractConnectorTest {
         assertTombstone(updates.get(1), "order_number", 10001);
         assertInsert(updates.get(2), "order_number", 10101);
 
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
             try (JdbcConnection connection = db.connect()) {
                 connection.execute("DELETE FROM orders WHERE order_number=10101");
             }
@@ -1518,7 +1518,7 @@ public class MySqlConnectorIT extends AbstractConnectorTest {
         SourceRecords records = consumeRecordsByTopic(INITIAL_EVENT_COUNT); // 6 DDL changes
         assertThat(records.recordsForTopic(DATABASE.topicForTable("orders")).size()).isEqualTo(5);
 
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
             try (JdbcConnection connection = db.connect()) {
                 connection.execute("UPDATE orders SET order_number=10101 WHERE order_number=10001");
             }
@@ -1530,7 +1530,7 @@ public class MySqlConnectorIT extends AbstractConnectorTest {
         assertDelete(updates.get(0), "order_number", 10001);
         assertInsert(updates.get(1), "order_number", 10101);
 
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
             try (JdbcConnection connection = db.connect()) {
                 connection.execute("DELETE FROM orders WHERE order_number = 10101;");
                 connection.execute("DELETE FROM orders WHERE order_number = 10002;");
@@ -1565,7 +1565,7 @@ public class MySqlConnectorIT extends AbstractConnectorTest {
 
         waitForStreamingRunning(DATABASE.getServerName());
 
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
             try (JdbcConnection connection = db.connect()) {
                 final Connection jdbc = connection.connection();
                 connection.setAutoCommit(false);
@@ -1617,7 +1617,7 @@ public class MySqlConnectorIT extends AbstractConnectorTest {
         final String insertSqlStatement = "INSERT INTO products VALUES (default,'robot','Toy robot',1.304)";
 
         // Connect to the DB and issue our insert statement to test.
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
             try (JdbcConnection connection = db.connect()) {
                 // Disable Query log option
                 connection.execute("SET binlog_rows_query_log_events=OFF");
@@ -1668,7 +1668,7 @@ public class MySqlConnectorIT extends AbstractConnectorTest {
         final String insertSqlStatement = "INSERT INTO products VALUES (default,'robot','Toy robot',1.304)";
 
         // Connect to the DB and issue our insert statement to test.
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
             try (JdbcConnection connection = db.connect()) {
                 // Enable Query log option
                 connection.execute("SET binlog_rows_query_log_events=ON");
@@ -1720,7 +1720,7 @@ public class MySqlConnectorIT extends AbstractConnectorTest {
         final String insertSqlStatement = "INSERT INTO products VALUES (default,'robot','Toy robot',1.304)";
 
         // Connect to the DB and issue our insert statement to test.
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
             try (JdbcConnection connection = db.connect()) {
                 // Enable Query log option
                 connection.execute("SET binlog_rows_query_log_events=ON");
@@ -1775,7 +1775,7 @@ public class MySqlConnectorIT extends AbstractConnectorTest {
         logger.warn(DATABASE.getDatabaseName());
 
         // Connect to the DB and issue our insert statement to test.
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
             try (JdbcConnection connection = db.connect()) {
                 // Enable Query log option
                 connection.execute("SET binlog_rows_query_log_events=ON");
@@ -1837,7 +1837,7 @@ public class MySqlConnectorIT extends AbstractConnectorTest {
         logger.warn(DATABASE.getDatabaseName());
 
         // Connect to the DB and issue our insert statement to test.
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
             try (JdbcConnection connection = db.connect()) {
                 // Enable Query log option
                 connection.execute("SET binlog_rows_query_log_events=ON");
@@ -1896,7 +1896,7 @@ public class MySqlConnectorIT extends AbstractConnectorTest {
         final String deleteSqlStatement = "DELETE FROM orders WHERE order_number=10001 LIMIT 1";
 
         // Connect to the DB and issue our insert statement to test.
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
             try (JdbcConnection connection = db.connect()) {
                 // Enable Query log option
                 connection.execute("SET binlog_rows_query_log_events=ON");
@@ -1947,7 +1947,7 @@ public class MySqlConnectorIT extends AbstractConnectorTest {
         final String deleteSqlStatement = "DELETE FROM orders WHERE purchaser=1002";
 
         // Connect to the DB and issue our insert statement to test.
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
             try (JdbcConnection connection = db.connect()) {
                 // Enable Query log option
                 connection.execute("SET binlog_rows_query_log_events=ON");
@@ -2006,7 +2006,7 @@ public class MySqlConnectorIT extends AbstractConnectorTest {
         final String updateSqlStatement = "UPDATE products set name='toaster' where id=109 LIMIT 1";
 
         // Connect to the DB and issue our insert statement to test.
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
             try (JdbcConnection connection = db.connect()) {
                 // Enable Query log option
                 connection.execute("SET binlog_rows_query_log_events=ON");
@@ -2057,7 +2057,7 @@ public class MySqlConnectorIT extends AbstractConnectorTest {
         final String updateSqlStatement = "UPDATE orders set quantity=0 where order_number in (10001, 10004)";
 
         // Connect to the DB and issue our insert statement to test.
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
             try (JdbcConnection connection = db.connect()) {
                 // Enable Query log option
                 connection.execute("SET binlog_rows_query_log_events=ON");
@@ -2322,7 +2322,7 @@ public class MySqlConnectorIT extends AbstractConnectorTest {
         SourceRecords records = consumeRecordsByTopic(INITIAL_EVENT_COUNT); // 6 DDL changes
         assertThat(records.recordsForTopic(DATABASE.topicForTable("orders")).size()).isEqualTo(5);
 
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
             try (JdbcConnection connection = db.connect()) {
                 connection.execute("UPDATE orders SET order_number=10303 WHERE order_number=10003");
             }
@@ -2341,7 +2341,7 @@ public class MySqlConnectorIT extends AbstractConnectorTest {
         keyPKUpdateHeader = getPKUpdateOldKeyHeader(insertRecord).get();
         assertEquals(Integer.valueOf(10003), ((Struct) keyPKUpdateHeader.value()).getInt32("order_number"));
 
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
             try (JdbcConnection connection = db.connect()) {
                 connection.execute("UPDATE orders SET quantity=5 WHERE order_number=10004");
             }
@@ -2369,7 +2369,7 @@ public class MySqlConnectorIT extends AbstractConnectorTest {
         start(MySqlConnector.class, config);
         waitForSnapshotToBeCompleted("mysql", DATABASE.getServerName());
 
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
             try (JdbcConnection connection = db.connect()) {
                 connection.execute("INSERT INTO products VALUES (201,'rubberduck','Rubber Duck',2.12);");
                 connection.execute("UPDATE products SET weight=3.13 WHERE name = 'rubberduck'");
@@ -2410,7 +2410,7 @@ public class MySqlConnectorIT extends AbstractConnectorTest {
         start(MySqlConnector.class, config);
         waitForSnapshotToBeCompleted("mysql", DATABASE.getServerName());
 
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
             try (JdbcConnection connection = db.connect()) {
                 connection.execute("INSERT INTO products VALUES (204,'rubberduck','Rubber Duck',2.12);");
                 connection.execute("UPDATE products SET weight=3.13 WHERE name = 'rubberduck'");
@@ -2465,7 +2465,7 @@ public class MySqlConnectorIT extends AbstractConnectorTest {
         waitForStreamingRunning(DATABASE.getServerName());
 
         // Do some changes.
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
             try (JdbcConnection connection = db.connect()) {
                 connection.execute("INSERT INTO products VALUES (204,'rubberduck','Rubber Duck',2.12);");
                 connection.execute("INSERT INTO products VALUES (205,'rubbercrocodile','Rubber Crocodile',4.14);");
@@ -2474,14 +2474,14 @@ public class MySqlConnectorIT extends AbstractConnectorTest {
         }
 
         // Switch to 'STATEMENT' binlog format to mimic DML events in the log.
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
             try (JdbcConnection connection = db.connect()) {
                 connection.execute(String.format("SET GLOBAL binlog_format = 'STATEMENT'", DATABASE.getDatabaseName()));
             }
         }
 
         // Do some more changes.
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
             try (JdbcConnection connection = db.connect()) {
                 connection.execute("UPDATE products SET weight=2.22 WHERE id=204;");
                 connection.execute("UPDATE products SET weight=4.44 WHERE id=205;");
@@ -2497,7 +2497,7 @@ public class MySqlConnectorIT extends AbstractConnectorTest {
         assertThat(completion.hasError()).isFalse();
 
         // Switch back to 'ROW' binlog format.
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
             try (JdbcConnection connection = db.connect()) {
                 connection.execute(String.format("SET GLOBAL binlog_format = 'ROW'", DATABASE.getDatabaseName()));
             }
@@ -2518,7 +2518,7 @@ public class MySqlConnectorIT extends AbstractConnectorTest {
         start(MySqlConnector.class, config, new NoTombStonesHandler(consumedLines));
         waitForSnapshotToBeCompleted("mysql", DATABASE.getServerName());
 
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
             try (JdbcConnection connection = db.connect()) {
                 connection.execute("INSERT INTO products VALUES (201,'rubberduck','Rubber Duck',2.12);");
                 connection.execute("DELETE FROM products WHERE name = 'rubberduck'");
@@ -2551,7 +2551,7 @@ public class MySqlConnectorIT extends AbstractConnectorTest {
         start(MySqlConnector.class, config);
         waitForSnapshotToBeCompleted("mysql", DATABASE.getServerName());
 
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
             try (JdbcConnection connection = db.connect()) {
                 connection.execute("insert into orders values(1000, '2022-10-09', 1002, 90, 106)");
                 connection.execute("truncate table orders;");

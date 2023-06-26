@@ -98,7 +98,7 @@ public class MySqlParserIT extends AbstractConnectorTest {
         // Start the connector ...
         start(MySqlConnector.class, config);
 
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DB_NAME, mySQLContainer.getUsername(), mySQLContainer.getPassword())) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DB_NAME, mySQLContainer.getUsername(), mySQLContainer.getPassword())) {
             try (JdbcConnection connection = db.connect()) {
                 connection.execute("SELECT VERSION();");
                 connection.execute("CREATE TABLE VISIBLE_COLUMN_TABLE (" +
@@ -122,7 +122,7 @@ public class MySqlParserIT extends AbstractConnectorTest {
         // Start the connector ...
         start(MySqlConnector.class, config);
 
-        try (MariadbTestConnection db = MariadbTestConnection.forTestDatabase(DB_NAME, mySQLContainer.getUsername(), mySQLContainer.getPassword())) {
+        try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DB_NAME, mySQLContainer.getUsername(), mySQLContainer.getPassword())) {
             try (JdbcConnection connection = db.connect()) {
                 connection.execute("SELECT VERSION();");
                 connection.execute("CREATE TABLE INVISIBLE_COLUMN_TABLE (" +

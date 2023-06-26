@@ -154,7 +154,7 @@ public class UniqueDatabase {
         final URL ddlTestFile = UniqueDatabase.class.getClassLoader().getResource(ddlFile);
         assertNotNull("Cannot locate " + ddlFile, ddlTestFile);
         try {
-            try (MariadbTestConnection connection = MariadbTestConnection.forTestDatabase(DEFAULT_DATABASE, urlProperties)) {
+            try (MariaDBTestConnection connection = MariaDBTestConnection.forTestDatabase(DEFAULT_DATABASE, urlProperties)) {
                 final List<String> statements = Arrays.stream(
                         Stream.concat(
                                 Arrays.stream(charset != null ? CREATE_DATABASE_WITH_CHARSET_DDL : CREATE_DATABASE_DDL),
