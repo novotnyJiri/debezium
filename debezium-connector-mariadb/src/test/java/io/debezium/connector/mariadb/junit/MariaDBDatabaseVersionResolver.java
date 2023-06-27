@@ -9,11 +9,11 @@ import io.debezium.connector.mariadb.MariaDBTestConnection;
 import io.debezium.junit.DatabaseVersionResolver;
 
 /**
- * Implementation of {@link DatabaseVersionResolver} specific for MySQL.
+ * Implementation of {@link DatabaseVersionResolver} specific for MariaDB.
  *
  * @author Chris Cranford
  */
-public class MySqlDatabaseVersionResolver implements DatabaseVersionResolver {
+public class MariaDBDatabaseVersionResolver implements DatabaseVersionResolver {
 
     public DatabaseVersion getVersion() {
         final String versionString = MariaDBTestConnection.forTestDatabase("mysql").getMariaDbVersionString();
