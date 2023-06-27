@@ -99,8 +99,8 @@ public class MariaDBTestConnection extends JdbcConnection {
         return JdbcConfiguration.adapt(configuration.edit()
                 .withDefault(JdbcConfiguration.HOSTNAME, "localhost")
                 .withDefault(JdbcConfiguration.PORT, 3306)
-                .withDefault(JdbcConfiguration.USER, "mysqluser")
-                .withDefault(JdbcConfiguration.PASSWORD, "mysqlpw")
+                .withDefault(JdbcConfiguration.USER, "mariauser")
+                .withDefault(JdbcConfiguration.PASSWORD, "mariapw")
                 .build());
 
     }
@@ -174,44 +174,44 @@ public class MariaDBTestConnection extends JdbcConnection {
 
     public DatabaseDifferences databaseAsserts() {
         if (databaseAsserts == null) {
-//            if (getMariaDbVersion() == MariaDbVersion.MARIADB_10_3) {
-//                databaseAsserts = new DatabaseDifferences() {
-//                    @Override
-//                    public boolean isCurrentDateTimeDefaultGenerated() {
-//                        return false;
-//                    }
-//
-//                    @Override
-//                    public String currentDateTimeDefaultOptional(String isoString) {
-//                        return isoString;
-//                    }
-//                };
-//            }
-//            else {
-//                databaseAsserts = new DatabaseDifferences() {
-//                    @Override
-//                    public boolean isCurrentDateTimeDefaultGenerated() {
-//                        return true;
-//                    }
-//
-//                    @Override
-//                    public String currentDateTimeDefaultOptional(String isoString) {
-//                        return null;
-//                    }
-//
-//                };
-//            }
+            // if (getMariaDbVersion() == MariaDbVersion.MARIADB_10_3) {
+            // databaseAsserts = new DatabaseDifferences() {
+            // @Override
+            // public boolean isCurrentDateTimeDefaultGenerated() {
+            // return false;
+            // }
+            //
+            // @Override
+            // public String currentDateTimeDefaultOptional(String isoString) {
+            // return isoString;
+            // }
+            // };
+            // }
+            // else {
+            // databaseAsserts = new DatabaseDifferences() {
+            // @Override
+            // public boolean isCurrentDateTimeDefaultGenerated() {
+            // return true;
+            // }
+            //
+            // @Override
+            // public String currentDateTimeDefaultOptional(String isoString) {
+            // return null;
+            // }
+            //
+            // };
+            // }
             databaseAsserts = new DatabaseDifferences() {
-                    @Override
-                    public boolean isCurrentDateTimeDefaultGenerated() {
-                        return false;
-                    }
+                @Override
+                public boolean isCurrentDateTimeDefaultGenerated() {
+                    return false;
+                }
 
-                    @Override
-                    public String currentDateTimeDefaultOptional(String isoString) {
-                        return isoString;
-                    }
-                };
+                @Override
+                public String currentDateTimeDefaultOptional(String isoString) {
+                    return isoString;
+                }
+            };
         }
         return databaseAsserts;
     }
