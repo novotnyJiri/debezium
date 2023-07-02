@@ -21,7 +21,7 @@ public class MySqlConnectorTest {
 
     @Test
     public void shouldReturnConfigurationDefinition() {
-        assertConfigDefIsValid(new MySqlConnector(), MySqlConnectorConfig.ALL_FIELDS);
+        assertConfigDefIsValid(new MySqlConnector(), MariaDBConnectorConfig.ALL_FIELDS);
     }
 
     protected static void assertConfigDefIsValid(Connector connector, io.debezium.config.Field.Set fields) {
@@ -36,14 +36,14 @@ public class MySqlConnectorTest {
             assertThat(key.importance).isEqualTo(expected.importance());
             assertThat(key.documentation).isEqualTo(expected.description());
             assertThat(key.type).isEqualTo(expected.type());
-            if (expected.equals(MySqlConnectorConfig.SCHEMA_HISTORY) || expected.equals(MySqlConnectorConfig.JDBC_DRIVER)
-                    || expected.equals(MySqlConnectorConfig.TOPIC_NAMING_STRATEGY)) {
+            if (expected.equals(MariaDBConnectorConfig.SCHEMA_HISTORY) || expected.equals(MariaDBConnectorConfig.JDBC_DRIVER)
+                    || expected.equals(MariaDBConnectorConfig.TOPIC_NAMING_STRATEGY)) {
                 assertThat(((Class<?>) key.defaultValue).getName()).isEqualTo((String) expected.defaultValue());
             }
             else if (expected.type() == ConfigDef.Type.LIST && key.defaultValue != null) {
                 assertThat(key.defaultValue).isEqualTo(Arrays.asList(expected.defaultValue()));
             }
-            else if (!expected.equals(MySqlConnectorConfig.SERVER_ID)) {
+            else if (!expected.equals(MariaDBConnectorConfig.SERVER_ID)) {
                 assertThat(key.defaultValue).isEqualTo(expected.defaultValue());
             }
             assertThat(key.dependents).isEqualTo(expected.dependents());

@@ -591,7 +591,7 @@
             <properties>
                 <!-- Run multiple images at the same time, but use different ports for all MySQL servers -->
                 <docker.dbs>
-                    debezium/mysql-server-test-database,debezium/mysql-server-gtids-test-database,debezium/mysql-server-gtids-test-database-replica,debezium/percona-server-test-database,debezium/mysql-server-test-database-ssl
+                    debezium/mariadb-server-test-database,debezium/mysql-server-gtids-test-database,debezium/mysql-server-gtids-test-database-replica,debezium/percona-server-test-database,debezium/mysql-server-test-database-ssl
                 </docker.dbs>
                 <mysql.port>4301</mysql.port>
                 <mysql.gtid.port>4302</mysql.gtid.port>

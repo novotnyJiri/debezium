@@ -28,12 +28,12 @@ import io.debezium.spi.schema.DataCollectionId;
 import io.debezium.util.Clock;
 import io.debezium.util.Strings;
 
-public class MySqlChangeEventSourceFactory implements ChangeEventSourceFactory<MySqlPartition, MySqlOffsetContext> {
+public class MySqlChangeEventSourceFactory implements ChangeEventSourceFactory<MariaDBPartition, MariaDBOffsetContext> {
 
-    private final MySqlConnectorConfig configuration;
+    private final MariaDBConnectorConfig configuration;
     private final MainConnectionProvidingConnectionFactory<MySqlConnection> connectionFactory;
     private final ErrorHandler errorHandler;
-    private final EventDispatcher<MySqlPartition, TableId> dispatcher;
+    private final EventDispatcher<MariaDBPartition, TableId> dispatcher;
     private final Clock clock;
     private final MySqlTaskContext taskContext;
     private final MySqlStreamingChangeEventSourceMetrics streamingMetrics;
@@ -44,8 +44,8 @@ public class MySqlChangeEventSourceFactory implements ChangeEventSourceFactory<M
     // but in the core shared code.
     private final ChangeEventQueue<DataChangeEvent> queue;
 
-    public MySqlChangeEventSourceFactory(MySqlConnectorConfig configuration, MainConnectionProvidingConnectionFactory<MySqlConnection> connectionFactory,
-                                         ErrorHandler errorHandler, EventDispatcher<MySqlPartition, TableId> dispatcher, Clock clock, MySqlDatabaseSchema schema,
+    public MySqlChangeEventSourceFactory(MariaDBConnectorConfig configuration, MainConnectionProvidingConnectionFactory<MySqlConnection> connectionFactory,
+                                         ErrorHandler errorHandler, EventDispatcher<MariaDBPartition, TableId> dispatcher, Clock clock, MySqlDatabaseSchema schema,
                                          MySqlTaskContext taskContext, MySqlStreamingChangeEventSourceMetrics streamingMetrics,
                                          ChangeEventQueue<DataChangeEvent> queue) {
         this.configuration = configuration;
@@ -60,7 +60,7 @@ public class MySqlChangeEventSourceFactory implements ChangeEventSourceFactory<M
     }
 
     @Override
-    public SnapshotChangeEventSource<MySqlPartition, MySqlOffsetContext> getSnapshotChangeEventSource(SnapshotProgressListener<MySqlPartition> snapshotProgressListener) {
+    public SnapshotChangeEventSource<MariaDBPartition, MariaDBOffsetContext> getSnapshotChangeEventSource(SnapshotProgressListener<MariaDBPartition> snapshotProgressListener) {
         return new MySqlSnapshotChangeEventSource(configuration, connectionFactory, taskContext.getSchema(), dispatcher, clock,
                 (MySqlSnapshotChangeEventSourceMetrics) snapshotProgressListener, this::modifyAndFlushLastRecord);
     }
@@ -71,9 +71,9 @@ public class MySqlChangeEventSourceFactory implements ChangeEventSourceFactory<M
     }
 
     @Override
-    public StreamingChangeEventSource<MySqlPartition, MySqlOffsetContext> getStreamingChangeEventSource() {
+    public StreamingChangeEventSource<MariaDBPartition, MariaDBOffsetContext> getStreamingChangeEventSource() {
         queue.disableBuffering();
-        return new MySqlStreamingChangeEventSource(
+        return new MariaDBStreamingChangeEventSource(
                 configuration,
                 connectionFactory.mainConnection(),
                 dispatcher,
@@ -84,11 +84,11 @@ public class MySqlChangeEventSourceFactory implements ChangeEventSourceFactory<M
     }
 
     @Override
-    public Optional<IncrementalSnapshotChangeEventSource<MySqlPartition, ? extends DataCollectionId>> getIncrementalSnapshotChangeEventSource(
-                                                                                                                                              MySqlOffsetContext offsetContext,
-                                                                                                                                              SnapshotProgressListener<MySqlPartition> snapshotProgressListener,
-                                                                                                                                              DataChangeEventListener<MySqlPartition> dataChangeEventListener,
-                                                                                                                                              NotificationService<MySqlPartition, MySqlOffsetContext> notificationService) {
+    public Optional<IncrementalSnapshotChangeEventSource<MariaDBPartition, ? extends DataCollectionId>> getIncrementalSnapshotChangeEventSource(
+                                                                                                                                              MariaDBOffsetContext offsetContext,
+                                                                                                                                              SnapshotProgressListener<MariaDBPartition> snapshotProgressListener,
+                                                                                                                                              DataChangeEventListener<MariaDBPartition> dataChangeEventListener,
+                                                                                                                                              NotificationService<MariaDBPartition, MariaDBOffsetContext> notificationService) {
 
         if (configuration.isReadOnlyConnection()) {
             if (connectionFactory.mainConnection().isGtidModeEnabled()) {

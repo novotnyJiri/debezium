@@ -27,7 +27,7 @@ import io.debezium.relational.RelationalDatabaseConnectorConfig;
  * data change events.
  * <h2>Configuration</h2>
  * <p>
- * This connector is configured with the set of properties described in {@link MySqlConnectorConfig}.
+ * This connector is configured with the set of properties described in {@link MariaDBConnectorConfig}.
  *
  *
  * @author Randall Hauch
@@ -72,7 +72,7 @@ public class MySqlConnector extends RelationalBaseSourceConnector {
 
     @Override
     public ConfigDef config() {
-        return MySqlConnectorConfig.configDef();
+        return MariaDBConnectorConfig.configDef();
     }
 
     @Override
@@ -98,6 +98,6 @@ public class MySqlConnector extends RelationalBaseSourceConnector {
 
     @Override
     protected Map<String, ConfigValue> validateAllFields(Configuration config) {
-        return config.validate(MySqlConnectorConfig.ALL_FIELDS);
+        return config.validate(MariaDBConnectorConfig.ALL_FIELDS);
     }
 }

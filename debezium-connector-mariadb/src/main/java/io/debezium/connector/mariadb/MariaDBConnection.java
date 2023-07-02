@@ -496,7 +496,7 @@ public class MySqlConnection extends JdbcConnection {
             final boolean useSSL = sslModeEnabled();
             final Configuration dbConfig = config
                     .edit()
-                    .withDefault(MySqlConnectorConfig.PORT, MySqlConnectorConfig.PORT.defaultValue())
+                    .withDefault(MariaDBConnectorConfig.PORT, MariaDBConnectorConfig.PORT.defaultValue())
                     .build()
                     .subset(DATABASE_CONFIG_PREFIX, true)
                     .merge(config.subset(DRIVER_CONFIG_PREFIX, true));
@@ -531,7 +531,7 @@ public class MySqlConnection extends JdbcConnection {
                     .without("queryInterceptors");
 
             this.jdbcConfig = JdbcConfiguration.adapt(jdbcConfigBuilder.build());
-            String driverClassName = this.jdbcConfig.getString(MySqlConnectorConfig.JDBC_DRIVER);
+            String driverClassName = this.jdbcConfig.getString(MariaDBConnectorConfig.JDBC_DRIVER);
             factory = JdbcConnection.patternBasedFactory(MySqlConnection.URL_PATTERN, driverClassName, getClass().getClassLoader());
         }
 
@@ -559,62 +559,62 @@ public class MySqlConnection extends JdbcConnection {
         }
 
         public String username() {
-            return config.getString(MySqlConnectorConfig.USER);
+            return config.getString(MariaDBConnectorConfig.USER);
         }
 
         public String password() {
-            return config.getString(MySqlConnectorConfig.PASSWORD);
+            return config.getString(MariaDBConnectorConfig.PASSWORD);
         }
 
         public String hostname() {
-            return config.getString(MySqlConnectorConfig.HOSTNAME);
+            return config.getString(MariaDBConnectorConfig.HOSTNAME);
         }
 
         public int port() {
-            return config.getInteger(MySqlConnectorConfig.PORT);
+            return config.getInteger(MariaDBConnectorConfig.PORT);
         }
 
-        public MySqlConnectorConfig.SecureConnectionMode sslMode() {
-            String mode = config.getString(MySqlConnectorConfig.SSL_MODE);
-            return MySqlConnectorConfig.SecureConnectionMode.parse(mode);
+        public MariaDBConnectorConfig.SecureConnectionMode sslMode() {
+            String mode = config.getString(MariaDBConnectorConfig.SSL_MODE);
+            return MariaDBConnectorConfig.SecureConnectionMode.parse(mode);
         }
 
         public boolean sslModeEnabled() {
-            return sslMode() != MySqlConnectorConfig.SecureConnectionMode.DISABLED;
+            return sslMode() != MariaDBConnectorConfig.SecureConnectionMode.DISABLED;
         }
 
         public String sslKeyStore() {
-            return config.getString(MySqlConnectorConfig.SSL_KEYSTORE);
+            return config.getString(MariaDBConnectorConfig.SSL_KEYSTORE);
         }
 
         public char[] sslKeyStorePassword() {
-            String password = config.getString(MySqlConnectorConfig.SSL_KEYSTORE_PASSWORD);
+            String password = config.getString(MariaDBConnectorConfig.SSL_KEYSTORE_PASSWORD);
             return Strings.isNullOrBlank(password) ? null : password.toCharArray();
         }
 
         public String sslTrustStore() {
-            return config.getString(MySqlConnectorConfig.SSL_TRUSTSTORE);
+            return config.getString(MariaDBConnectorConfig.SSL_TRUSTSTORE);
         }
 
         public char[] sslTrustStorePassword() {
-            String password = config.getString(MySqlConnectorConfig.SSL_TRUSTSTORE_PASSWORD);
+            String password = config.getString(MariaDBConnectorConfig.SSL_TRUSTSTORE_PASSWORD);
             return Strings.isNullOrBlank(password) ? null : password.toCharArray();
         }
 
         public Duration getConnectionTimeout() {
-            return Duration.ofMillis(config.getLong(MySqlConnectorConfig.CONNECTION_TIMEOUT_MS));
+            return Duration.ofMillis(config.getLong(MariaDBConnectorConfig.CONNECTION_TIMEOUT_MS));
         }
 
         public EventProcessingFailureHandlingMode eventProcessingFailureHandlingMode() {
             String mode = config.getString(CommonConnectorConfig.EVENT_PROCESSING_FAILURE_HANDLING_MODE);
             if (mode == null) {
-                mode = config.getString(MySqlConnectorConfig.EVENT_DESERIALIZATION_FAILURE_HANDLING_MODE);
+                mode = config.getString(MariaDBConnectorConfig.EVENT_DESERIALIZATION_FAILURE_HANDLING_MODE);
             }
             return EventProcessingFailureHandlingMode.parse(mode);
         }
 
         public EventProcessingFailureHandlingMode inconsistentSchemaHandlingMode() {
-            String mode = config.getString(MySqlConnectorConfig.INCONSISTENT_SCHEMA_HANDLING_MODE);
+            String mode = config.getString(MariaDBConnectorConfig.INCONSISTENT_SCHEMA_HANDLING_MODE);
             return EventProcessingFailureHandlingMode.parse(mode);
         }
     }

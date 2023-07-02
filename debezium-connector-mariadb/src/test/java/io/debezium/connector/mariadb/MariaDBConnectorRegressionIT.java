@@ -34,7 +34,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import io.debezium.config.Configuration;
-import io.debezium.connector.mariadb.MySqlConnectorConfig.SnapshotMode;
+import io.debezium.connector.mariadb.MariaDBConnectorConfig.SnapshotMode;
 import io.debezium.data.Envelope;
 import io.debezium.doc.FixFor;
 import io.debezium.embedded.AbstractConnectorTest;
@@ -82,8 +82,8 @@ public class MySqlConnectorRegressionIT extends AbstractConnectorTest {
     public void shouldConsumeAllEventsFromDatabaseUsingBinlogAndNoSnapshot() throws SQLException, InterruptedException {
         // Use the DB configuration to define the connector's configuration ...
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, true)
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, MySqlConnectorConfig.SnapshotMode.NEVER)
+                .with(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, true)
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, MariaDBConnectorConfig.SnapshotMode.NEVER)
                 .with("database.connectionTimeZone", DATABASE.timezone())
                 .build();
         // Start the connector ...
@@ -367,10 +367,10 @@ public class MySqlConnectorRegressionIT extends AbstractConnectorTest {
     public void shouldConsumeAllEventsFromDatabaseUsingBinlogAndNoSnapshotAndConnectTimesTypes() throws SQLException, InterruptedException {
         // Use the DB configuration to define the connector's configuration ...
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, true)
-                .with(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, true)
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, SnapshotMode.NEVER)
-                .with(MySqlConnectorConfig.TIME_PRECISION_MODE, TemporalPrecisionMode.CONNECT)
+                .with(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, true)
+                .with(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, true)
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, SnapshotMode.NEVER)
+                .with(MariaDBConnectorConfig.TIME_PRECISION_MODE, TemporalPrecisionMode.CONNECT)
                 .with("database.connectionTimeZone", DATABASE.timezone())
                 .build();
         // Start the connector ...
@@ -850,7 +850,7 @@ public class MySqlConnectorRegressionIT extends AbstractConnectorTest {
 
             // Use the DB configuration to define the connector's configuration ...
             config = DATABASE.defaultConfig()
-                    .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("dbz_85_fractest"))
+                    .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("dbz_85_fractest"))
                     .with(SchemaHistory.STORE_ONLY_CAPTURED_TABLES_DDL, true)
                     .build();
             // Start the connector ...
@@ -928,10 +928,10 @@ public class MySqlConnectorRegressionIT extends AbstractConnectorTest {
     public void shouldConsumeAllEventsFromDecimalTableInDatabaseUsingBinlogAndNoSnapshot() throws SQLException, InterruptedException {
         // Use the DB configuration to define the connector's configuration ...
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("dbz_147_decimalvalues"))
-                .with(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, true)
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, SnapshotMode.NEVER.toString())
-                .with(MySqlConnectorConfig.DECIMAL_HANDLING_MODE, DecimalHandlingMode.DOUBLE)
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("dbz_147_decimalvalues"))
+                .with(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, true)
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, SnapshotMode.NEVER.toString())
+                .with(MariaDBConnectorConfig.DECIMAL_HANDLING_MODE, DecimalHandlingMode.DOUBLE)
                 .build();
         // Start the connector ...
         start(MySqlConnector.class, config);
@@ -970,10 +970,10 @@ public class MySqlConnectorRegressionIT extends AbstractConnectorTest {
     public void shouldConsumeDecimalAsStringFromBinlog() throws SQLException, InterruptedException {
         // Use the DB configuration to define the connector's configuration ...
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("dbz_147_decimalvalues"))
-                .with(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, true)
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, SnapshotMode.NEVER.toString())
-                .with(MySqlConnectorConfig.DECIMAL_HANDLING_MODE, DecimalHandlingMode.STRING)
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("dbz_147_decimalvalues"))
+                .with(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, true)
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, SnapshotMode.NEVER.toString())
+                .with(MariaDBConnectorConfig.DECIMAL_HANDLING_MODE, DecimalHandlingMode.STRING)
                 .build();
         // Start the connector ...
         start(MySqlConnector.class, config);
@@ -1010,10 +1010,10 @@ public class MySqlConnectorRegressionIT extends AbstractConnectorTest {
     public void shouldConsumeDecimalAsStringFromSnapshot() throws SQLException, InterruptedException {
         // Use the DB configuration to define the connector's configuration ...
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("dbz_147_decimalvalues"))
-                .with(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, true)
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("dbz_147_decimalvalues"))
+                .with(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, true)
                 .with(SchemaHistory.STORE_ONLY_CAPTURED_TABLES_DDL, true)
-                .with(MySqlConnectorConfig.DECIMAL_HANDLING_MODE, DecimalHandlingMode.STRING)
+                .with(MariaDBConnectorConfig.DECIMAL_HANDLING_MODE, DecimalHandlingMode.STRING)
                 .build();
         // Start the connector ...
         start(MySqlConnector.class, config);
