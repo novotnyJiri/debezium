@@ -29,9 +29,9 @@ public abstract class AbstractMySqlFieldReader implements MySqlFieldReader {
 
     private static final Set<String> TEXT_DATATYPES = Collect.unmodifiableSet("CHAR", "VARCHAR", "TEXT");
 
-    private final MySqlConnectorConfig connectorConfig;
+    private final MariaDBConnectorConfig connectorConfig;
 
-    protected AbstractMySqlFieldReader(MySqlConnectorConfig connectorConfig) {
+    protected AbstractMySqlFieldReader(MariaDBConnectorConfig connectorConfig) {
         this.connectorConfig = connectorConfig;
     }
 
@@ -87,7 +87,7 @@ public abstract class AbstractMySqlFieldReader implements MySqlFieldReader {
             try {
                 String columnData = rs.getString(columnIndex);
                 if (columnData != null) {
-                    return columnData.getBytes(MySqlConnection.getJavaEncodingForMysqlCharSet(column.charsetName()));
+                    return columnData.getBytes(MariaDBConnection.getJavaEncodingForMysqlCharSet(column.charsetName()));
                 }
             }
             catch (UnsupportedEncodingException e) {

@@ -23,9 +23,9 @@ import org.junit.Test;
 
 import io.debezium.config.Configuration;
 import io.debezium.connector.mariadb.MariaDBTestConnection;
-import io.debezium.connector.mariadb.MySqlConnector;
-import io.debezium.connector.mariadb.MySqlConnectorConfig;
-import io.debezium.connector.mariadb.MySqlConnectorConfig.SnapshotMode;
+import io.debezium.connector.mariadb.MariaDBConnector;
+import io.debezium.connector.mariadb.MariaDBConnectorConfig;
+import io.debezium.connector.mariadb.MariaDBConnectorConfig.SnapshotMode;
 import io.debezium.connector.mariadb.UniqueDatabase;
 import io.debezium.doc.FixFor;
 import io.debezium.embedded.AbstractConnectorTest;
@@ -100,13 +100,13 @@ public class ZZZGtidSetIT extends AbstractConnectorTest {
 
         // Use the DB configuration to define the connector's configuration ...
         config = ro_database.defaultConfig()
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, SnapshotMode.NEVER)
-                .with(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, true)
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, ro_database.qualifiedTableName("customers"))
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, SnapshotMode.NEVER)
+                .with(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, true)
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, ro_database.qualifiedTableName("customers"))
                 .build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         // Consume the first records due to startup and initialization of the database ...
         // Testing.Print.enable();
@@ -187,13 +187,13 @@ public class ZZZGtidSetIT extends AbstractConnectorTest {
 
         // Use the DB configuration to define the connector's configuration ...
         config = database.defaultConfig()
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, SnapshotMode.WHEN_NEEDED)
-                .with(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, true)
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, database.qualifiedTableName("customers"))
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, SnapshotMode.WHEN_NEEDED)
+                .with(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, true)
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, database.qualifiedTableName("customers"))
                 .build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         // Consume the first records due to startup and initialization of the database ...
         // Testing.Print.enable();
@@ -213,7 +213,7 @@ public class ZZZGtidSetIT extends AbstractConnectorTest {
                     "INSERT INTO customers VALUES(default,2,2,2)");
         }
 
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
         records = consumeRecordsByTopic(2);
         stopConnector();
 
@@ -223,7 +223,7 @@ public class ZZZGtidSetIT extends AbstractConnectorTest {
                     "INSERT INTO customers VALUES(default,4,4,4)");
         }
         purgeDatabaseLogs();
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
         // SET + DROP/CREATE/USE DB + DROP/CREATE 4 tables + 8 data
         records = consumeRecordsByTopic(1 + 3 + 2 * 4 + 8);
         assertThat(records.recordsForTopic(database.topicForTable("customers")).size()).isEqualTo(8);
@@ -242,7 +242,7 @@ public class ZZZGtidSetIT extends AbstractConnectorTest {
                     "INSERT INTO customers VALUES(default,7,7,7)",
                     "INSERT INTO customers VALUES(default,8,8,8)");
         }
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
         // SET + DROP/CREATE/USE DB + DROP/CREATE 4 tables + 8 data
         records = consumeRecordsByTopic(1 + 3 + 2 * 4 + 12);
         assertThat(records.recordsForTopic(database.topicForTable("customers")).size()).isEqualTo(12);

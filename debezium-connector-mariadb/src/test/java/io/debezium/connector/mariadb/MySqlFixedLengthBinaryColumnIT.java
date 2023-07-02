@@ -60,11 +60,11 @@ public class MySqlFixedLengthBinaryColumnIT extends AbstractConnectorTest {
     public void bytesMode() throws SQLException, InterruptedException {
         // Use the DB configuration to define the connector's configuration ...
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, MySqlConnectorConfig.SnapshotMode.NEVER)
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, MariaDBConnectorConfig.SnapshotMode.NEVER)
                 .build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         // ---------------------------------------------------------------------------------------------------------------
         // Consume all of the events due to startup and initialization of the database
@@ -107,12 +107,12 @@ public class MySqlFixedLengthBinaryColumnIT extends AbstractConnectorTest {
     public void hexMode() throws SQLException, InterruptedException {
         // Use the DB configuration to define the connector's configuration ...
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, MySqlConnectorConfig.SnapshotMode.NEVER)
-                .with(MySqlConnectorConfig.BINARY_HANDLING_MODE, BinaryHandlingMode.HEX)
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, MariaDBConnectorConfig.SnapshotMode.NEVER)
+                .with(MariaDBConnectorConfig.BINARY_HANDLING_MODE, BinaryHandlingMode.HEX)
                 .build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         // ---------------------------------------------------------------------------------------------------------------
         // Consume all of the events due to startup and initialization of the database
@@ -155,12 +155,12 @@ public class MySqlFixedLengthBinaryColumnIT extends AbstractConnectorTest {
     public void base64Mode() throws SQLException, InterruptedException {
         // Use the DB configuration to define the connector's configuration ...
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, MySqlConnectorConfig.SnapshotMode.NEVER)
-                .with(MySqlConnectorConfig.BINARY_HANDLING_MODE, BinaryHandlingMode.BASE64)
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, MariaDBConnectorConfig.SnapshotMode.NEVER)
+                .with(MariaDBConnectorConfig.BINARY_HANDLING_MODE, BinaryHandlingMode.BASE64)
                 .build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         // ---------------------------------------------------------------------------------------------------------------
         // Consume all of the events due to startup and initialization of the database
@@ -203,12 +203,12 @@ public class MySqlFixedLengthBinaryColumnIT extends AbstractConnectorTest {
     public void base64UrlSafeMode() throws SQLException, InterruptedException {
         // Use the DB configuration to define the connector's configuration ...
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, MySqlConnectorConfig.SnapshotMode.NEVER)
-                .with(MySqlConnectorConfig.BINARY_HANDLING_MODE, BinaryHandlingMode.BASE64_URL_SAFE)
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, MariaDBConnectorConfig.SnapshotMode.NEVER)
+                .with(MariaDBConnectorConfig.BINARY_HANDLING_MODE, BinaryHandlingMode.BASE64_URL_SAFE)
                 .build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         // ---------------------------------------------------------------------------------------------------------------
         // Consume all of the events due to startup and initialization of the database

@@ -70,10 +70,10 @@ public class TransactionPayloadIT extends AbstractConnectorTest {
     @Test
     public void shouldCaptureMultipleWriteEvents() throws Exception {
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, MySqlConnectorConfig.SnapshotMode.NEVER)
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, MariaDBConnectorConfig.SnapshotMode.NEVER)
                 .build();
 
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         Testing.Debug.enable();
         assertConnectorIsRunning();

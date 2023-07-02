@@ -17,12 +17,12 @@ import io.debezium.pipeline.spi.Partition;
 import io.debezium.relational.AbstractPartition;
 import io.debezium.util.Collect;
 
-public class MySqlPartition extends AbstractPartition implements Partition {
+public class MariaDBPartition extends AbstractPartition implements Partition {
     private static final String SERVER_PARTITION_KEY = "server";
 
     private final String serverName;
 
-    public MySqlPartition(String serverName, String databaseName) {
+    public MariaDBPartition(String serverName, String databaseName) {
         super(databaseName);
         this.serverName = serverName;
     }
@@ -40,7 +40,7 @@ public class MySqlPartition extends AbstractPartition implements Partition {
         if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
-        final MySqlPartition other = (MySqlPartition) obj;
+        final MariaDBPartition other = (MariaDBPartition) obj;
         return Objects.equals(serverName, other.serverName);
     }
 
@@ -54,7 +54,7 @@ public class MySqlPartition extends AbstractPartition implements Partition {
         return "MySqlPartition [sourcePartition=" + getSourcePartition() + "]";
     }
 
-    public static class Provider implements Partition.Provider<MySqlPartition> {
+    public static class Provider implements Partition.Provider<MariaDBPartition> {
         private final MariaDBConnectorConfig connectorConfig;
         private final Configuration taskConfig;
 
@@ -64,8 +64,8 @@ public class MySqlPartition extends AbstractPartition implements Partition {
         }
 
         @Override
-        public Set<MySqlPartition> getPartitions() {
-            return Collections.singleton(new MySqlPartition(
+        public Set<MariaDBPartition> getPartitions() {
+            return Collections.singleton(new MariaDBPartition(
                     connectorConfig.getLogicalName(), taskConfig.getString(DATABASE_NAME.name())));
         }
     }

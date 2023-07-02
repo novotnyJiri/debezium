@@ -123,7 +123,7 @@ public class MariaDBTestConnection extends JdbcConnection {
                 mariaDbVersion = MariaDbVersion.MARIADB_10_3;
             }
             else {
-                throw new IllegalStateException("Couldn't resolve MySQL Server version");
+                throw new IllegalStateException("Couldn't resolve MariaDB version");
             }
         }
 

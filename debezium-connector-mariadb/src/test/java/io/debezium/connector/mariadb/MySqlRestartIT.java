@@ -53,8 +53,8 @@ public class MySqlRestartIT extends AbstractConnectorTest {
     @FixFor("DBZ-1276")
     public void shouldNotDuplicateEventsAfterRestart() throws Exception {
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, MySqlConnectorConfig.SnapshotMode.INITIAL)
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("restart_table"))
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, MariaDBConnectorConfig.SnapshotMode.INITIAL)
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("restart_table"))
                 .build();
 
         try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
@@ -64,7 +64,7 @@ public class MySqlRestartIT extends AbstractConnectorTest {
                         "INSERT INTO restart_table VALUES(1, 10)");
             }
         }
-        start(MySqlConnector.class, config, record -> {
+        start(MariaDBConnector.class, config, record -> {
             final Schema schema = record.valueSchema();
             final Struct value = ((Struct) record.value());
             return schema.field("after") != null && value.getStruct("after").getInt32("id").equals(5);
@@ -93,7 +93,7 @@ public class MySqlRestartIT extends AbstractConnectorTest {
 
         stopConnector();
 
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         records = consumeRecordsByTopic(2);
         assertThat(records.recordsForTopic(DATABASE.topicForTable("restart_table")).size()).isEqualTo(2);

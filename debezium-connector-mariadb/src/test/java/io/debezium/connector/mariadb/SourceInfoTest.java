@@ -38,14 +38,14 @@ public class SourceInfoTest {
     private static final String SERVER_NAME = "my-server"; // can technically be any string
 
     private SourceInfo source;
-    private MySqlOffsetContext offsetContext;
+    private MariaDBOffsetContext offsetContext;
     private boolean inTxn = false;
     private long positionOfBeginEvent = 0L;
     private int eventNumberInTxn = 0;
 
     @Before
     public void beforeEach() {
-        offsetContext = MySqlOffsetContext.initial(new MySqlConnectorConfig(Configuration.create()
+        offsetContext = MariaDBOffsetContext.initial(new MariaDBConnectorConfig(Configuration.create()
                 .with(CommonConnectorConfig.TOPIC_PREFIX, "server")
                 .build()));
         source = offsetContext.getSource();
@@ -363,9 +363,9 @@ public class SourceInfoTest {
             rowsToSkip = 0L;
         }
         assertThat(rowsToSkip).isEqualTo(0);
-        assertThat(offset.get(MySqlOffsetContext.EVENTS_TO_SKIP_OFFSET_KEY)).isNull();
+        assertThat(offset.get(MariaDBOffsetContext.EVENTS_TO_SKIP_OFFSET_KEY)).isNull();
         if (offsetContext.gtidSet() != null) {
-            assertThat(offset.get(MySqlOffsetContext.GTID_SET_KEY)).isEqualTo(offsetContext.gtidSet());
+            assertThat(offset.get(MariaDBOffsetContext.GTID_SET_KEY)).isEqualTo(offsetContext.gtidSet());
         }
     }
 
@@ -380,14 +380,14 @@ public class SourceInfoTest {
             Map<String, ?> offset = offsetContext.getOffset();
             assertThat(offset.get(SourceInfo.BINLOG_FILENAME_OFFSET_KEY)).isEqualTo(FILENAME);
             if (offsetContext.gtidSet() != null) {
-                assertThat(offset.get(MySqlOffsetContext.GTID_SET_KEY)).isEqualTo(offsetContext.gtidSet());
+                assertThat(offset.get(MariaDBOffsetContext.GTID_SET_KEY)).isEqualTo(offsetContext.gtidSet());
             }
             long position = (Long) offset.get(SourceInfo.BINLOG_POSITION_OFFSET_KEY);
             if (inTxn) {
                 // regardless of the row count, the position is always the txn begin position ...
                 assertThat(position).isEqualTo(positionOfBeginEvent);
                 // and the number of the last completed event (the previous one) ...
-                Long eventsToSkip = (Long) offset.get(MySqlOffsetContext.EVENTS_TO_SKIP_OFFSET_KEY);
+                Long eventsToSkip = (Long) offset.get(MariaDBOffsetContext.EVENTS_TO_SKIP_OFFSET_KEY);
                 if (eventsToSkip == null) {
                     eventsToSkip = 0L;
                 }
@@ -396,7 +396,7 @@ public class SourceInfoTest {
             else {
                 // Matches the next event ...
                 assertThat(position).isEqualTo(positionOfEvent + eventSize);
-                assertThat(offset.get(MySqlOffsetContext.EVENTS_TO_SKIP_OFFSET_KEY)).isNull();
+                assertThat(offset.get(MariaDBOffsetContext.EVENTS_TO_SKIP_OFFSET_KEY)).isNull();
             }
             Long rowsToSkip = (Long) offset.get(SourceInfo.BINLOG_ROW_IN_EVENT_OFFSET_KEY);
             if (rowsToSkip == null) {
@@ -416,7 +416,7 @@ public class SourceInfoTest {
             assertThat(recordSource.getInt32(SourceInfo.BINLOG_ROW_IN_EVENT_OFFSET_KEY)).isEqualTo(row);
             assertThat(recordSource.getString(SourceInfo.BINLOG_FILENAME_OFFSET_KEY)).isEqualTo(FILENAME);
             if (offsetContext.gtidSet() != null) {
-                assertThat(recordSource.getString(MySqlOffsetContext.GTID_SET_KEY)).isEqualTo(offsetContext.gtidSet());
+                assertThat(recordSource.getString(MariaDBOffsetContext.GTID_SET_KEY)).isEqualTo(offsetContext.gtidSet());
             }
         }
         offsetContext.completeEvent();
@@ -436,7 +436,7 @@ public class SourceInfoTest {
         offset.put(SourceInfo.BINLOG_POSITION_OFFSET_KEY, Long.toString(position));
         offset.put(SourceInfo.BINLOG_ROW_IN_EVENT_OFFSET_KEY, Integer.toString(row));
         if (gtidSet != null) {
-            offset.put(MySqlOffsetContext.GTID_SET_KEY, gtidSet);
+            offset.put(MariaDBOffsetContext.GTID_SET_KEY, gtidSet);
         }
         if (snapshot) {
             offset.put(SourceInfo.SNAPSHOT_KEY, Boolean.TRUE.toString());
@@ -445,7 +445,7 @@ public class SourceInfoTest {
     }
 
     protected SourceInfo sourceWith(Map<String, String> offset) {
-        offsetContext = (MySqlOffsetContext) new MySqlOffsetContext.Loader(new MySqlConnectorConfig(Configuration.create()
+        offsetContext = (MariaDBOffsetContext) new MariaDBOffsetContext.Loader(new MariaDBConnectorConfig(Configuration.create()
                 .with(CommonConnectorConfig.TOPIC_PREFIX, SERVER_NAME)
                 .build())).load(offset);
         source = offsetContext.getSource();
@@ -669,9 +669,9 @@ public class SourceInfoTest {
 
     protected Document positionWithGtids(String gtids, boolean snapshot) {
         if (snapshot) {
-            return Document.create(MySqlOffsetContext.GTID_SET_KEY, gtids, SourceInfo.SNAPSHOT_KEY, true);
+            return Document.create(MariaDBOffsetContext.GTID_SET_KEY, gtids, SourceInfo.SNAPSHOT_KEY, true);
         }
-        return Document.create(MySqlOffsetContext.GTID_SET_KEY, gtids);
+        return Document.create(MariaDBOffsetContext.GTID_SET_KEY, gtids);
     }
 
     protected Document positionWithoutGtids(String filename, int position, int event, int row) {
@@ -689,10 +689,10 @@ public class SourceInfoTest {
             pos = pos.set(SourceInfo.BINLOG_ROW_IN_EVENT_OFFSET_KEY, row);
         }
         if (event >= 0) {
-            pos = pos.set(MySqlOffsetContext.EVENTS_TO_SKIP_OFFSET_KEY, event);
+            pos = pos.set(MariaDBOffsetContext.EVENTS_TO_SKIP_OFFSET_KEY, event);
         }
         if (gtids != null && gtids.trim().length() != 0) {
-            pos = pos.set(MySqlOffsetContext.GTID_SET_KEY, gtids);
+            pos = pos.set(MariaDBOffsetContext.GTID_SET_KEY, gtids);
         }
         if (snapshot) {
             pos = pos.set(SourceInfo.SNAPSHOT_KEY, true);

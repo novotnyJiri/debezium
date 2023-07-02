@@ -32,9 +32,9 @@ import io.debezium.util.ContainerImageVersions;
 import io.debezium.util.Testing;
 
 /**
- * Integration test for {@link MySqlConnector} using Testcontainers infrastructure for testing column constraints supported in MySQL 8.0.x.
+ * Integration test for {@link MariaDBConnector} using Testcontainers infrastructure for testing column constraints supported in MySQL 8.0.x.
  */
-@SkipWhenSslModeIsNot(value = MySqlConnectorConfig.SecureConnectionMode.DISABLED, reason = "Only running with ssl disabled mode")
+@SkipWhenSslModeIsNot(value = MariaDBConnectorConfig.SecureConnectionMode.DISABLED, reason = "Only running with ssl disabled mode")
 public class MySqlParserIT extends AbstractConnectorTest {
 
     @Rule
@@ -76,17 +76,17 @@ public class MySqlParserIT extends AbstractConnectorTest {
     public Configuration.Builder defaultConfig() {
         return Configuration.create()
                 .with(CommonConnectorConfig.TOPIC_PREFIX, "myServer1")
-                .with(MySqlConnectorConfig.HOSTNAME, System.getProperty("database.hostname", "localhost"))
+                .with(MariaDBConnectorConfig.HOSTNAME, System.getProperty("database.hostname", "localhost"))
                 .with(CommonConnectorConfig.DATABASE_CONFIG_PREFIX + JdbcConfiguration.PORT, mySQLContainer.getMappedPort(3306))
-                .with(MySqlConnectorConfig.USER, "debezium")
-                .with(MySqlConnectorConfig.PASSWORD, "dbz")
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, MySqlConnectorConfig.SnapshotMode.INITIAL)
-                .with(MySqlConnectorConfig.SSL_MODE, MySqlConnectorConfig.SecureConnectionMode.DISABLED)
-                .with(MySqlConnectorConfig.SERVER_ID, 18765)
-                .with(MySqlConnectorConfig.POLL_INTERVAL_MS, 10)
-                .with(MySqlConnectorConfig.SCHEMA_HISTORY, "io.debezium.relational.history.MemorySchemaHistory")
-                .with(MySqlConnectorConfig.DATABASE_INCLUDE_LIST, DB_NAME)
-                .with(MySqlConnectorConfig.BUFFER_SIZE_FOR_BINLOG_READER, 10_000);
+                .with(MariaDBConnectorConfig.USER, "debezium")
+                .with(MariaDBConnectorConfig.PASSWORD, "dbz")
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, MariaDBConnectorConfig.SnapshotMode.INITIAL)
+                .with(MariaDBConnectorConfig.SSL_MODE, MariaDBConnectorConfig.SecureConnectionMode.DISABLED)
+                .with(MariaDBConnectorConfig.SERVER_ID, 18765)
+                .with(MariaDBConnectorConfig.POLL_INTERVAL_MS, 10)
+                .with(MariaDBConnectorConfig.SCHEMA_HISTORY, "io.debezium.relational.history.MemorySchemaHistory")
+                .with(MariaDBConnectorConfig.DATABASE_INCLUDE_LIST, DB_NAME)
+                .with(MariaDBConnectorConfig.BUFFER_SIZE_FOR_BINLOG_READER, 10_000);
     }
 
     @Test
@@ -96,7 +96,7 @@ public class MySqlParserIT extends AbstractConnectorTest {
         Testing.Print.enable();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DB_NAME, mySQLContainer.getUsername(), mySQLContainer.getPassword())) {
             try (JdbcConnection connection = db.connect()) {
@@ -120,7 +120,7 @@ public class MySqlParserIT extends AbstractConnectorTest {
         Testing.Print.enable();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DB_NAME, mySQLContainer.getUsername(), mySQLContainer.getPassword())) {
             try (JdbcConnection connection = db.connect()) {

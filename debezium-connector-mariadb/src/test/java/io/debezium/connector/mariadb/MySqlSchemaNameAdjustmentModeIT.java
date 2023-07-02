@@ -65,12 +65,12 @@ public class MySqlSchemaNameAdjustmentModeIT extends AbstractConnectorTest {
 
     private Struct consume(SchemaNameAdjustmentMode adjustmentMode) throws InterruptedException {
         final Configuration config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, MySqlConnectorConfig.SnapshotMode.INITIAL)
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("name-adjustment"))
-                .with(MySqlConnectorConfig.SCHEMA_NAME_ADJUSTMENT_MODE, adjustmentMode)
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, MariaDBConnectorConfig.SnapshotMode.INITIAL)
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("name-adjustment"))
+                .with(MariaDBConnectorConfig.SCHEMA_NAME_ADJUSTMENT_MODE, adjustmentMode)
                 .build();
 
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         SourceRecords records = consumeRecordsByTopic(6 + 1); // 6 DDL changes, 1 INSERT
         final List<SourceRecord> results = records.recordsForTopic(DATABASE.topicForTable("name-adjustment"));

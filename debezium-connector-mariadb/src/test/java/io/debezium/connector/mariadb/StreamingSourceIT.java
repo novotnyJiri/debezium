@@ -42,7 +42,7 @@ import org.junit.Test;
 import io.debezium.DebeziumException;
 import io.debezium.config.CommonConnectorConfig.EventProcessingFailureHandlingMode;
 import io.debezium.config.Configuration;
-import io.debezium.connector.mariadb.MySqlConnectorConfig.SecureConnectionMode;
+import io.debezium.connector.mariadb.MariaDBConnectorConfig.SecureConnectionMode;
 import io.debezium.data.Envelope;
 import io.debezium.data.KeyValueStore;
 import io.debezium.data.KeyValueStore.Collection;
@@ -152,11 +152,11 @@ public class StreamingSourceIT extends AbstractConnectorTest {
 
     protected Configuration.Builder simpleConfig() {
         return DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.USER, "replicator")
-                .with(MySqlConnectorConfig.PASSWORD, "replpass")
-                .with(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
-                .with(MySqlConnectorConfig.INCLUDE_SQL_QUERY, false)
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, MySqlConnectorConfig.SnapshotMode.NEVER);
+                .with(MariaDBConnectorConfig.USER, "replicator")
+                .with(MariaDBConnectorConfig.PASSWORD, "replpass")
+                .with(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
+                .with(MariaDBConnectorConfig.INCLUDE_SQL_QUERY, false)
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, MariaDBConnectorConfig.SnapshotMode.NEVER);
     }
 
     @Test
@@ -165,7 +165,7 @@ public class StreamingSourceIT extends AbstractConnectorTest {
         config = simpleConfig()
                 .build();
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         // Poll for records ...
         // Testing.Print.enable();
@@ -220,11 +220,11 @@ public class StreamingSourceIT extends AbstractConnectorTest {
     public void shouldCreateSnapshotOfSingleDatabaseWithSchemaChanges() throws Exception {
         // Use the DB configuration to define the connector's configuration ...
         config = simpleConfig()
-                .with(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, true)
+                .with(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, true)
                 .build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         // Poll for records ...
         // Testing.Print.enable();
@@ -301,11 +301,11 @@ public class StreamingSourceIT extends AbstractConnectorTest {
     public void shouldFilterAllRecordsBasedOnDatabaseIncludeListFilter() throws Exception {
         // Define configuration that will ignore all events from MySQL source.
         config = simpleConfig()
-                .with(MySqlConnectorConfig.DATABASE_INCLUDE_LIST, "db-does-not-exist")
+                .with(MariaDBConnectorConfig.DATABASE_INCLUDE_LIST, "db-does-not-exist")
                 .build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
         waitForStreamingRunning("mysql", DATABASE.getServerName(), "streaming");
 
         // Lets wait for at least 35 events to be filtered.
@@ -333,13 +333,13 @@ public class StreamingSourceIT extends AbstractConnectorTest {
         REGRESSION_DATABASE.createAndInitialize();
 
         String tableName = "dbz_85_fractest";
-        config = simpleConfig().with(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
-                .with(MySqlConnectorConfig.DATABASE_INCLUDE_LIST, REGRESSION_DATABASE.getDatabaseName())
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, REGRESSION_DATABASE.qualifiedTableName(tableName))
+        config = simpleConfig().with(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
+                .with(MariaDBConnectorConfig.DATABASE_INCLUDE_LIST, REGRESSION_DATABASE.getDatabaseName())
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, REGRESSION_DATABASE.qualifiedTableName(tableName))
                 .build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         int expectedChanges = 1; // only 1 insert
 
@@ -370,13 +370,13 @@ public class StreamingSourceIT extends AbstractConnectorTest {
         REGRESSION_DATABASE.createAndInitialize();
 
         String tableName = "dbz_342_timetest";
-        config = simpleConfig().with(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
-                .with(MySqlConnectorConfig.DATABASE_INCLUDE_LIST, REGRESSION_DATABASE.getDatabaseName())
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, REGRESSION_DATABASE.qualifiedTableName(tableName))
+        config = simpleConfig().with(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
+                .with(MariaDBConnectorConfig.DATABASE_INCLUDE_LIST, REGRESSION_DATABASE.getDatabaseName())
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, REGRESSION_DATABASE.qualifiedTableName(tableName))
                 .build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         int expectedChanges = 1; // only 1 insert
 
@@ -464,13 +464,13 @@ public class StreamingSourceIT extends AbstractConnectorTest {
         REGRESSION_DATABASE.createAndInitialize();
 
         config = simpleConfig()
-                .with(MySqlConnectorConfig.SSL_MODE, SecureConnectionMode.REQUIRED)
+                .with(MariaDBConnectorConfig.SSL_MODE, SecureConnectionMode.REQUIRED)
                 .with(SET_TLS_PROTOCOLS, "TLSv1.7")
                 .build();
 
         // Start the connector ...
         Map<String, Object> result = new HashMap<>();
-        start(MySqlConnector.class, config, (success, message, error) -> {
+        start(MariaDBConnector.class, config, (success, message, error) -> {
             result.put("success", success);
             result.put("message", message);
         });
@@ -490,13 +490,13 @@ public class StreamingSourceIT extends AbstractConnectorTest {
         REGRESSION_DATABASE.createAndInitialize();
 
         config = simpleConfig()
-                .with(MySqlConnectorConfig.SSL_MODE, SecureConnectionMode.REQUIRED)
+                .with(MariaDBConnectorConfig.SSL_MODE, SecureConnectionMode.REQUIRED)
                 .with(SET_TLS_PROTOCOLS, "TLSv1.2")
                 .build();
 
         // Start the connector ...
         AtomicReference<Throwable> exception = new AtomicReference<>();
-        start(MySqlConnector.class, config, (success, message, error) -> exception.set(error));
+        start(MariaDBConnector.class, config, (success, message, error) -> exception.set(error));
 
         waitForStreamingRunning("mysql", DATABASE.getServerName(), "streaming");
         assertThat(exception.get()).isNull();
@@ -508,8 +508,8 @@ public class StreamingSourceIT extends AbstractConnectorTest {
         final String HEARTBEAT_TOPIC_PREFIX_VALUE = "myheartbeat";
 
         config = simpleConfig()
-                .with(MySqlConnectorConfig.USER, "snapper")
-                .with(MySqlConnectorConfig.PASSWORD, "snapperpass")
+                .with(MariaDBConnectorConfig.USER, "snapper")
+                .with(MariaDBConnectorConfig.PASSWORD, "snapperpass")
                 .with(AbstractTopicNamingStrategy.DEFAULT_HEARTBEAT_TOPIC_PREFIX, HEARTBEAT_TOPIC_PREFIX_VALUE)
                 .with(Heartbeat.HEARTBEAT_INTERVAL, "100")
                 .with(DatabaseHeartbeatImpl.HEARTBEAT_ACTION_QUERY_PROPERTY_NAME,
@@ -523,7 +523,7 @@ public class StreamingSourceIT extends AbstractConnectorTest {
         }
         // Start the connector ...
         AtomicReference<Throwable> exception = new AtomicReference<>();
-        start(MySqlConnector.class, config, (success, message, error) -> exception.set(error));
+        start(MariaDBConnector.class, config, (success, message, error) -> exception.set(error));
 
         waitForStreamingRunning("mysql", DATABASE.getServerName(), "streaming");
 
@@ -547,22 +547,22 @@ public class StreamingSourceIT extends AbstractConnectorTest {
     }
 
     private void inconsistentSchema(EventProcessingFailureHandlingMode mode) throws InterruptedException, SQLException {
-        final LogInterceptor logInterceptor = new LogInterceptor(MySqlStreamingChangeEventSource.class);
+        final LogInterceptor logInterceptor = new LogInterceptor(MariaDBStreamingChangeEventSource.class);
         Configuration.Builder builder = simpleConfig()
                 .with(SchemaHistory.STORE_ONLY_CAPTURED_TABLES_DDL, true)
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("orders"));
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("orders"));
 
         if (mode == null) {
             config = builder.build();
         }
         else {
             config = builder
-                    .with(MySqlConnectorConfig.INCONSISTENT_SCHEMA_HANDLING_MODE, mode)
+                    .with(MariaDBConnectorConfig.INCONSISTENT_SCHEMA_HANDLING_MODE, mode)
                     .build();
         }
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         // Poll for records ...
         // Testing.Print.enable();
@@ -571,11 +571,11 @@ public class StreamingSourceIT extends AbstractConnectorTest {
         assertThat(consumed).isGreaterThanOrEqualTo(expected);
 
         stopConnector();
-        config = builder.with(MySqlConnectorConfig.TABLE_INCLUDE_LIST,
+        config = builder.with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST,
                 DATABASE.qualifiedTableName("orders") + "," + DATABASE.qualifiedTableName("customers")).build();
 
         AtomicReference<Throwable> exception = new AtomicReference<>();
-        start(MySqlConnector.class, config, (success, message, error) -> exception.set(error));
+        start(MariaDBConnector.class, config, (success, message, error) -> exception.set(error));
 
         try (
                 MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName());

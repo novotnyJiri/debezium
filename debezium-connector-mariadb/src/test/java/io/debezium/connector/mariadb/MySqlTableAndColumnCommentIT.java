@@ -61,13 +61,13 @@ public class MySqlTableAndColumnCommentIT extends AbstractConnectorTest {
     public void shouldParseComment() throws SQLException, InterruptedException {
         // Use the DB configuration to define the connector's configuration ...
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, MySqlConnectorConfig.SnapshotMode.INITIAL)
-                .with(MySqlConnectorConfig.INCLUDE_SCHEMA_COMMENTS, true)
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, MariaDBConnectorConfig.SnapshotMode.INITIAL)
+                .with(MariaDBConnectorConfig.INCLUDE_SCHEMA_COMMENTS, true)
                 .with("datatype.propagate.source.type", ".+\\.BIGINT,.+\\.VARCHAR")
                 .build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         // Testing.Debug.enable();
         final int numDatabase = 3;

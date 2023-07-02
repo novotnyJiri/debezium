@@ -26,7 +26,7 @@ public class MySqlTextProtocolFieldReader extends AbstractMySqlFieldReader {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MySqlTextProtocolFieldReader.class);
 
-    public MySqlTextProtocolFieldReader(MySqlConnectorConfig config) {
+    public MySqlTextProtocolFieldReader(MariaDBConnectorConfig config) {
         super(config);
     }
 

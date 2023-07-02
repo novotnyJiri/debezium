@@ -36,7 +36,7 @@ import io.debezium.DebeziumException;
 import io.debezium.config.CommonConnectorConfig;
 import io.debezium.config.Configuration;
 import io.debezium.config.Configuration.Builder;
-import io.debezium.connector.mariadb.MySqlConnectorConfig.SnapshotMode;
+import io.debezium.connector.mariadb.MariaDBConnectorConfig.SnapshotMode;
 import io.debezium.data.KeyValueStore;
 import io.debezium.data.KeyValueStore.Collection;
 import io.debezium.data.SchemaChangeHistory;
@@ -92,11 +92,11 @@ public class SnapshotSourceIT extends AbstractConnectorTest {
 
     protected Configuration.Builder simpleConfig() {
         return DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
-                .with(MySqlConnectorConfig.SNAPSHOT_LOCKING_MODE, MySqlConnectorConfig.SnapshotLockingMode.MINIMAL)
+                .with(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
+                .with(MariaDBConnectorConfig.SNAPSHOT_LOCKING_MODE, MariaDBConnectorConfig.SnapshotLockingMode.MINIMAL)
                 // Explicitly enable INCLUDE_SQL_QUERY connector option. For snapshots it should have no effect as
                 // source query should not included in snapshot events.
-                .with(MySqlConnectorConfig.INCLUDE_SQL_QUERY, true);
+                .with(MariaDBConnectorConfig.INCLUDE_SQL_QUERY, true);
     }
 
     @Test
@@ -133,22 +133,22 @@ public class SnapshotSourceIT extends AbstractConnectorTest {
         final LogInterceptor logInterceptor = new LogInterceptor(MySqlSnapshotChangeEventSource.class);
 
         final Builder builder = simpleConfig()
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("customers") + "," + DATABASE.qualifiedTableName("products"))
-                .with(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, true);
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("customers") + "," + DATABASE.qualifiedTableName("products"))
+                .with(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, true);
         if (!useGlobalLock) {
             builder
-                    .with(MySqlConnectorConfig.USER, "cloud")
-                    .with(MySqlConnectorConfig.PASSWORD, "cloudpass")
-                    .with(MySqlConnectorConfig.TEST_DISABLE_GLOBAL_LOCKING, "true")
+                    .with(MariaDBConnectorConfig.USER, "cloud")
+                    .with(MariaDBConnectorConfig.PASSWORD, "cloudpass")
+                    .with(MariaDBConnectorConfig.TEST_DISABLE_GLOBAL_LOCKING, "true")
                     .with(SchemaHistory.STORE_ONLY_CAPTURED_TABLES_DDL, storeOnlyCapturedTables);
         }
         if (!data) {
-            builder.with(MySqlConnectorConfig.SNAPSHOT_MODE, SnapshotMode.SCHEMA_ONLY);
+            builder.with(MariaDBConnectorConfig.SNAPSHOT_MODE, SnapshotMode.SCHEMA_ONLY);
         }
         config = builder.build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
         waitForSnapshotToBeCompleted("mysql", DATABASE.getServerName());
 
         // Poll for records ...
@@ -263,9 +263,9 @@ public class SnapshotSourceIT extends AbstractConnectorTest {
     @Test
     public void snapshotWithBackupLocksShouldNotWaitForReads() throws Exception {
         config = simpleConfig()
-                .with(MySqlConnectorConfig.USER, "cloud")
-                .with(MySqlConnectorConfig.PASSWORD, "cloudpass")
-                .with(MySqlConnectorConfig.SNAPSHOT_LOCKING_MODE, MySqlConnectorConfig.SnapshotLockingMode.MINIMAL_PERCONA)
+                .with(MariaDBConnectorConfig.USER, "cloud")
+                .with(MariaDBConnectorConfig.PASSWORD, "cloudpass")
+                .with(MariaDBConnectorConfig.SNAPSHOT_LOCKING_MODE, MariaDBConnectorConfig.SnapshotLockingMode.MINIMAL_PERCONA)
                 .build();
 
         if (!MariaDBTestConnection.isPerconaServer()) {
@@ -291,7 +291,7 @@ public class SnapshotSourceIT extends AbstractConnectorTest {
 
         latch.await(10, TimeUnit.SECONDS);
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
         waitForSnapshotToBeCompleted("mysql", DATABASE.getServerName());
 
         // Poll for records ...
@@ -306,12 +306,12 @@ public class SnapshotSourceIT extends AbstractConnectorTest {
     @FixFor("DBZ-2456")
     public void shouldCreateSnapshotSelectively() throws Exception {
         config = simpleConfig()
-                .with(MySqlConnectorConfig.DATABASE_INCLUDE_LIST, "connector_(.*)_" + DATABASE.getIdentifier())
+                .with(MariaDBConnectorConfig.DATABASE_INCLUDE_LIST, "connector_(.*)_" + DATABASE.getIdentifier())
                 .with(CommonConnectorConfig.SNAPSHOT_MODE_TABLES, "connector_(.*).CUSTOMERS")
                 .build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
         waitForSnapshotToBeCompleted("mysql", DATABASE.getServerName());
 
         // Poll for records ...
@@ -350,14 +350,14 @@ public class SnapshotSourceIT extends AbstractConnectorTest {
     @FixFor("DBZ-3952")
     public void shouldNotFailStreamingOnNonSnapshottedTable() throws Exception {
         config = simpleConfig()
-                .with(MySqlConnectorConfig.DATABASE_INCLUDE_LIST, DATABASE.getDatabaseName())
+                .with(MariaDBConnectorConfig.DATABASE_INCLUDE_LIST, DATABASE.getDatabaseName())
                 .with(RelationalDatabaseConnectorConfig.TABLE_INCLUDE_LIST,
                         DATABASE.qualifiedTableName("ORDERS") + "," + DATABASE.qualifiedTableName("CUSTOMERS"))
                 .with(CommonConnectorConfig.SNAPSHOT_MODE_TABLES, DATABASE.qualifiedTableName("ORDERS"))
                 .build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
         waitForSnapshotToBeCompleted("mysql", DATABASE.getServerName());
 
         // Poll for records ...
@@ -400,14 +400,14 @@ public class SnapshotSourceIT extends AbstractConnectorTest {
     @FixFor("DBZ-3238")
     public void shouldSnapshotCorrectlyReadFields() throws Exception {
         config = simpleConfig()
-                .with(MySqlConnectorConfig.DATABASE_INCLUDE_LIST, "connector_read_binary_field_test_" + BINARY_FIELD_DATABASE.getIdentifier())
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, BINARY_FIELD_DATABASE.qualifiedTableName("binary_field"))
-                .with(MySqlConnectorConfig.ROW_COUNT_FOR_STREAMING_RESULT_SETS, "0")
-                .with(MySqlConnectorConfig.SNAPSHOT_FETCH_SIZE, "101")
+                .with(MariaDBConnectorConfig.DATABASE_INCLUDE_LIST, "connector_read_binary_field_test_" + BINARY_FIELD_DATABASE.getIdentifier())
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, BINARY_FIELD_DATABASE.qualifiedTableName("binary_field"))
+                .with(MariaDBConnectorConfig.ROW_COUNT_FOR_STREAMING_RESULT_SETS, "0")
+                .with(MariaDBConnectorConfig.SNAPSHOT_FETCH_SIZE, "101")
                 .build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
         waitForSnapshotToBeCompleted("mysql", BINARY_FIELD_DATABASE.getServerName());
 
         // Poll for records ...
@@ -438,13 +438,13 @@ public class SnapshotSourceIT extends AbstractConnectorTest {
     @Test
     public void shouldCreateSnapshotOfSingleDatabaseUsingInsertEvents() throws Exception {
         config = simpleConfig()
-                .with(MySqlConnectorConfig.DATABASE_INCLUDE_LIST, "connector_(.*)_" + DATABASE.getIdentifier())
+                .with(MariaDBConnectorConfig.DATABASE_INCLUDE_LIST, "connector_(.*)_" + DATABASE.getIdentifier())
                 .with("transforms", "snapshotasinsert")
                 .with("transforms.snapshotasinsert.type", "io.debezium.connector.mysql.transforms.ReadToInsertEvent")
                 .build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
         waitForSnapshotToBeCompleted("mysql", DATABASE.getServerName());
 
         // Poll for records ...
@@ -530,10 +530,10 @@ public class SnapshotSourceIT extends AbstractConnectorTest {
 
     @Test
     public void shouldCreateSnapshotOfSingleDatabaseWithSchemaChanges() throws Exception {
-        config = simpleConfig().with(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, true).build();
+        config = simpleConfig().with(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, true).build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
         waitForSnapshotToBeCompleted("mysql", DATABASE.getServerName());
 
         // Poll for records ...
@@ -614,11 +614,11 @@ public class SnapshotSourceIT extends AbstractConnectorTest {
 
     @Test(expected = DebeziumException.class)
     public void shouldCreateSnapshotSchemaOnlyRecovery_exception() throws Exception {
-        config = simpleConfig().with(MySqlConnectorConfig.SNAPSHOT_MODE, MySqlConnectorConfig.SnapshotMode.SCHEMA_ONLY_RECOVERY).build();
+        config = simpleConfig().with(MariaDBConnectorConfig.SNAPSHOT_MODE, MariaDBConnectorConfig.SnapshotMode.SCHEMA_ONLY_RECOVERY).build();
 
         // Start the connector ...
         AtomicReference<Throwable> exception = new AtomicReference<>();
-        start(MySqlConnector.class, config, (success, message, error) -> {
+        start(MariaDBConnector.class, config, (success, message, error) -> {
             exception.set(error);
         });
 
@@ -631,12 +631,12 @@ public class SnapshotSourceIT extends AbstractConnectorTest {
     @Test
     public void shouldCreateSnapshotSchemaOnlyRecovery() throws Exception {
         Configuration.Builder builder = simpleConfig()
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, MySqlConnectorConfig.SnapshotMode.INITIAL)
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("customers"))
-                .with(MySqlConnectorConfig.SCHEMA_HISTORY, MemorySchemaHistory.class.getName());
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, MariaDBConnectorConfig.SnapshotMode.INITIAL)
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("customers"))
+                .with(MariaDBConnectorConfig.SCHEMA_HISTORY, MemorySchemaHistory.class.getName());
         config = builder.build();
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         // Poll for records ...
         // Testing.Print.enable();
@@ -645,9 +645,9 @@ public class SnapshotSourceIT extends AbstractConnectorTest {
         assertThat(sourceRecords.allRecordsInOrder()).hasSize(recordCount);
         stopConnector();
 
-        builder.with(MySqlConnectorConfig.SNAPSHOT_MODE, MySqlConnectorConfig.SnapshotMode.SCHEMA_ONLY_RECOVERY);
+        builder.with(MariaDBConnectorConfig.SNAPSHOT_MODE, MariaDBConnectorConfig.SnapshotMode.SCHEMA_ONLY_RECOVERY);
         config = builder.build();
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         try (
                 MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName());
@@ -664,11 +664,11 @@ public class SnapshotSourceIT extends AbstractConnectorTest {
     @Test
     public void shouldSnapshotTablesInOrderSpecifiedInTableIncludeList() throws Exception {
         config = simpleConfig()
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST,
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST,
                         "connector_test_ro_(.*).orders,connector_test_ro_(.*).Products,connector_test_ro_(.*).products_on_hand,connector_test_ro_(.*).dbz_342_timetest")
                 .build();
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
         waitForSnapshotToBeCompleted("mysql", DATABASE.getServerName());
 
         // Poll for records ...
@@ -698,13 +698,13 @@ public class SnapshotSourceIT extends AbstractConnectorTest {
         }
 
         config = simpleConfig()
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST,
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST,
                         "connector_test_ro_(.*).Products,connector_test_ro_(.*).dbz_342_timetest")
-                .with(MySqlConnectorConfig.SNAPSHOT_TABLES_ORDER_BY_ROW_COUNT, SnapshotTablesRowCountOrder.ASCENDING)
+                .with(MariaDBConnectorConfig.SNAPSHOT_TABLES_ORDER_BY_ROW_COUNT, SnapshotTablesRowCountOrder.ASCENDING)
                 .build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
         waitForSnapshotToBeCompleted("mysql", DATABASE.getServerName());
 
         // Poll for records ...
@@ -734,13 +734,13 @@ public class SnapshotSourceIT extends AbstractConnectorTest {
         }
 
         config = simpleConfig()
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST,
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST,
                         "connector_test_ro_(.*).dbz_342_timetest,connector_test_ro_(.*).Products")
-                .with(MySqlConnectorConfig.SNAPSHOT_TABLES_ORDER_BY_ROW_COUNT, SnapshotTablesRowCountOrder.DESCENDING)
+                .with(MariaDBConnectorConfig.SNAPSHOT_TABLES_ORDER_BY_ROW_COUNT, SnapshotTablesRowCountOrder.DESCENDING)
                 .build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
         waitForSnapshotToBeCompleted("mysql", DATABASE.getServerName());
 
         // Poll for records ...
@@ -763,7 +763,7 @@ public class SnapshotSourceIT extends AbstractConnectorTest {
         config = simpleConfig()
                 .build();
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
         waitForSnapshotToBeCompleted("mysql", DATABASE.getServerName());
 
         // Poll for records ...
@@ -790,13 +790,13 @@ public class SnapshotSourceIT extends AbstractConnectorTest {
     @Test
     public void shouldCreateSnapshotSchemaOnly() throws Exception {
         config = simpleConfig()
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, MySqlConnectorConfig.SnapshotMode.SCHEMA_ONLY)
-                .with(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, true)
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, MariaDBConnectorConfig.SnapshotMode.SCHEMA_ONLY)
+                .with(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, true)
                 .with(Heartbeat.HEARTBEAT_INTERVAL, 300_000)
                 .build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
         waitForSnapshotToBeCompleted("mysql", DATABASE.getServerName());
 
         // Poll for records ...

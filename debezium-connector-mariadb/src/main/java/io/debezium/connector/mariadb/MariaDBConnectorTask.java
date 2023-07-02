@@ -19,7 +19,7 @@ import io.debezium.config.Configuration;
 import io.debezium.config.Field;
 import io.debezium.connector.base.ChangeEventQueue;
 import io.debezium.connector.common.BaseSourceTask;
-import io.debezium.connector.mariadb.MySqlConnection.MySqlConnectionConfiguration;
+import io.debezium.connector.mariadb.MariaDBConnection.MySqlConnectionConfiguration;
 import io.debezium.connector.mariadb.MariaDBConnectorConfig.BigIntUnsignedHandlingMode;
 import io.debezium.connector.mariadb.MariaDBConnectorConfig.SnapshotMode;
 import io.debezium.document.DocumentReader;
@@ -42,20 +42,20 @@ import io.debezium.spi.topic.TopicNamingStrategy;
 import io.debezium.util.Clock;
 
 /**
- * The main task executing streaming from MySQL.
+ * The main task executing streaming from MariaDB.
  * Responsible for lifecycle management of the streaming code.
  *
- * @author Jiri Pechanec
+ * @author Jiri Novotny
  *
  */
-public class MySqlConnectorTask extends BaseSourceTask<MariaDBPartition, MariaDBOffsetContext> {
+public class MariaDBConnectorTask extends BaseSourceTask<MariaDBPartition, MariaDBOffsetContext> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MySqlConnectorTask.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MariaDBConnectorTask.class);
     private static final String CONTEXT_NAME = "mysql-connector-task";
 
-    private volatile MySqlTaskContext taskContext;
+    private volatile MariaDBTaskContext taskContext;
     private volatile ChangeEventQueue<DataChangeEvent> queue;
-    private volatile MySqlConnection connection;
+    private volatile MariaDBConnection connection;
     private volatile ErrorHandler errorHandler;
     private volatile MySqlDatabaseSchema schema;
 
@@ -80,8 +80,8 @@ public class MySqlConnectorTask extends BaseSourceTask<MariaDBPartition, MariaDB
                 .withDefault("database.useCursorFetch", connectorConfig.useCursorFetch())
                 .build();
 
-        MainConnectionProvidingConnectionFactory<MySqlConnection> connectionFactory = new DefaultMainConnectionProvidingConnectionFactory<>(
-                () -> new MySqlConnection(new MySqlConnectionConfiguration(config),
+        MainConnectionProvidingConnectionFactory<MariaDBConnection> connectionFactory = new DefaultMainConnectionProvidingConnectionFactory<>(
+                () -> new MariaDBConnection(new MySqlConnectionConfiguration(config),
                         connectorConfig.useCursorFetch() ? new MySqlBinaryProtocolFieldReader(connectorConfig) : new MySqlTextProtocolFieldReader(connectorConfig)));
 
         connection = connectionFactory.mainConnection();
@@ -124,7 +124,7 @@ public class MySqlConnectorTask extends BaseSourceTask<MariaDBPartition, MariaDB
             previousOffsets.resetOffset(partition);
         }
 
-        taskContext = new MySqlTaskContext(connectorConfig, schema);
+        taskContext = new MariaDBTaskContext(connectorConfig, schema);
 
         // Set up the task record queue ...
         this.queue = new ChangeEventQueue.Builder<DataChangeEvent>()
@@ -159,7 +159,7 @@ public class MySqlConnectorTask extends BaseSourceTask<MariaDBPartition, MariaDB
                 connectorConfig.createHeartbeat(
                         topicNamingStrategy,
                         schemaNameAdjuster,
-                        () -> new MySqlConnection(new MySqlConnectionConfiguration(heartbeatConfig), connectorConfig.useCursorFetch()
+                        () -> new MariaDBConnection(new MySqlConnectionConfiguration(heartbeatConfig), connectorConfig.useCursorFetch()
                                 ? new MySqlBinaryProtocolFieldReader(connectorConfig)
                                 : new MySqlTextProtocolFieldReader(connectorConfig)),
                         exception -> {
@@ -178,7 +178,7 @@ public class MySqlConnectorTask extends BaseSourceTask<MariaDBPartition, MariaDB
                 schemaNameAdjuster,
                 signalProcessor);
 
-        final MySqlStreamingChangeEventSourceMetrics streamingMetrics = new MySqlStreamingChangeEventSourceMetrics(taskContext, queue, metadataProvider);
+        final MariaDBStreamingChangeEventSourceMetrics streamingMetrics = new MariaDBStreamingChangeEventSourceMetrics(taskContext, queue, metadataProvider);
 
         dispatcher.getSignalingActions().forEach(signalProcessor::registerSignalAction);
 
@@ -190,7 +190,7 @@ public class MySqlConnectorTask extends BaseSourceTask<MariaDBPartition, MariaDB
                 errorHandler,
                 MariaDBConnector.class,
                 connectorConfig,
-                new MySqlChangeEventSourceFactory(connectorConfig, connectionFactory, errorHandler, dispatcher, clock, schema, taskContext, streamingMetrics, queue),
+                new MariaDBChangeEventSourceFactory(connectorConfig, connectionFactory, errorHandler, dispatcher, clock, schema, taskContext, streamingMetrics, queue),
                 new MySqlChangeEventSourceMetricsFactory(streamingMetrics),
                 dispatcher,
                 schema,

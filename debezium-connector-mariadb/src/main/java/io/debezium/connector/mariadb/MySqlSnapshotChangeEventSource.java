@@ -29,8 +29,8 @@ import org.slf4j.LoggerFactory;
 
 import io.debezium.DebeziumException;
 import io.debezium.connector.SnapshotRecord;
-import io.debezium.connector.mariadb.MySqlConnection.DatabaseLocales;
-import io.debezium.connector.mariadb.MySqlOffsetContext.Loader;
+import io.debezium.connector.mariadb.MariaDBConnection.DatabaseLocales;
+import io.debezium.connector.mariadb.MariaDBOffsetContext.Loader;
 import io.debezium.data.Envelope;
 import io.debezium.function.BlockingConsumer;
 import io.debezium.jdbc.JdbcConnection;
@@ -45,12 +45,12 @@ import io.debezium.util.Clock;
 import io.debezium.util.Collect;
 import io.debezium.util.Strings;
 
-public class MySqlSnapshotChangeEventSource extends RelationalSnapshotChangeEventSource<MySqlPartition, MySqlOffsetContext> {
+public class MySqlSnapshotChangeEventSource extends RelationalSnapshotChangeEventSource<MariaDBPartition, MariaDBOffsetContext> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MySqlSnapshotChangeEventSource.class);
 
-    private final MySqlConnectorConfig connectorConfig;
-    private final MySqlConnection connection;
+    private final MariaDBConnectorConfig connectorConfig;
+    private final MariaDBConnection connection;
     private long globalLockAcquiredAt = -1;
     private long tableLockAcquiredAt = -1;
     private final RelationalTableFilters filters;
@@ -60,8 +60,8 @@ public class MySqlSnapshotChangeEventSource extends RelationalSnapshotChangeEven
     private Set<TableId> delayedSchemaSnapshotTables = Collections.emptySet();
     private final BlockingConsumer<Function<SourceRecord, SourceRecord>> lastEventProcessor;
 
-    public MySqlSnapshotChangeEventSource(MySqlConnectorConfig connectorConfig, MainConnectionProvidingConnectionFactory<MySqlConnection> connectionFactory,
-                                          MySqlDatabaseSchema schema, EventDispatcher<MySqlPartition, TableId> dispatcher, Clock clock,
+    public MySqlSnapshotChangeEventSource(MariaDBConnectorConfig connectorConfig, MainConnectionProvidingConnectionFactory<MariaDBConnection> connectionFactory,
+                                          MySqlDatabaseSchema schema, EventDispatcher<MariaDBPartition, TableId> dispatcher, Clock clock,
                                           MySqlSnapshotChangeEventSourceMetrics metrics,
                                           BlockingConsumer<Function<SourceRecord, SourceRecord>> lastEventProcessor) {
         super(connectorConfig, connectionFactory, schema, dispatcher, clock, metrics);
@@ -74,7 +74,7 @@ public class MySqlSnapshotChangeEventSource extends RelationalSnapshotChangeEven
     }
 
     @Override
-    protected SnapshottingTask getSnapshottingTask(MySqlPartition partition, MySqlOffsetContext previousOffset) {
+    protected SnapshottingTask getSnapshottingTask(MariaDBPartition partition, MariaDBOffsetContext previousOffset) {
         boolean snapshotSchema = true;
         boolean snapshotData = true;
 
@@ -100,12 +100,12 @@ public class MySqlSnapshotChangeEventSource extends RelationalSnapshotChangeEven
     }
 
     @Override
-    protected SnapshotContext<MySqlPartition, MySqlOffsetContext> prepare(MySqlPartition partition) throws Exception {
+    protected SnapshotContext<MariaDBPartition, MariaDBOffsetContext> prepare(MariaDBPartition partition) throws Exception {
         return new MySqlSnapshotContext(partition);
     }
 
     @Override
-    protected Set<TableId> getAllTableIds(RelationalSnapshotContext<MySqlPartition, MySqlOffsetContext> ctx)
+    protected Set<TableId> getAllTableIds(RelationalSnapshotContext<MariaDBPartition, MariaDBOffsetContext> ctx)
             throws Exception {
         // -------------------
         // READ DATABASE NAMES
@@ -153,7 +153,7 @@ public class MySqlSnapshotChangeEventSource extends RelationalSnapshotChangeEven
 
     @Override
     protected void lockTablesForSchemaSnapshot(ChangeEventSourceContext sourceContext,
-                                               RelationalSnapshotContext<MySqlPartition, MySqlOffsetContext> snapshotContext)
+                                               RelationalSnapshotContext<MariaDBPartition, MariaDBOffsetContext> snapshotContext)
             throws SQLException {
         // Set the transaction isolation level to REPEATABLE READ. This is the default, but the default can be changed
         // which is why we explicitly set it here.
@@ -198,7 +198,7 @@ public class MySqlSnapshotChangeEventSource extends RelationalSnapshotChangeEven
     }
 
     @Override
-    protected void releaseSchemaSnapshotLocks(RelationalSnapshotContext<MySqlPartition, MySqlOffsetContext> snapshotContext)
+    protected void releaseSchemaSnapshotLocks(RelationalSnapshotContext<MariaDBPartition, MariaDBOffsetContext> snapshotContext)
             throws SQLException {
         if (connectorConfig.getSnapshotLockingMode().usesMinimalLocking()) {
             if (isGloballyLocked()) {
@@ -216,7 +216,7 @@ public class MySqlSnapshotChangeEventSource extends RelationalSnapshotChangeEven
     }
 
     @Override
-    protected void releaseDataSnapshotLocks(RelationalSnapshotContext<MySqlPartition, MySqlOffsetContext> snapshotContext)
+    protected void releaseDataSnapshotLocks(RelationalSnapshotContext<MariaDBPartition, MariaDBOffsetContext> snapshotContext)
             throws Exception {
         if (isGloballyLocked()) {
             globalUnlock();
@@ -248,8 +248,8 @@ public class MySqlSnapshotChangeEventSource extends RelationalSnapshotChangeEven
     }
 
     @Override
-    protected void determineSnapshotOffset(RelationalSnapshotContext<MySqlPartition, MySqlOffsetContext> ctx,
-                                           MySqlOffsetContext previousOffset)
+    protected void determineSnapshotOffset(RelationalSnapshotContext<MariaDBPartition, MariaDBOffsetContext> ctx,
+                                           MariaDBOffsetContext previousOffset)
             throws Exception {
         if (!isGloballyLocked() && !isTablesLocked() && connectorConfig.getSnapshotLockingMode().usesLocking()) {
             return;
@@ -259,7 +259,7 @@ public class MySqlSnapshotChangeEventSource extends RelationalSnapshotChangeEven
             tryStartingSnapshot(ctx);
             return;
         }
-        final MySqlOffsetContext offsetContext = MySqlOffsetContext.initial(connectorConfig);
+        final MariaDBOffsetContext offsetContext = MariaDBOffsetContext.initial(connectorConfig);
         ctx.offset = offsetContext;
         LOGGER.info("Read binlog position of MySQL primary server");
         final String showMasterStmt = "SHOW MASTER STATUS";
@@ -290,7 +290,7 @@ public class MySqlSnapshotChangeEventSource extends RelationalSnapshotChangeEven
         tryStartingSnapshot(ctx);
     }
 
-    private void addSchemaEvent(RelationalSnapshotContext<MySqlPartition, MySqlOffsetContext> snapshotContext,
+    private void addSchemaEvent(RelationalSnapshotContext<MariaDBPartition, MariaDBOffsetContext> snapshotContext,
                                 String database, String ddl) {
         schemaEvents.addAll(databaseSchema.parseSnapshotDdl(snapshotContext.partition, ddl, database,
                 snapshotContext.offset, clock.currentTimeAsInstant()));
@@ -298,8 +298,8 @@ public class MySqlSnapshotChangeEventSource extends RelationalSnapshotChangeEven
 
     @Override
     protected void readTableStructure(ChangeEventSourceContext sourceContext,
-                                      RelationalSnapshotContext<MySqlPartition, MySqlOffsetContext> snapshotContext,
-                                      MySqlOffsetContext offsetContext)
+                                      RelationalSnapshotContext<MariaDBPartition, MariaDBOffsetContext> snapshotContext,
+                                      MariaDBOffsetContext offsetContext)
             throws Exception {
         Set<TableId> capturedSchemaTables;
         if (twoPhaseSchemaSnapshot()) {
@@ -353,7 +353,7 @@ public class MySqlSnapshotChangeEventSource extends RelationalSnapshotChangeEven
         }
     }
 
-    void createSchemaEventsForTables(RelationalSnapshotContext<MySqlPartition, MySqlOffsetContext> snapshotContext,
+    void createSchemaEventsForTables(RelationalSnapshotContext<MariaDBPartition, MariaDBOffsetContext> snapshotContext,
                                      final Collection<TableId> tablesToRead, final boolean firstPhase)
             throws SQLException {
         for (TableId tableId : tablesToRead) {
@@ -373,7 +373,7 @@ public class MySqlSnapshotChangeEventSource extends RelationalSnapshotChangeEven
     }
 
     @Override
-    protected SchemaChangeEvent getCreateTableEvent(RelationalSnapshotContext<MySqlPartition, MySqlOffsetContext> snapshotContext,
+    protected SchemaChangeEvent getCreateTableEvent(RelationalSnapshotContext<MariaDBPartition, MariaDBOffsetContext> snapshotContext,
                                                     Table table)
             throws SQLException {
         return SchemaChangeEvent.ofSnapshotCreate(snapshotContext.partition, snapshotContext.offset, snapshotContext.catalogName, table);
@@ -386,7 +386,7 @@ public class MySqlSnapshotChangeEventSource extends RelationalSnapshotChangeEven
      * @return a valid query string
      */
     @Override
-    protected Optional<String> getSnapshotSelect(RelationalSnapshotContext<MySqlPartition, MySqlOffsetContext> snapshotContext,
+    protected Optional<String> getSnapshotSelect(RelationalSnapshotContext<MariaDBPartition, MariaDBOffsetContext> snapshotContext,
                                                  TableId tableId, List<String> columns) {
         return Optional.of(getSnapshotSelect(tableId, columns));
     }
@@ -397,7 +397,7 @@ public class MySqlSnapshotChangeEventSource extends RelationalSnapshotChangeEven
     }
 
     @Override
-    protected Optional<String> getSnapshotConnectionFirstSelect(RelationalSnapshotContext<MySqlPartition, MySqlOffsetContext> snapshotContext, TableId tableId) {
+    protected Optional<String> getSnapshotConnectionFirstSelect(RelationalSnapshotContext<MariaDBPartition, MariaDBOffsetContext> snapshotContext, TableId tableId) {
         return Optional.of(getSnapshotSelect(tableId, List.of("*")) + " LIMIT 1");
     }
 
@@ -424,7 +424,7 @@ public class MySqlSnapshotChangeEventSource extends RelationalSnapshotChangeEven
         globalLockAcquiredAt = -1;
     }
 
-    private void tableLock(RelationalSnapshotContext<MySqlPartition, MySqlOffsetContext> snapshotContext)
+    private void tableLock(RelationalSnapshotContext<MariaDBPartition, MariaDBOffsetContext> snapshotContext)
             throws SQLException {
         // ------------------------------------
         // LOCK TABLES and READ BINLOG POSITION
@@ -478,7 +478,7 @@ public class MySqlSnapshotChangeEventSource extends RelationalSnapshotChangeEven
 
     @Override
     protected Statement readTableStatement(JdbcConnection jdbcConnection, OptionalLong rowCount) throws SQLException {
-        MySqlConnection connection = (MySqlConnection) jdbcConnection;
+        MariaDBConnection connection = (MariaDBConnection) jdbcConnection;
         final long largeTableRowCount = connectorConfig.rowCountForLargeTable();
         if (rowCount.isEmpty() || largeTableRowCount == 0 || rowCount.getAsLong() <= largeTableRowCount) {
             return super.readTableStatement(connection, rowCount);
@@ -504,7 +504,7 @@ public class MySqlSnapshotChangeEventSource extends RelationalSnapshotChangeEven
      * @return the statement; never null
      * @throws SQLException if there is a problem creating the statement
      */
-    private Statement createStatementWithLargeResultSet(MySqlConnection connection) throws SQLException {
+    private Statement createStatementWithLargeResultSet(MariaDBConnection connection) throws SQLException {
         int fetchSize = connectorConfig.getSnapshotFetchSize();
         Statement stmt = connection.connection().createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
         stmt.setFetchSize(fetchSize);
@@ -514,16 +514,16 @@ public class MySqlSnapshotChangeEventSource extends RelationalSnapshotChangeEven
     /**
      * Mutable context which is populated in the course of snapshotting.
      */
-    private static class MySqlSnapshotContext extends RelationalSnapshotContext<MySqlPartition, MySqlOffsetContext> {
+    private static class MySqlSnapshotContext extends RelationalSnapshotContext<MariaDBPartition, MariaDBOffsetContext> {
 
-        MySqlSnapshotContext(MySqlPartition partition) throws SQLException {
+        MySqlSnapshotContext(MariaDBPartition partition) throws SQLException {
             super(partition, "");
         }
     }
 
     @Override
     protected void createSchemaChangeEventsForTables(ChangeEventSourceContext sourceContext,
-                                                     RelationalSnapshotContext<MySqlPartition, MySqlOffsetContext> snapshotContext,
+                                                     RelationalSnapshotContext<MariaDBPartition, MariaDBOffsetContext> snapshotContext,
                                                      SnapshottingTask snapshottingTask)
             throws Exception {
         tryStartingSnapshot(snapshotContext);
@@ -563,7 +563,7 @@ public class MySqlSnapshotChangeEventSource extends RelationalSnapshotChangeEven
     }
 
     @Override
-    protected MySqlOffsetContext copyOffset(RelationalSnapshotContext<MySqlPartition, MySqlOffsetContext> snapshotContext) {
+    protected MariaDBOffsetContext copyOffset(RelationalSnapshotContext<MariaDBPartition, MariaDBOffsetContext> snapshotContext) {
         return new Loader(connectorConfig).load(snapshotContext.offset.getOffset());
     }
 }

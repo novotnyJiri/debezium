@@ -22,7 +22,7 @@ import io.debezium.relational.TableId;
 /**
  * Information about the source of information, which includes the position in the source binary log we have previously processed.
  * <p>
- * The {@link MySqlPartition#getSourcePartition() source partition} information describes the database whose log is being consumed. Typically, the
+ * The {@link MariaDBPartition#getSourcePartition() source partition} information describes the database whose log is being consumed. Typically, the
  * database is identified by the host address port number of the MySQL server and the name of the database. Here's a JSON-like
  * representation of an example database:
  *
@@ -34,8 +34,8 @@ import io.debezium.relational.TableId;
  *
  * <p>
  * The offset includes the {@link #binlogFilename() binlog filename}, the {@link #binlogPosition() position of the first event} in the binlog, the
- * {@link MySqlOffsetContext#eventsToSkipUponRestart() number of events to skip}, and the
- * {@link MySqlOffsetContext#rowsToSkipUponRestart() number of rows to also skip}.
+ * {@link MariaDBOffsetContext#eventsToSkipUponRestart() number of events to skip}, and the
+ * {@link MariaDBOffsetContext#rowsToSkipUponRestart() number of rows to also skip}.
  * <p>
  * Here's a JSON-like representation of an example offset:
  *
@@ -111,7 +111,7 @@ public final class SourceInfo extends BaseSourceInfo {
     private Set<TableId> tableIds;
     private String databaseName;
 
-    public SourceInfo(MySqlConnectorConfig connectorConfig) {
+    public SourceInfo(MariaDBConnectorConfig connectorConfig) {
         super(connectorConfig);
 
         this.tableIds = new HashSet<>();
@@ -223,7 +223,7 @@ public final class SourceInfo extends BaseSourceInfo {
     /**
      * Get the name of the MySQL binary log file that has last been processed.
      *
-     * @return the name of the binary log file; null if it has not been {@link MySqlOffsetContext#setBinlogStartPoint(String, long) set}
+     * @return the name of the binary log file; null if it has not been {@link MariaDBOffsetContext#setBinlogStartPoint(String, long) set}
      */
     public String binlogFilename() {
         return currentBinlogFilename;
@@ -232,7 +232,7 @@ public final class SourceInfo extends BaseSourceInfo {
     /**
      * Get the position within the MySQL binary log file of the next event to be processed.
      *
-     * @return the position within the binary log file; null if it has not been {@link MySqlOffsetContext#setBinlogStartPoint(String, long) set}
+     * @return the position within the binary log file; null if it has not been {@link MariaDBOffsetContext#setBinlogStartPoint(String, long) set}
      */
     public long binlogPosition() {
         return currentBinlogPosition;

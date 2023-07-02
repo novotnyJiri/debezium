@@ -60,15 +60,15 @@ public class MySqlJdbcSinkDataTypeConverterIT extends AbstractConnectorTest {
         Testing.Files.delete(SCHEMA_HISTORY_PATH);
 
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, MySqlConnectorConfig.SnapshotMode.INITIAL)
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("BOOLEAN_TEST") + "," + DATABASE.qualifiedTableName("BOOLEAN_TEST2"))
-                .with(MySqlConnectorConfig.PROPAGATE_COLUMN_SOURCE_TYPE, ".*")
-                .with(MySqlConnectorConfig.CUSTOM_CONVERTERS, "jdbc-sink")
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, MariaDBConnectorConfig.SnapshotMode.INITIAL)
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("BOOLEAN_TEST") + "," + DATABASE.qualifiedTableName("BOOLEAN_TEST2"))
+                .with(MariaDBConnectorConfig.PROPAGATE_COLUMN_SOURCE_TYPE, ".*")
+                .with(MariaDBConnectorConfig.CUSTOM_CONVERTERS, "jdbc-sink")
                 .with("jdbc-sink.type", JdbcSinkDataTypesConverter.class.getName())
                 .with("jdbc-sink.selector.boolean", ".*BOOLEAN_TEST.b.*|.*BOOLEAN_TEST2.b.*")
                 .build();
 
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         SourceRecords records = consumeRecordsByTopic(2 + 4 + 1);
         assertThat(records).isNotNull();
@@ -139,15 +139,15 @@ public class MySqlJdbcSinkDataTypeConverterIT extends AbstractConnectorTest {
         Testing.Files.delete(SCHEMA_HISTORY_PATH);
 
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, MySqlConnectorConfig.SnapshotMode.INITIAL)
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("REAL_TEST") + "," + DATABASE.qualifiedTableName("REAL_TEST2"))
-                .with(MySqlConnectorConfig.PROPAGATE_COLUMN_SOURCE_TYPE, ".*")
-                .with(MySqlConnectorConfig.CUSTOM_CONVERTERS, "jdbc-sink")
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, MariaDBConnectorConfig.SnapshotMode.INITIAL)
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("REAL_TEST") + "," + DATABASE.qualifiedTableName("REAL_TEST2"))
+                .with(MariaDBConnectorConfig.PROPAGATE_COLUMN_SOURCE_TYPE, ".*")
+                .with(MariaDBConnectorConfig.CUSTOM_CONVERTERS, "jdbc-sink")
                 .with("jdbc-sink.type", JdbcSinkDataTypesConverter.class.getName())
                 .with("jdbc-sink.selector.real", ".*REAL_TEST.r.*|.*REAL_TEST2.r.*")
                 .build();
 
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         SourceRecords records = consumeRecordsByTopic(2 + 4 + 1);
         assertThat(records).isNotNull();
@@ -205,15 +205,15 @@ public class MySqlJdbcSinkDataTypeConverterIT extends AbstractConnectorTest {
         Testing.Files.delete(SCHEMA_HISTORY_PATH);
 
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, MySqlConnectorConfig.SnapshotMode.INITIAL)
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("NC_TEST") + "," + DATABASE.qualifiedTableName("NC_TEST2"))
-                .with(MySqlConnectorConfig.PROPAGATE_COLUMN_SOURCE_TYPE, ".*")
-                .with(MySqlConnectorConfig.CUSTOM_CONVERTERS, "jdbc-sink")
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, MariaDBConnectorConfig.SnapshotMode.INITIAL)
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("NC_TEST") + "," + DATABASE.qualifiedTableName("NC_TEST2"))
+                .with(MariaDBConnectorConfig.PROPAGATE_COLUMN_SOURCE_TYPE, ".*")
+                .with(MariaDBConnectorConfig.CUSTOM_CONVERTERS, "jdbc-sink")
                 .with("jdbc-sink.type", JdbcSinkDataTypesConverter.class.getName())
                 .with("jdbc-sink.selector.string", ".*NC_TEST.nc.*|.*NC_TEST2.nc.*")
                 .build();
 
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         SourceRecords records = consumeRecordsByTopic(2 + 4 + 1);
         assertThat(records).isNotNull();

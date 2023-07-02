@@ -15,25 +15,25 @@ import io.debezium.pipeline.source.spi.EventMetadataProvider;
 /**
  * @author Jiri Pechanec
  */
-public class MySqlChangeEventSourceMetricsFactory extends DefaultChangeEventSourceMetricsFactory<MySqlPartition> {
+public class MySqlChangeEventSourceMetricsFactory extends DefaultChangeEventSourceMetricsFactory<MariaDBPartition> {
 
-    final MySqlStreamingChangeEventSourceMetrics streamingMetrics;
+    final MariaDBStreamingChangeEventSourceMetrics streamingMetrics;
 
-    public MySqlChangeEventSourceMetricsFactory(MySqlStreamingChangeEventSourceMetrics streamingMetrics) {
+    public MySqlChangeEventSourceMetricsFactory(MariaDBStreamingChangeEventSourceMetrics streamingMetrics) {
         this.streamingMetrics = streamingMetrics;
     }
 
     @Override
-    public <T extends CdcSourceTaskContext> SnapshotChangeEventSourceMetrics<MySqlPartition> getSnapshotMetrics(T taskContext,
-                                                                                                                ChangeEventQueueMetrics changeEventQueueMetrics,
-                                                                                                                EventMetadataProvider eventMetadataProvider) {
-        return new MySqlSnapshotChangeEventSourceMetrics((MySqlTaskContext) taskContext, changeEventQueueMetrics, eventMetadataProvider);
+    public <T extends CdcSourceTaskContext> SnapshotChangeEventSourceMetrics<MariaDBPartition> getSnapshotMetrics(T taskContext,
+                                                                                                                  ChangeEventQueueMetrics changeEventQueueMetrics,
+                                                                                                                  EventMetadataProvider eventMetadataProvider) {
+        return new MySqlSnapshotChangeEventSourceMetrics((MariaDBTaskContext) taskContext, changeEventQueueMetrics, eventMetadataProvider);
     }
 
     @Override
-    public <T extends CdcSourceTaskContext> StreamingChangeEventSourceMetrics<MySqlPartition> getStreamingMetrics(T taskContext,
-                                                                                                                  ChangeEventQueueMetrics changeEventQueueMetrics,
-                                                                                                                  EventMetadataProvider eventMetadataProvider) {
+    public <T extends CdcSourceTaskContext> StreamingChangeEventSourceMetrics<MariaDBPartition> getStreamingMetrics(T taskContext,
+                                                                                                                    ChangeEventQueueMetrics changeEventQueueMetrics,
+                                                                                                                    EventMetadataProvider eventMetadataProvider) {
         return streamingMetrics;
     }
 

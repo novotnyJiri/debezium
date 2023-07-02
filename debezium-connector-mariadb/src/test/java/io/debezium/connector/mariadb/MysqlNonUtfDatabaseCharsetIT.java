@@ -51,10 +51,10 @@ public class MysqlNonUtfDatabaseCharsetIT extends AbstractConnectorTest {
     @Test
     public void useStringsDuringSnapshots() throws InterruptedException, SQLException {
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, MySqlConnectorConfig.SnapshotMode.INITIAL)
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("DATA") + "," + DATABASE.qualifiedTableName("DATASTREAM"))
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, MariaDBConnectorConfig.SnapshotMode.INITIAL)
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("DATA") + "," + DATABASE.qualifiedTableName("DATASTREAM"))
                 .build();
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         Testing.Print.enable();
 
@@ -81,13 +81,13 @@ public class MysqlNonUtfDatabaseCharsetIT extends AbstractConnectorTest {
     @Test
     public void useByteArrayDuringSnapshots() throws InterruptedException, SQLException {
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, MySqlConnectorConfig.SnapshotMode.INITIAL)
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("DATA") + "," + DATABASE.qualifiedTableName("DATASTREAM"))
-                .with(MySqlConnectorConfig.CUSTOM_CONVERTERS, "boolean")
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, MariaDBConnectorConfig.SnapshotMode.INITIAL)
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("DATA") + "," + DATABASE.qualifiedTableName("DATASTREAM"))
+                .with(MariaDBConnectorConfig.CUSTOM_CONVERTERS, "boolean")
                 .with("boolean.type", TinyIntOneToBooleanConverter.class.getName())
                 .with("boolean.selector", ".*")
                 .build();
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         Testing.Print.enable();
 

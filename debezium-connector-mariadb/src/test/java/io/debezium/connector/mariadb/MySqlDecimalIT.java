@@ -70,12 +70,12 @@ public class MySqlDecimalIT extends AbstractConnectorTest {
     @SkipWhenKafkaVersion(value = SkipWhenKafkaVersion.KafkaVersion.KAFKA_1XX, check = EqualityCheck.EQUAL, description = "No compatible with Kafka 1.x")
     public void testPreciseDecimalHandlingMode() throws SQLException, InterruptedException {
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, MySqlConnectorConfig.SnapshotMode.INITIAL)
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName(TABLE_NAME))
-                .with(MySqlConnectorConfig.DECIMAL_HANDLING_MODE, RelationalDatabaseConnectorConfig.DecimalHandlingMode.PRECISE)
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, MariaDBConnectorConfig.SnapshotMode.INITIAL)
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName(TABLE_NAME))
+                .with(MariaDBConnectorConfig.DECIMAL_HANDLING_MODE, RelationalDatabaseConnectorConfig.DecimalHandlingMode.PRECISE)
                 .build();
 
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         assertBigDecimalChangeRecord(consumeInsert());
 
@@ -86,12 +86,12 @@ public class MySqlDecimalIT extends AbstractConnectorTest {
     @FixFor("DBZ-730")
     public void testDoubleDecimalHandlingMode() throws SQLException, InterruptedException {
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, MySqlConnectorConfig.SnapshotMode.INITIAL)
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName(TABLE_NAME))
-                .with(MySqlConnectorConfig.DECIMAL_HANDLING_MODE, RelationalDatabaseConnectorConfig.DecimalHandlingMode.DOUBLE)
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, MariaDBConnectorConfig.SnapshotMode.INITIAL)
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName(TABLE_NAME))
+                .with(MariaDBConnectorConfig.DECIMAL_HANDLING_MODE, RelationalDatabaseConnectorConfig.DecimalHandlingMode.DOUBLE)
                 .build();
 
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         assertDoubleChangeRecord(consumeInsert());
 
@@ -102,12 +102,12 @@ public class MySqlDecimalIT extends AbstractConnectorTest {
     @FixFor({ "DBZ-730", "DBZ-4730" })
     public void testStringDecimalHandlingMode() throws SQLException, InterruptedException {
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, MySqlConnectorConfig.SnapshotMode.INITIAL)
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName(TABLE_NAME))
-                .with(MySqlConnectorConfig.DECIMAL_HANDLING_MODE, RelationalDatabaseConnectorConfig.DecimalHandlingMode.STRING)
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, MariaDBConnectorConfig.SnapshotMode.INITIAL)
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName(TABLE_NAME))
+                .with(MariaDBConnectorConfig.DECIMAL_HANDLING_MODE, RelationalDatabaseConnectorConfig.DecimalHandlingMode.STRING)
                 .build();
 
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         assertStringChangeRecord(consumeInsert());
 

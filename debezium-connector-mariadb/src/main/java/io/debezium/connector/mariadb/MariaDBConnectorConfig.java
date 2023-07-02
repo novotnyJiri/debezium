@@ -39,9 +39,9 @@ import io.debezium.util.Collect;
 /**
  * The configuration properties.
  */
-public class MySqlConnectorConfig extends HistorizedRelationalDatabaseConnectorConfig {
+public class MariaDBConnectorConfig extends HistorizedRelationalDatabaseConnectorConfig {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MySqlConnectorConfig.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MariaDBConnectorConfig.class);
 
     /**
      * It is not possible to test disabled global locking locally as regular MySQL build always
@@ -650,7 +650,7 @@ public class MySqlConnectorConfig extends HistorizedRelationalDatabaseConnectorC
             .withGroup(Field.createGroupEntry(Field.Group.CONNECTOR, 25))
             .withWidth(Width.LONG)
             .withImportance(Importance.MEDIUM)
-            .withValidation(MySqlConnectorConfig::validateGtidSetExcludes)
+            .withValidation(MariaDBConnectorConfig::validateGtidSetExcludes)
             .withInvisibleRecommender()
             .withDescription("The source UUIDs used to exclude GTID ranges when determine the starting position in the MySQL server's binlog.");
 
@@ -745,7 +745,7 @@ public class MySqlConnectorConfig extends HistorizedRelationalDatabaseConnectorC
             .withWidth(Width.SHORT)
             .withImportance(Importance.MEDIUM)
             .withDescription("Whether the connector should include the original SQL query that generated the change event. "
-                    + "Note: This option requires MySQL be configured with the binlog_rows_query_log_events option set to ON. Query will not be present for events generated from snapshot. "
+                    + "Note: This option requires MariaDB be configured with the binlog_annotate_row_events option set to ON. Query will not be present for events generated from snapshot. "
                     + "WARNING: Enabling this option may expose tables or fields explicitly excluded or masked by including the original SQL statement in the change event. "
                     + "For this reason the default value is 'false'.")
             .withDefault(false);
@@ -780,7 +780,7 @@ public class MySqlConnectorConfig extends HistorizedRelationalDatabaseConnectorC
                     + "of the snapshot; in such cases set this property to 'extended'. Using a value of 'none' will prevent the connector from acquiring any "
                     + "table locks during the snapshot process. This mode can only be used in combination with snapshot.mode values of 'schema_only' or "
                     + "'schema_only_recovery' and is only safe to use if no schema changes are happening while the snapshot is taken.")
-            .withValidation(MySqlConnectorConfig::validateSnapshotLockingMode);
+            .withValidation(MariaDBConnectorConfig::validateSnapshotLockingMode);
 
     public static final Field SNAPSHOT_NEW_TABLES = Field.create("snapshot.new.tables")
             .withDisplayName("Snapshot newly added tables")
@@ -799,7 +799,7 @@ public class MySqlConnectorConfig extends HistorizedRelationalDatabaseConnectorC
     public static final Field TIME_PRECISION_MODE = RelationalDatabaseConnectorConfig.TIME_PRECISION_MODE
             .withEnum(TemporalPrecisionMode.class, TemporalPrecisionMode.ADAPTIVE_TIME_MICROSECONDS)
             .withGroup(Field.createGroupEntry(Field.Group.CONNECTOR, 26))
-            .withValidation(MySqlConnectorConfig::validateTimePrecisionMode)
+            .withValidation(MariaDBConnectorConfig::validateTimePrecisionMode)
             .withDescription("Time, date and timestamps can be represented with different kinds of precisions, including: "
                     + "'adaptive_time_microseconds': the precision of date and timestamp values is based the database column's precision; but time fields always use microseconds precision; "
                     + "'connect': always represents time, date and timestamp values using Kafka Connect's built-in representations for Time, Date, and Timestamp, "
@@ -819,7 +819,7 @@ public class MySqlConnectorConfig extends HistorizedRelationalDatabaseConnectorC
             .withDisplayName("Event deserialization failure handling")
             .withEnum(EventProcessingFailureHandlingMode.class, EventProcessingFailureHandlingMode.FAIL)
             .withGroup(Field.createGroupEntry(Field.Group.CONNECTOR, 21))
-            .withValidation(MySqlConnectorConfig::validateEventDeserializationFailureHandlingModeNotSet)
+            .withValidation(MariaDBConnectorConfig::validateEventDeserializationFailureHandlingModeNotSet)
             .withWidth(Width.SHORT)
             .withImportance(Importance.MEDIUM)
             .withDescription("Specify how failures during deserialization of binlog events (i.e. when encountering a corrupted event) should be handled, including: "
@@ -946,11 +946,11 @@ public class MySqlConnectorConfig extends HistorizedRelationalDatabaseConnectorC
     private final EventProcessingFailureHandlingMode inconsistentSchemaFailureHandlingMode;
     private final boolean readOnlyConnection;
 
-    public MySqlConnectorConfig(Configuration config) {
+    public MariaDBConnectorConfig(Configuration config) {
         super(
-                MySqlConnector.class,
+                MariaDBConnector.class,
                 config,
-                TableFilter.fromPredicate(MySqlConnectorConfig::isNotBuiltInTable),
+                TableFilter.fromPredicate(MariaDBConnectorConfig::isNotBuiltInTable),
                 true,
                 DEFAULT_SNAPSHOT_FETCH_SIZE,
                 ColumnFilterMode.CATALOG,
@@ -962,17 +962,17 @@ public class MySqlConnectorConfig extends HistorizedRelationalDatabaseConnectorC
         this.snapshotLockingMode = SnapshotLockingMode.parse(config.getString(SNAPSHOT_LOCKING_MODE), SNAPSHOT_LOCKING_MODE.defaultValueAsString());
         this.readOnlyConnection = config.getBoolean(READ_ONLY_CONNECTION);
 
-        final String snapshotNewTables = config.getString(MySqlConnectorConfig.SNAPSHOT_NEW_TABLES);
-        this.snapshotNewTables = SnapshotNewTables.parse(snapshotNewTables, MySqlConnectorConfig.SNAPSHOT_NEW_TABLES.defaultValueAsString());
+        final String snapshotNewTables = config.getString(MariaDBConnectorConfig.SNAPSHOT_NEW_TABLES);
+        this.snapshotNewTables = SnapshotNewTables.parse(snapshotNewTables, MariaDBConnectorConfig.SNAPSHOT_NEW_TABLES.defaultValueAsString());
 
-        final String inconsistentSchemaFailureHandlingMode = config.getString(MySqlConnectorConfig.INCONSISTENT_SCHEMA_HANDLING_MODE);
+        final String inconsistentSchemaFailureHandlingMode = config.getString(MariaDBConnectorConfig.INCONSISTENT_SCHEMA_HANDLING_MODE);
         this.inconsistentSchemaFailureHandlingMode = EventProcessingFailureHandlingMode.parse(inconsistentSchemaFailureHandlingMode);
 
-        this.connectionTimeout = Duration.ofMillis(config.getLong(MySqlConnectorConfig.CONNECTION_TIMEOUT_MS));
+        this.connectionTimeout = Duration.ofMillis(config.getLong(MariaDBConnectorConfig.CONNECTION_TIMEOUT_MS));
 
         // Set up the GTID filter ...
-        final String gtidSetIncludes = config.getString(MySqlConnectorConfig.GTID_SOURCE_INCLUDES);
-        final String gtidSetExcludes = config.getString(MySqlConnectorConfig.GTID_SOURCE_EXCLUDES);
+        final String gtidSetIncludes = config.getString(MariaDBConnectorConfig.GTID_SOURCE_INCLUDES);
+        final String gtidSetExcludes = config.getString(MariaDBConnectorConfig.GTID_SOURCE_EXCLUDES);
         this.gtidSourceFilter = gtidSetIncludes != null ? Predicates.includesUuids(gtidSetIncludes)
                 : (gtidSetExcludes != null ? Predicates.excludesUuids(gtidSetExcludes) : null);
 
@@ -1026,7 +1026,7 @@ public class MySqlConnectorConfig extends HistorizedRelationalDatabaseConnectorC
         // Determine which configurations are explicitly defined
         if (config.hasKey(SNAPSHOT_LOCKING_MODE.name())) {
             final SnapshotLockingMode lockingModeValue = SnapshotLockingMode.parse(
-                    config.getString(MySqlConnectorConfig.SNAPSHOT_LOCKING_MODE));
+                    config.getString(MariaDBConnectorConfig.SNAPSHOT_LOCKING_MODE));
             // Sanity check, validate the configured value is a valid option.
             if (lockingModeValue == null) {
                 problems.accept(SNAPSHOT_LOCKING_MODE, lockingModeValue, "Must be a valid snapshot.locking.mode value");
@@ -1111,7 +1111,7 @@ public class MySqlConnectorConfig extends HistorizedRelationalDatabaseConnectorC
     }
 
     public SecureConnectionMode sslMode() {
-        final String mode = config.getString(MySqlConnectorConfig.SSL_MODE);
+        final String mode = config.getString(MariaDBConnectorConfig.SSL_MODE);
         return SecureConnectionMode.parse(mode);
     }
 
@@ -1120,7 +1120,7 @@ public class MySqlConnectorConfig extends HistorizedRelationalDatabaseConnectorC
     }
 
     public int bufferSizeForStreamingChangeEventSource() {
-        return config.getInteger(MySqlConnectorConfig.BUFFER_SIZE_FOR_BINLOG_READER);
+        return config.getInteger(MariaDBConnectorConfig.BUFFER_SIZE_FOR_BINLOG_READER);
     }
 
     /**
@@ -1134,15 +1134,15 @@ public class MySqlConnectorConfig extends HistorizedRelationalDatabaseConnectorC
     }
 
     public boolean includeSchemaChangeRecords() {
-        return config.getBoolean(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES);
+        return config.getBoolean(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES);
     }
 
     public boolean includeSqlQuery() {
-        return config.getBoolean(MySqlConnectorConfig.INCLUDE_SQL_QUERY);
+        return config.getBoolean(MariaDBConnectorConfig.INCLUDE_SQL_QUERY);
     }
 
     public long rowCountForLargeTable() {
-        return config.getLong(MySqlConnectorConfig.ROW_COUNT_FOR_STREAMING_RESULT_SETS);
+        return config.getLong(MariaDBConnectorConfig.ROW_COUNT_FOR_STREAMING_RESULT_SETS);
     }
 
     @Override

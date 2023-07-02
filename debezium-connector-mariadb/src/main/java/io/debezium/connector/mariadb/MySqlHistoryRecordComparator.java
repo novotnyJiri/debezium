@@ -21,7 +21,7 @@ final class MySqlHistoryRecordComparator extends HistoryRecordComparator {
 
     /**
      * Determine whether the first offset is at or before the point in time of the second
-     * offset, where the offsets are given in JSON representation of the maps returned by {@link MySqlOffsetContext#getOffset()}.
+     * offset, where the offsets are given in JSON representation of the maps returned by {@link MariaDBOffsetContext#getOffset()}.
      * <p>
      * This logic makes a significant assumption: once a MySQL server/cluster has GTIDs enabled, they will
      * never be disabled. This is the only way to compare a position with a GTID to a position without a GTID,
@@ -37,8 +37,8 @@ final class MySqlHistoryRecordComparator extends HistoryRecordComparator {
      */
     @Override
     protected boolean isPositionAtOrBefore(Document recorded, Document desired) {
-        String recordedGtidSetStr = recorded.getString(MySqlOffsetContext.GTID_SET_KEY);
-        String desiredGtidSetStr = desired.getString(MySqlOffsetContext.GTID_SET_KEY);
+        String recordedGtidSetStr = recorded.getString(MariaDBOffsetContext.GTID_SET_KEY);
+        String desiredGtidSetStr = desired.getString(MariaDBOffsetContext.GTID_SET_KEY);
         if (desiredGtidSetStr != null) {
             // The desired position uses GTIDs, so we ideally compare using GTIDs ...
             if (recordedGtidSetStr != null) {
@@ -58,8 +58,8 @@ final class MySqlHistoryRecordComparator extends HistoryRecordComparator {
                     }
                     // In all other cases (even when recorded is in snapshot mode), recorded is before or at desired GTID.
                     // Now we need to compare how many events in that transaction we've already completed ...
-                    int recordedEventCount = recorded.getInteger(MySqlOffsetContext.EVENTS_TO_SKIP_OFFSET_KEY, 0);
-                    int desiredEventCount = desired.getInteger(MySqlOffsetContext.EVENTS_TO_SKIP_OFFSET_KEY, 0);
+                    int recordedEventCount = recorded.getInteger(MariaDBOffsetContext.EVENTS_TO_SKIP_OFFSET_KEY, 0);
+                    int desiredEventCount = desired.getInteger(MariaDBOffsetContext.EVENTS_TO_SKIP_OFFSET_KEY, 0);
                     int diff = recordedEventCount - desiredEventCount;
                     if (diff > 0) {
                         return false;
@@ -120,8 +120,8 @@ final class MySqlHistoryRecordComparator extends HistoryRecordComparator {
         }
 
         // The positions are the same, so compare the completed events in the transaction ...
-        int recordedEventCount = recorded.getInteger(MySqlOffsetContext.EVENTS_TO_SKIP_OFFSET_KEY, 0);
-        int desiredEventCount = desired.getInteger(MySqlOffsetContext.EVENTS_TO_SKIP_OFFSET_KEY, 0);
+        int recordedEventCount = recorded.getInteger(MariaDBOffsetContext.EVENTS_TO_SKIP_OFFSET_KEY, 0);
+        int desiredEventCount = desired.getInteger(MariaDBOffsetContext.EVENTS_TO_SKIP_OFFSET_KEY, 0);
         diff = recordedEventCount - desiredEventCount;
         if (diff > 0) {
             return false;

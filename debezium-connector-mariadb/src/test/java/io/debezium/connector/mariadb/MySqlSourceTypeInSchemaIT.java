@@ -65,12 +65,12 @@ public class MySqlSourceTypeInSchemaIT extends AbstractConnectorTest {
     public void shouldPropagateSourceTypeAsSchemaParameter() throws SQLException, InterruptedException {
         // Use the DB configuration to define the connector's configuration ...
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, MySqlConnectorConfig.SnapshotMode.NEVER)
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, MariaDBConnectorConfig.SnapshotMode.NEVER)
                 .with("column.propagate.source.type", ".*\\.c1,.*\\.c2,.*\\.c3.*,.*\\.f.")
                 .build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         // ---------------------------------------------------------------------------------------------------------------
         // Consume all of the events due to startup and initialization of the database
@@ -162,12 +162,12 @@ public class MySqlSourceTypeInSchemaIT extends AbstractConnectorTest {
     public void shouldPropagateSourceTypeByDatatype() throws SQLException, InterruptedException {
         // Use the DB configuration to define the connector's configuration ...
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, MySqlConnectorConfig.SnapshotMode.NEVER)
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, MariaDBConnectorConfig.SnapshotMode.NEVER)
                 .with("datatype.propagate.source.type", ".+\\.FLOAT,.+\\.VARCHAR")
                 .build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
         waitForStreamingRunning("mysql", DATABASE.getServerName(), getStreamingNamespace());
 
         // ---------------------------------------------------------------------------------------------------------------

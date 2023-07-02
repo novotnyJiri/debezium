@@ -55,11 +55,11 @@ public class MySqlTimestampColumnIT extends AbstractConnectorTest {
     @FixFor("DBZ-1243")
     public void shouldConvertDateTimeWithZeroPrecision() throws Exception {
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, MySqlConnectorConfig.SnapshotMode.NEVER)
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("t_user_black_list"))
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, MariaDBConnectorConfig.SnapshotMode.NEVER)
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("t_user_black_list"))
                 .build();
 
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         // There should be 5 records that imply create database, create table, alter table, insert row, update row.
         // If the ddl parser fails, there will only be 3; the insert/update won't occur.

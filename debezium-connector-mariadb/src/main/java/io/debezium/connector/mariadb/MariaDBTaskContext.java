@@ -15,12 +15,12 @@ import io.debezium.connector.common.CdcSourceTaskContext;
  * @author Jiri Pechanec
  *
  */
-public class MySqlTaskContext extends CdcSourceTaskContext {
+public class MariaDBTaskContext extends CdcSourceTaskContext {
 
     private final MySqlDatabaseSchema schema;
     private final BinaryLogClient binaryLogClient;
 
-    public MySqlTaskContext(MariaDBConnectorConfig config, MySqlDatabaseSchema schema) {
+    public MariaDBTaskContext(MariaDBConnectorConfig config, MySqlDatabaseSchema schema) {
         super(config.getContextName(), config.getLogicalName(), schema::tableIds);
         this.schema = schema;
         this.binaryLogClient = new BinaryLogClient(config.hostname(), config.port(), config.username(), config.password());

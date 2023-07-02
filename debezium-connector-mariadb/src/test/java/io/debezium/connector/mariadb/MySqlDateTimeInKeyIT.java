@@ -55,11 +55,11 @@ public class MySqlDateTimeInKeyIT extends AbstractConnectorTest {
     public void shouldAcceptAllZeroDatetimeInPrimaryKey() throws SQLException, InterruptedException {
         // Use the DB configuration to define the connector's configuration ...
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, MySqlConnectorConfig.SnapshotMode.INITIAL)
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, MariaDBConnectorConfig.SnapshotMode.INITIAL)
                 .build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         // Testing.Debug.enable();
         final int numDatabase = 3;

@@ -28,15 +28,15 @@ import io.debezium.spi.schema.DataCollectionId;
 import io.debezium.util.Clock;
 import io.debezium.util.Strings;
 
-public class MySqlChangeEventSourceFactory implements ChangeEventSourceFactory<MariaDBPartition, MariaDBOffsetContext> {
+public class MariaDBChangeEventSourceFactory implements ChangeEventSourceFactory<MariaDBPartition, MariaDBOffsetContext> {
 
     private final MariaDBConnectorConfig configuration;
-    private final MainConnectionProvidingConnectionFactory<MySqlConnection> connectionFactory;
+    private final MainConnectionProvidingConnectionFactory<MariaDBConnection> connectionFactory;
     private final ErrorHandler errorHandler;
     private final EventDispatcher<MariaDBPartition, TableId> dispatcher;
     private final Clock clock;
-    private final MySqlTaskContext taskContext;
-    private final MySqlStreamingChangeEventSourceMetrics streamingMetrics;
+    private final MariaDBTaskContext taskContext;
+    private final MariaDBStreamingChangeEventSourceMetrics streamingMetrics;
     private final MySqlDatabaseSchema schema;
     // MySQL snapshot requires buffering to modify the last record in the snapshot as sometimes it is
     // impossible to detect it till the snapshot is ended. Mainly when the last snapshotted table is empty.
@@ -44,10 +44,10 @@ public class MySqlChangeEventSourceFactory implements ChangeEventSourceFactory<M
     // but in the core shared code.
     private final ChangeEventQueue<DataChangeEvent> queue;
 
-    public MySqlChangeEventSourceFactory(MariaDBConnectorConfig configuration, MainConnectionProvidingConnectionFactory<MySqlConnection> connectionFactory,
-                                         ErrorHandler errorHandler, EventDispatcher<MariaDBPartition, TableId> dispatcher, Clock clock, MySqlDatabaseSchema schema,
-                                         MySqlTaskContext taskContext, MySqlStreamingChangeEventSourceMetrics streamingMetrics,
-                                         ChangeEventQueue<DataChangeEvent> queue) {
+    public MariaDBChangeEventSourceFactory(MariaDBConnectorConfig configuration, MainConnectionProvidingConnectionFactory<MariaDBConnection> connectionFactory,
+                                           ErrorHandler errorHandler, EventDispatcher<MariaDBPartition, TableId> dispatcher, Clock clock, MySqlDatabaseSchema schema,
+                                           MariaDBTaskContext taskContext, MariaDBStreamingChangeEventSourceMetrics streamingMetrics,
+                                           ChangeEventQueue<DataChangeEvent> queue) {
         this.configuration = configuration;
         this.connectionFactory = connectionFactory;
         this.errorHandler = errorHandler;

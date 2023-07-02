@@ -5,7 +5,7 @@
  */
 package io.debezium.connector.mariadb;
 
-import static io.debezium.connector.mariadb.MySqlConnectorConfig.isBuiltInDatabase;
+import static io.debezium.connector.mariadb.MariaDBConnectorConfig.isBuiltInDatabase;
 import static io.debezium.junit.EqualityCheck.LESS_THAN;
 import static junit.framework.TestCase.assertEquals;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -39,10 +39,10 @@ import io.debezium.config.Configuration;
 import io.debezium.config.EnumeratedValue;
 import io.debezium.config.Field;
 import io.debezium.connector.mariadb.MariaDBTestConnection.MariaDbVersion;
-import io.debezium.connector.mariadb.MySqlConnectorConfig.SecureConnectionMode;
-import io.debezium.connector.mariadb.MySqlConnectorConfig.SnapshotLockingMode;
-import io.debezium.connector.mariadb.MySqlConnectorConfig.SnapshotMode;
-import io.debezium.connector.mariadb.MySqlConnectorConfig.SnapshotNewTables;
+import io.debezium.connector.mariadb.MariaDBConnectorConfig.SecureConnectionMode;
+import io.debezium.connector.mariadb.MariaDBConnectorConfig.SnapshotLockingMode;
+import io.debezium.connector.mariadb.MariaDBConnectorConfig.SnapshotMode;
+import io.debezium.connector.mariadb.MariaDBConnectorConfig.SnapshotNewTables;
 import io.debezium.converters.CloudEventsConverterTest;
 import io.debezium.data.Envelope;
 import io.debezium.doc.FixFor;
@@ -108,13 +108,13 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
         config = Configuration.create()
                 .with(CommonConnectorConfig.TOPIC_PREFIX, "myserver")
                 .with(KafkaSchemaHistory.TOPIC, "myserver")
-                .with(MySqlConnectorConfig.SCHEMA_HISTORY, FileSchemaHistory.class)
+                .with(MariaDBConnectorConfig.SCHEMA_HISTORY, FileSchemaHistory.class)
                 .with(FileSchemaHistory.FILE_PATH, SCHEMA_HISTORY_PATH)
                 .build();
 
         // we expect the engine will log at least one error, so preface it ...
         logger.info("Attempting to start the connector with an INVALID configuration, so MULTIPLE error messages and exceptions will appear in the log");
-        start(MySqlConnector.class, config, (success, msg, error) -> {
+        start(MariaDBConnector.class, config, (success, msg, error) -> {
             assertThat(success).isFalse();
             assertThat(error).isNotNull();
         });
@@ -124,86 +124,86 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
     @Test
     public void shouldFailToValidateInvalidConfiguration() {
         Configuration config = Configuration.create()
-                .with(MySqlConnectorConfig.SCHEMA_HISTORY, FileSchemaHistory.class)
+                .with(MariaDBConnectorConfig.SCHEMA_HISTORY, FileSchemaHistory.class)
                 .with(FileSchemaHistory.FILE_PATH, SCHEMA_HISTORY_PATH)
                 .build();
-        MySqlConnector connector = new MySqlConnector();
+        MariaDBConnector connector = new MariaDBConnector();
         Config result = connector.validate(config.asMap());
 
-        assertConfigurationErrors(result, MySqlConnectorConfig.HOSTNAME, 1);
-        assertNoConfigurationErrors(result, MySqlConnectorConfig.PORT);
-        assertConfigurationErrors(result, MySqlConnectorConfig.USER, 1);
+        assertConfigurationErrors(result, MariaDBConnectorConfig.HOSTNAME, 1);
+        assertNoConfigurationErrors(result, MariaDBConnectorConfig.PORT);
+        assertConfigurationErrors(result, MariaDBConnectorConfig.USER, 1);
         assertConfigurationErrors(result, CommonConnectorConfig.TOPIC_PREFIX, 1);
-        assertConfigurationErrors(result, MySqlConnectorConfig.SERVER_ID);
-        assertNoConfigurationErrors(result, MySqlConnectorConfig.TABLES_IGNORE_BUILTIN);
-        assertNoConfigurationErrors(result, MySqlConnectorConfig.DATABASE_INCLUDE_LIST);
-        assertNoConfigurationErrors(result, MySqlConnectorConfig.DATABASE_EXCLUDE_LIST);
-        assertNoConfigurationErrors(result, MySqlConnectorConfig.TABLE_INCLUDE_LIST);
-        assertNoConfigurationErrors(result, MySqlConnectorConfig.TABLE_EXCLUDE_LIST);
-        assertNoConfigurationErrors(result, MySqlConnectorConfig.COLUMN_EXCLUDE_LIST);
-        assertNoConfigurationErrors(result, MySqlConnectorConfig.COLUMN_INCLUDE_LIST);
-        assertNoConfigurationErrors(result, MySqlConnectorConfig.CONNECTION_TIMEOUT_MS);
-        assertNoConfigurationErrors(result, MySqlConnectorConfig.KEEP_ALIVE);
-        assertNoConfigurationErrors(result, MySqlConnectorConfig.KEEP_ALIVE_INTERVAL_MS);
-        assertNoConfigurationErrors(result, MySqlConnectorConfig.MAX_QUEUE_SIZE);
-        assertNoConfigurationErrors(result, MySqlConnectorConfig.MAX_BATCH_SIZE);
-        assertNoConfigurationErrors(result, MySqlConnectorConfig.POLL_INTERVAL_MS);
-        assertNoConfigurationErrors(result, MySqlConnectorConfig.SCHEMA_HISTORY);
-        assertNoConfigurationErrors(result, MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES);
-        assertNoConfigurationErrors(result, MySqlConnectorConfig.SNAPSHOT_MODE);
-        assertNoConfigurationErrors(result, MySqlConnectorConfig.SNAPSHOT_LOCKING_MODE);
-        assertNoConfigurationErrors(result, MySqlConnectorConfig.SNAPSHOT_NEW_TABLES);
-        assertNoConfigurationErrors(result, MySqlConnectorConfig.SSL_MODE);
-        assertNoConfigurationErrors(result, MySqlConnectorConfig.SSL_KEYSTORE);
-        assertNoConfigurationErrors(result, MySqlConnectorConfig.SSL_KEYSTORE_PASSWORD);
-        assertNoConfigurationErrors(result, MySqlConnectorConfig.SSL_TRUSTSTORE);
-        assertNoConfigurationErrors(result, MySqlConnectorConfig.SSL_TRUSTSTORE_PASSWORD);
-        assertNoConfigurationErrors(result, MySqlConnectorConfig.DECIMAL_HANDLING_MODE);
-        assertNoConfigurationErrors(result, MySqlConnectorConfig.TIME_PRECISION_MODE);
+        assertConfigurationErrors(result, MariaDBConnectorConfig.SERVER_ID);
+        assertNoConfigurationErrors(result, MariaDBConnectorConfig.TABLES_IGNORE_BUILTIN);
+        assertNoConfigurationErrors(result, MariaDBConnectorConfig.DATABASE_INCLUDE_LIST);
+        assertNoConfigurationErrors(result, MariaDBConnectorConfig.DATABASE_EXCLUDE_LIST);
+        assertNoConfigurationErrors(result, MariaDBConnectorConfig.TABLE_INCLUDE_LIST);
+        assertNoConfigurationErrors(result, MariaDBConnectorConfig.TABLE_EXCLUDE_LIST);
+        assertNoConfigurationErrors(result, MariaDBConnectorConfig.COLUMN_EXCLUDE_LIST);
+        assertNoConfigurationErrors(result, MariaDBConnectorConfig.COLUMN_INCLUDE_LIST);
+        assertNoConfigurationErrors(result, MariaDBConnectorConfig.CONNECTION_TIMEOUT_MS);
+        assertNoConfigurationErrors(result, MariaDBConnectorConfig.KEEP_ALIVE);
+        assertNoConfigurationErrors(result, MariaDBConnectorConfig.KEEP_ALIVE_INTERVAL_MS);
+        assertNoConfigurationErrors(result, MariaDBConnectorConfig.MAX_QUEUE_SIZE);
+        assertNoConfigurationErrors(result, MariaDBConnectorConfig.MAX_BATCH_SIZE);
+        assertNoConfigurationErrors(result, MariaDBConnectorConfig.POLL_INTERVAL_MS);
+        assertNoConfigurationErrors(result, MariaDBConnectorConfig.SCHEMA_HISTORY);
+        assertNoConfigurationErrors(result, MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES);
+        assertNoConfigurationErrors(result, MariaDBConnectorConfig.SNAPSHOT_MODE);
+        assertNoConfigurationErrors(result, MariaDBConnectorConfig.SNAPSHOT_LOCKING_MODE);
+        assertNoConfigurationErrors(result, MariaDBConnectorConfig.SNAPSHOT_NEW_TABLES);
+        assertNoConfigurationErrors(result, MariaDBConnectorConfig.SSL_MODE);
+        assertNoConfigurationErrors(result, MariaDBConnectorConfig.SSL_KEYSTORE);
+        assertNoConfigurationErrors(result, MariaDBConnectorConfig.SSL_KEYSTORE_PASSWORD);
+        assertNoConfigurationErrors(result, MariaDBConnectorConfig.SSL_TRUSTSTORE);
+        assertNoConfigurationErrors(result, MariaDBConnectorConfig.SSL_TRUSTSTORE_PASSWORD);
+        assertNoConfigurationErrors(result, MariaDBConnectorConfig.DECIMAL_HANDLING_MODE);
+        assertNoConfigurationErrors(result, MariaDBConnectorConfig.TIME_PRECISION_MODE);
     }
 
     @Test
     public void shouldValidateAcceptableConfiguration() {
         Configuration config = Configuration.create().build();
-        MySqlConnector connector = new MySqlConnector();
+        MariaDBConnector connector = new MariaDBConnector();
         Config result = connector.validate(config.asMap());
 
         // validate that the required fields have errors
-        assertConfigurationErrors(result, MySqlConnectorConfig.HOSTNAME, 1);
-        assertConfigurationErrors(result, MySqlConnectorConfig.USER, 1);
-        assertConfigurationErrors(result, MySqlConnectorConfig.SERVER_ID, 1);
+        assertConfigurationErrors(result, MariaDBConnectorConfig.HOSTNAME, 1);
+        assertConfigurationErrors(result, MariaDBConnectorConfig.USER, 1);
+        assertConfigurationErrors(result, MariaDBConnectorConfig.SERVER_ID, 1);
         assertConfigurationErrors(result, CommonConnectorConfig.TOPIC_PREFIX, 1);
 
         // validate the non required fields
-        validateConfigField(result, MySqlConnectorConfig.PORT, 3306);
-        validateConfigField(result, MySqlConnectorConfig.PASSWORD, null);
-        validateConfigField(result, MySqlConnectorConfig.ON_CONNECT_STATEMENTS, null);
-        validateConfigField(result, MySqlConnectorConfig.TABLES_IGNORE_BUILTIN, Boolean.TRUE);
-        validateConfigField(result, MySqlConnectorConfig.DATABASE_INCLUDE_LIST, null);
-        validateConfigField(result, MySqlConnectorConfig.DATABASE_EXCLUDE_LIST, null);
-        validateConfigField(result, MySqlConnectorConfig.TABLE_INCLUDE_LIST, null);
-        validateConfigField(result, MySqlConnectorConfig.TABLE_EXCLUDE_LIST, null);
-        validateConfigField(result, MySqlConnectorConfig.COLUMN_EXCLUDE_LIST, null);
-        validateConfigField(result, MySqlConnectorConfig.COLUMN_INCLUDE_LIST, null);
-        validateConfigField(result, MySqlConnectorConfig.MSG_KEY_COLUMNS, null);
-        validateConfigField(result, MySqlConnectorConfig.CONNECTION_TIMEOUT_MS, 30000);
-        validateConfigField(result, MySqlConnectorConfig.KEEP_ALIVE, Boolean.TRUE);
-        validateConfigField(result, MySqlConnectorConfig.KEEP_ALIVE_INTERVAL_MS, 60000L);
-        validateConfigField(result, MySqlConnectorConfig.MAX_QUEUE_SIZE, 8192);
-        validateConfigField(result, MySqlConnectorConfig.MAX_BATCH_SIZE, 2048);
-        validateConfigField(result, MySqlConnectorConfig.POLL_INTERVAL_MS, 500L);
-        validateConfigField(result, MySqlConnectorConfig.SCHEMA_HISTORY, "io.debezium.storage.kafka.history.KafkaSchemaHistory");
-        validateConfigField(result, MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, Boolean.TRUE);
-        validateConfigField(result, MySqlConnectorConfig.SNAPSHOT_MODE, SnapshotMode.INITIAL);
-        validateConfigField(result, MySqlConnectorConfig.SNAPSHOT_LOCKING_MODE, SnapshotLockingMode.MINIMAL);
-        validateConfigField(result, MySqlConnectorConfig.SNAPSHOT_NEW_TABLES, SnapshotNewTables.OFF);
-        validateConfigField(result, MySqlConnectorConfig.SSL_MODE, SecureConnectionMode.PREFERRED);
-        validateConfigField(result, MySqlConnectorConfig.SSL_KEYSTORE, null);
-        validateConfigField(result, MySqlConnectorConfig.SSL_KEYSTORE_PASSWORD, null);
-        validateConfigField(result, MySqlConnectorConfig.SSL_TRUSTSTORE, null);
-        validateConfigField(result, MySqlConnectorConfig.SSL_TRUSTSTORE_PASSWORD, null);
-        validateConfigField(result, MySqlConnectorConfig.DECIMAL_HANDLING_MODE, DecimalHandlingMode.PRECISE);
-        validateConfigField(result, MySqlConnectorConfig.TIME_PRECISION_MODE, TemporalPrecisionMode.ADAPTIVE_TIME_MICROSECONDS);
+        validateConfigField(result, MariaDBConnectorConfig.PORT, 3306);
+        validateConfigField(result, MariaDBConnectorConfig.PASSWORD, null);
+        validateConfigField(result, MariaDBConnectorConfig.ON_CONNECT_STATEMENTS, null);
+        validateConfigField(result, MariaDBConnectorConfig.TABLES_IGNORE_BUILTIN, Boolean.TRUE);
+        validateConfigField(result, MariaDBConnectorConfig.DATABASE_INCLUDE_LIST, null);
+        validateConfigField(result, MariaDBConnectorConfig.DATABASE_EXCLUDE_LIST, null);
+        validateConfigField(result, MariaDBConnectorConfig.TABLE_INCLUDE_LIST, null);
+        validateConfigField(result, MariaDBConnectorConfig.TABLE_EXCLUDE_LIST, null);
+        validateConfigField(result, MariaDBConnectorConfig.COLUMN_EXCLUDE_LIST, null);
+        validateConfigField(result, MariaDBConnectorConfig.COLUMN_INCLUDE_LIST, null);
+        validateConfigField(result, MariaDBConnectorConfig.MSG_KEY_COLUMNS, null);
+        validateConfigField(result, MariaDBConnectorConfig.CONNECTION_TIMEOUT_MS, 30000);
+        validateConfigField(result, MariaDBConnectorConfig.KEEP_ALIVE, Boolean.TRUE);
+        validateConfigField(result, MariaDBConnectorConfig.KEEP_ALIVE_INTERVAL_MS, 60000L);
+        validateConfigField(result, MariaDBConnectorConfig.MAX_QUEUE_SIZE, 8192);
+        validateConfigField(result, MariaDBConnectorConfig.MAX_BATCH_SIZE, 2048);
+        validateConfigField(result, MariaDBConnectorConfig.POLL_INTERVAL_MS, 500L);
+        validateConfigField(result, MariaDBConnectorConfig.SCHEMA_HISTORY, "io.debezium.storage.kafka.history.KafkaSchemaHistory");
+        validateConfigField(result, MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, Boolean.TRUE);
+        validateConfigField(result, MariaDBConnectorConfig.SNAPSHOT_MODE, SnapshotMode.INITIAL);
+        validateConfigField(result, MariaDBConnectorConfig.SNAPSHOT_LOCKING_MODE, SnapshotLockingMode.MINIMAL);
+        validateConfigField(result, MariaDBConnectorConfig.SNAPSHOT_NEW_TABLES, SnapshotNewTables.OFF);
+        validateConfigField(result, MariaDBConnectorConfig.SSL_MODE, SecureConnectionMode.PREFERRED);
+        validateConfigField(result, MariaDBConnectorConfig.SSL_KEYSTORE, null);
+        validateConfigField(result, MariaDBConnectorConfig.SSL_KEYSTORE_PASSWORD, null);
+        validateConfigField(result, MariaDBConnectorConfig.SSL_TRUSTSTORE, null);
+        validateConfigField(result, MariaDBConnectorConfig.SSL_TRUSTSTORE_PASSWORD, null);
+        validateConfigField(result, MariaDBConnectorConfig.DECIMAL_HANDLING_MODE, DecimalHandlingMode.PRECISE);
+        validateConfigField(result, MariaDBConnectorConfig.TIME_PRECISION_MODE, TemporalPrecisionMode.ADAPTIVE_TIME_MICROSECONDS);
     }
 
     private <T> void validateConfigField(Config config, Field field, T expectedValue) {
@@ -238,22 +238,22 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
         // Loop over all known valid values
         for (final String acceptableValue : acceptableValues) {
             Configuration config = DATABASE.defaultJdbcConfigBuilder()
-                    .with(MySqlConnectorConfig.SERVER_ID, 18765)
+                    .with(MariaDBConnectorConfig.SERVER_ID, 18765)
                     .with(CommonConnectorConfig.TOPIC_PREFIX, "myServer")
                     .with(KafkaSchemaHistory.BOOTSTRAP_SERVERS, "some.host.com")
                     .with(KafkaSchemaHistory.TOPIC, "my.db.history.topic")
-                    .with(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, true)
+                    .with(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, true)
 
                     // Conflicting properties under test:
-                    .with(MySqlConnectorConfig.SNAPSHOT_LOCKING_MODE, SnapshotLockingMode.NONE.getValue())
-                    .with(MySqlConnectorConfig.SNAPSHOT_MODE, acceptableValue)
+                    .with(MariaDBConnectorConfig.SNAPSHOT_LOCKING_MODE, SnapshotLockingMode.NONE.getValue())
+                    .with(MariaDBConnectorConfig.SNAPSHOT_MODE, acceptableValue)
                     .build();
 
-            MySqlConnector connector = new MySqlConnector();
+            MariaDBConnector connector = new MariaDBConnector();
             Config result = connector.validate(config.asMap());
-            assertNoConfigurationErrors(result, MySqlConnectorConfig.SNAPSHOT_LOCKING_MODE);
+            assertNoConfigurationErrors(result, MariaDBConnectorConfig.SNAPSHOT_LOCKING_MODE);
 
-            assertThat(new MySqlConnectorConfig(config).getSnapshotLockingMode()).isEqualTo(SnapshotLockingMode.NONE);
+            assertThat(new MariaDBConnectorConfig(config).getSnapshotLockingMode()).isEqualTo(SnapshotLockingMode.NONE);
         }
     }
 
@@ -273,12 +273,12 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
 
     @Test
     public void shouldConsumeAllEventsFromDatabaseUsingSnapshot() throws SQLException, InterruptedException {
-        shouldConsumeAllEventsFromDatabaseUsingSnapshotByField(MySqlConnectorConfig.DATABASE_INCLUDE_LIST, 18765);
+        shouldConsumeAllEventsFromDatabaseUsingSnapshotByField(MariaDBConnectorConfig.DATABASE_INCLUDE_LIST, 18765);
     }
 
     @Test
     public void shouldConsumeAllEventsFromDatabaseUsingSnapshotOld() throws SQLException, InterruptedException {
-        shouldConsumeAllEventsFromDatabaseUsingSnapshotByField(MySqlConnectorConfig.DATABASE_INCLUDE_LIST, 18775);
+        shouldConsumeAllEventsFromDatabaseUsingSnapshotByField(MariaDBConnectorConfig.DATABASE_INCLUDE_LIST, 18775);
     }
 
     private void shouldConsumeAllEventsFromDatabaseUsingSnapshotByField(Field dbIncludeListField, int serverId) throws SQLException, InterruptedException {
@@ -293,19 +293,19 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
         // Use the DB configuration to define the connector's configuration to use the "replica"
         // which may be the same as the "master" ...
         config = DATABASE.defaultJdbcConfigBuilder()
-                .with(MySqlConnectorConfig.HOSTNAME, System.getProperty("database.replica.hostname", "localhost"))
-                .with(MySqlConnectorConfig.PORT, System.getProperty("database.replica.port", "3306"))
-                .with(MySqlConnectorConfig.SERVER_ID, serverId)
+                .with(MariaDBConnectorConfig.HOSTNAME, System.getProperty("database.replica.hostname", "localhost"))
+                .with(MariaDBConnectorConfig.PORT, System.getProperty("database.replica.port", "3306"))
+                .with(MariaDBConnectorConfig.SERVER_ID, serverId)
                 .with(CommonConnectorConfig.TOPIC_PREFIX, DATABASE.getServerName())
-                .with(MySqlConnectorConfig.POLL_INTERVAL_MS, 10)
+                .with(MariaDBConnectorConfig.POLL_INTERVAL_MS, 10)
                 .with(dbIncludeListField, DATABASE.getDatabaseName())
-                .with(MySqlConnectorConfig.SCHEMA_HISTORY, FileSchemaHistory.class)
-                .with(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, true)
+                .with(MariaDBConnectorConfig.SCHEMA_HISTORY, FileSchemaHistory.class)
+                .with(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, true)
                 .with(FileSchemaHistory.FILE_PATH, SCHEMA_HISTORY_PATH)
                 .build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         // Testing.Print.enable();
 
@@ -369,7 +369,7 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
 
         // Restart the connector and read the insert record ...
         Testing.print("*** Restarting connector after inserts were made");
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
         records = consumeRecordsByTopic(1);
         assertThat(records.recordsForTopic(DATABASE.topicForTable("products")).size()).isEqualTo(1);
         assertThat(records.topics().size()).isEqualTo(1);
@@ -380,7 +380,7 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
         Testing.print("*** Stopping connector");
         stopConnector();
         Testing.print("*** Restarting connector");
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         // ---------------------------------------------------------------------------------------------------------------
         // Simple INSERT
@@ -553,7 +553,7 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
         // ---------------------------------------------------------------------------------------------------------------
         Testing.print("*** Restarting connector");
         CompletionResult completion = new CompletionResult();
-        start(MySqlConnector.class, config, completion, (record) -> {
+        start(MariaDBConnector.class, config, completion, (record) -> {
             // We want to stop before processing record 3003 ...
             Struct key = (Struct) record.key();
             Number id = (Number) key.get("id");
@@ -615,12 +615,12 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
 
         // Read the last committed offsets, and verify the binlog coordinates ...
         final String serverName = config.getString(CommonConnectorConfig.TOPIC_PREFIX);
-        final MySqlOffsetContext.Loader loader = new MySqlOffsetContext.Loader(new MySqlConnectorConfig(Configuration.create()
+        final MariaDBOffsetContext.Loader loader = new MariaDBOffsetContext.Loader(new MariaDBConnectorConfig(Configuration.create()
                 .with(CommonConnectorConfig.TOPIC_PREFIX, serverName)
                 .build()));
-        final Map<String, String> partition = new MySqlPartition(serverName, DATABASE.getDatabaseName()).getSourcePartition();
+        final Map<String, String> partition = new MariaDBPartition(serverName, DATABASE.getDatabaseName()).getSourcePartition();
         Map<String, ?> lastCommittedOffset = readLastCommittedOffset(config, partition);
-        final MySqlOffsetContext offsetContext = loader.load(lastCommittedOffset);
+        final MariaDBOffsetContext offsetContext = loader.load(lastCommittedOffset);
         final SourceInfo persistedOffsetSource = offsetContext.getSource();
         Testing.print("Position before inserts: " + positionBeforeInserts);
         Testing.print("Position after inserts:  " + positionAfterInserts);
@@ -651,7 +651,7 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
         // assertThat(persistedOffsetSource.gtidSet()).isEqualTo(positionBeforeInserts.gtidSet());
 
         Testing.print("*** Restarting connector, and should begin with inserting 3003 (not 109!)");
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         // And consume the insert for 3003 ...
         records = consumeRecordsByTopic(1);
@@ -705,24 +705,24 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
         }
 
         config = DATABASE.defaultJdbcConfigBuilder()
-                .with(MySqlConnectorConfig.HOSTNAME, System.getProperty("database.replica.hostname", "localhost"))
-                .with(MySqlConnectorConfig.PORT, System.getProperty("database.replica.port", "3306"))
-                .with(MySqlConnectorConfig.SERVER_ID, 28765)
+                .with(MariaDBConnectorConfig.HOSTNAME, System.getProperty("database.replica.hostname", "localhost"))
+                .with(MariaDBConnectorConfig.PORT, System.getProperty("database.replica.port", "3306"))
+                .with(MariaDBConnectorConfig.SERVER_ID, 28765)
                 .with(CommonConnectorConfig.TOPIC_PREFIX, DATABASE.getServerName())
-                .with(MySqlConnectorConfig.POLL_INTERVAL_MS, 10)
-                .with(MySqlConnectorConfig.DATABASE_INCLUDE_LIST, DATABASE.getDatabaseName())
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.getDatabaseName() + ".products")
-                .with(MySqlConnectorConfig.SNAPSHOT_SELECT_STATEMENT_OVERRIDES_BY_TABLE, DATABASE.getDatabaseName() + ".products")
-                .with(MySqlConnectorConfig.SNAPSHOT_SELECT_STATEMENT_OVERRIDES_BY_TABLE + "." + DATABASE.getDatabaseName() + ".products",
+                .with(MariaDBConnectorConfig.POLL_INTERVAL_MS, 10)
+                .with(MariaDBConnectorConfig.DATABASE_INCLUDE_LIST, DATABASE.getDatabaseName())
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.getDatabaseName() + ".products")
+                .with(MariaDBConnectorConfig.SNAPSHOT_SELECT_STATEMENT_OVERRIDES_BY_TABLE, DATABASE.getDatabaseName() + ".products")
+                .with(MariaDBConnectorConfig.SNAPSHOT_SELECT_STATEMENT_OVERRIDES_BY_TABLE + "." + DATABASE.getDatabaseName() + ".products",
                         String.format("SELECT * from %s.products where id>=108 order by id", DATABASE.getDatabaseName()))
                 .with(SchemaHistory.STORE_ONLY_CAPTURED_TABLES_DDL, true)
-                .with(MySqlConnectorConfig.SCHEMA_HISTORY, FileSchemaHistory.class)
-                .with(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, true)
+                .with(MariaDBConnectorConfig.SCHEMA_HISTORY, FileSchemaHistory.class)
+                .with(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, true)
                 .with(FileSchemaHistory.FILE_PATH, SCHEMA_HISTORY_PATH)
                 .build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         // Testing.Print.enable();
 
@@ -753,26 +753,26 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
 
         String tables = String.format("%s.products,%s.products_on_hand", DATABASE.getDatabaseName(), DATABASE.getDatabaseName());
         config = DATABASE.defaultJdbcConfigBuilder()
-                .with(MySqlConnectorConfig.HOSTNAME, System.getProperty("database.replica.hostname", "localhost"))
-                .with(MySqlConnectorConfig.PORT, System.getProperty("database.replica.port", "3306"))
-                .with(MySqlConnectorConfig.SERVER_ID, 28765)
+                .with(MariaDBConnectorConfig.HOSTNAME, System.getProperty("database.replica.hostname", "localhost"))
+                .with(MariaDBConnectorConfig.PORT, System.getProperty("database.replica.port", "3306"))
+                .with(MariaDBConnectorConfig.SERVER_ID, 28765)
                 .with(CommonConnectorConfig.TOPIC_PREFIX, DATABASE.getServerName())
-                .with(MySqlConnectorConfig.POLL_INTERVAL_MS, 10)
-                .with(MySqlConnectorConfig.DATABASE_INCLUDE_LIST, DATABASE.getDatabaseName())
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, tables)
+                .with(MariaDBConnectorConfig.POLL_INTERVAL_MS, 10)
+                .with(MariaDBConnectorConfig.DATABASE_INCLUDE_LIST, DATABASE.getDatabaseName())
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, tables)
                 .with(SchemaHistory.STORE_ONLY_CAPTURED_TABLES_DDL, true)
-                .with(MySqlConnectorConfig.SNAPSHOT_SELECT_STATEMENT_OVERRIDES_BY_TABLE, tables)
-                .with(MySqlConnectorConfig.SNAPSHOT_SELECT_STATEMENT_OVERRIDES_BY_TABLE + "." + DATABASE.getDatabaseName() + ".products",
+                .with(MariaDBConnectorConfig.SNAPSHOT_SELECT_STATEMENT_OVERRIDES_BY_TABLE, tables)
+                .with(MariaDBConnectorConfig.SNAPSHOT_SELECT_STATEMENT_OVERRIDES_BY_TABLE + "." + DATABASE.getDatabaseName() + ".products",
                         String.format("SELECT * from %s.products where id>=108 order by id", DATABASE.getDatabaseName()))
-                .with(MySqlConnectorConfig.SNAPSHOT_SELECT_STATEMENT_OVERRIDES_BY_TABLE + "." + DATABASE.getDatabaseName() + ".products_on_hand",
+                .with(MariaDBConnectorConfig.SNAPSHOT_SELECT_STATEMENT_OVERRIDES_BY_TABLE + "." + DATABASE.getDatabaseName() + ".products_on_hand",
                         String.format("SELECT * from %s.products_on_hand where product_id>=108 order by product_id", DATABASE.getDatabaseName()))
-                .with(MySqlConnectorConfig.SCHEMA_HISTORY, FileSchemaHistory.class)
-                .with(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, true)
+                .with(MariaDBConnectorConfig.SCHEMA_HISTORY, FileSchemaHistory.class)
+                .with(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, true)
                 .with(FileSchemaHistory.FILE_PATH, SCHEMA_HISTORY_PATH)
                 .build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         // Testing.Print.enable();
 
@@ -801,14 +801,14 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
 
         final String tables = String.format("%s.customers", DATABASE.getDatabaseName(), DATABASE.getDatabaseName());
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, tables)
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, SnapshotMode.SCHEMA_ONLY)
-                .with(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, true)
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, tables)
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, SnapshotMode.SCHEMA_ONLY)
+                .with(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, true)
                 .with(SchemaHistory.STORE_ONLY_CAPTURED_TABLES_DDL, true)
                 .build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         // Consume the first records due to startup and initialization of the database ...
         // Testing.Print.enable();
@@ -837,14 +837,14 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
         Testing.Files.delete(SCHEMA_HISTORY_PATH);
 
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.DATABASE_INCLUDE_LIST, "no_" + DATABASE.getDatabaseName())
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, SnapshotMode.SCHEMA_ONLY)
-                .with(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, true)
+                .with(MariaDBConnectorConfig.DATABASE_INCLUDE_LIST, "no_" + DATABASE.getDatabaseName())
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, SnapshotMode.SCHEMA_ONLY)
+                .with(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, true)
                 .with(SchemaHistory.STORE_ONLY_CAPTURED_TABLES_DDL, true)
                 .build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         // Consume the first records due to startup and initialization of the database ...
         // Testing.Print.enable();
@@ -861,13 +861,13 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
 
         final String tables = String.format("%s.migration_test", DATABASE.getDatabaseName(), DATABASE.getDatabaseName());
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, tables)
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, SnapshotMode.SCHEMA_ONLY)
-                .with(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, true)
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, tables)
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, SnapshotMode.SCHEMA_ONLY)
+                .with(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, true)
                 .build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         // Wait for streaming to start
         // During the snapshot phase, 11 events in total should be generated
@@ -929,15 +929,15 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
 
         final String tables = String.format("%s.customers", DATABASE.getDatabaseName(), DATABASE.getDatabaseName());
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, tables)
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, SnapshotMode.SCHEMA_ONLY)
-                .with(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, true)
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, tables)
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, SnapshotMode.SCHEMA_ONLY)
+                .with(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, true)
                 .build();
 
         dropDatabases();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         // Consume the first records due to startup and initialization of the database ...
         // Testing.Print.enable();
@@ -967,9 +967,9 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
 
         final String tables = String.format("%s.customers", DATABASE.getDatabaseName(), DATABASE.getDatabaseName());
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, tables)
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, SnapshotMode.SCHEMA_ONLY)
-                .with(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, true)
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, tables)
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, SnapshotMode.SCHEMA_ONLY)
+                .with(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, true)
                 .with(SchemaHistory.STORE_ONLY_CAPTURED_TABLES_DDL, true)
                 .build();
 
@@ -980,7 +980,7 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
             }
         }
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         // Consume the first records due to startup and initialization of the database ...
         // Testing.Print.enable();
@@ -1006,10 +1006,10 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
 
         final String tables = String.format("%s.customers,%s.orders", DATABASE.getDatabaseName(), DATABASE.getDatabaseName());
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, tables)
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, SnapshotMode.SCHEMA_ONLY)
-                .with(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, true)
-                .with(MySqlConnectorConfig.DATABASE_INCLUDE_LIST, ".*")
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, tables)
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, SnapshotMode.SCHEMA_ONLY)
+                .with(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, true)
+                .with(MariaDBConnectorConfig.DATABASE_INCLUDE_LIST, ".*")
                 .build();
 
         dropDatabases();
@@ -1024,7 +1024,7 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
         }
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         // Consume the first records due to startup and initialization of the database ...
         // Testing.Print.enable();
@@ -1044,14 +1044,14 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
 
         final String tables = String.format("%s.customers, %s.orders", DATABASE.getDatabaseName(), DATABASE.getDatabaseName());
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, tables)
-                .with(MySqlConnectorConfig.DATABASE_INCLUDE_LIST, ".*")
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, tables)
+                .with(MariaDBConnectorConfig.DATABASE_INCLUDE_LIST, ".*")
                 .build();
 
         dropDatabases();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         // Consume the first records due to startup and initialization of the database ...
         // Testing.Print.enable();
@@ -1070,14 +1070,14 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
 
         final String tables = String.format("%s.customers, %s.orders", DATABASE.getDatabaseName(), DATABASE.getDatabaseName());
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, tables)
-                .with(MySqlConnectorConfig.DATABASE_INCLUDE_LIST, ".*")
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, tables)
+                .with(MariaDBConnectorConfig.DATABASE_INCLUDE_LIST, ".*")
                 .build();
 
         dropDatabases();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         // Consume the first records due to startup and initialization of the database ...
         // Testing.Print.enable();
@@ -1153,12 +1153,12 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
 
         // Use the DB configuration to define the connector's configuration ...
         config = RO_DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, SnapshotMode.NEVER)
-                .with(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, true)
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, SnapshotMode.NEVER)
+                .with(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, true)
                 .build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         // Consume the first records due to startup and initialization of the database ...
         // Testing.Print.enable();
@@ -1199,12 +1199,12 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
 
         // Use the DB configuration to define the connector's configuration ...
         config = RO_DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.COLUMN_INCLUDE_LIST, RO_DATABASE.qualifiedTableName("orders") + ".order_number")
-                .with(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
+                .with(MariaDBConnectorConfig.COLUMN_INCLUDE_LIST, RO_DATABASE.qualifiedTableName("orders") + ".order_number")
+                .with(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
                 .build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         // Consume the first records due to startup and initialization of the database ...
         // Testing.Print.enable();
@@ -1257,13 +1257,13 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
 
         // Use the DB configuration to define the connector's configuration ...
         config = RO_DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, RO_DATABASE.qualifiedTableName("order"))
-                .with(MySqlConnectorConfig.COLUMN_INCLUDE_LIST, RO_DATABASE.qualifiedTableName("order") + ".select")
-                .with(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, RO_DATABASE.qualifiedTableName("order"))
+                .with(MariaDBConnectorConfig.COLUMN_INCLUDE_LIST, RO_DATABASE.qualifiedTableName("order") + ".select")
+                .with(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
                 .build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         // Consume the first records due to startup and initialization of the database ...
         // Testing.Print.enable();
@@ -1304,13 +1304,13 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
 
         // Use the DB configuration to define the connector's configuration ...
         config = RO_DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.COLUMN_EXCLUDE_LIST, RO_DATABASE.qualifiedTableName("orders") + ".order_number")
+                .with(MariaDBConnectorConfig.COLUMN_EXCLUDE_LIST, RO_DATABASE.qualifiedTableName("orders") + ".order_number")
                 .with("column.mask.with.12.chars", RO_DATABASE.qualifiedTableName("customers") + ".email")
-                .with(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
+                .with(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
                 .build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         // Consume the first records due to startup and initialization of the database ...
         // Testing.Print.enable();
@@ -1361,11 +1361,11 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
         // Use the DB configuration to define the connector's configuration ...
         config = RO_DATABASE.defaultConfig()
                 .with("column.mask.hash.SHA-256.with.salt.CzQMA0cB5K", RO_DATABASE.qualifiedTableName("customers") + ".email")
-                .with(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
+                .with(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
                 .build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         // Consume the first records due to startup and initialization of the database ...
         // Testing.Print.enable();
@@ -1413,11 +1413,11 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
         // Use the DB configuration to define the connector's configuration ...
         config = RO_DATABASE.defaultConfig()
                 .with("column.truncate.to.7.chars", RO_DATABASE.qualifiedTableName("customers") + ".email")
-                .with(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
+                .with(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
                 .build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         // Consume the first records due to startup and initialization of the database ...
         // Testing.Print.enable();
@@ -1461,11 +1461,11 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
     @FixFor("DBZ-582")
     public void shouldEmitTombstoneOnDeleteByDefault() throws Exception {
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, MySqlConnectorConfig.SnapshotMode.NEVER)
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, MariaDBConnectorConfig.SnapshotMode.NEVER)
                 .build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         // ---------------------------------------------------------------------------------------------------------------
         // Consume all of the events due to startup and initialization of the database
@@ -1504,12 +1504,12 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
     @FixFor("DBZ-582")
     public void shouldEmitNoTombstoneOnDelete() throws Exception {
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, MySqlConnectorConfig.SnapshotMode.NEVER)
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, MariaDBConnectorConfig.SnapshotMode.NEVER)
                 .with(CommonConnectorConfig.TOMBSTONES_ON_DELETE, false)
                 .build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         // Testing.Print.enable();
         // ---------------------------------------------------------------------------------------------------------------
@@ -1550,12 +1550,12 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
     @FixFor("DBZ-794")
     public void shouldEmitNoSavepoints() throws Exception {
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, MySqlConnectorConfig.SnapshotMode.NEVER)
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, MariaDBConnectorConfig.SnapshotMode.NEVER)
                 .with(CommonConnectorConfig.TOMBSTONES_ON_DELETE, false)
                 .build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         // ---------------------------------------------------------------------------------------------------------------
         // Consume all of the events due to startup and initialization of the database
@@ -1599,15 +1599,15 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
         final String tableName = "products";
 
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
+                .with(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
                 .with(CommonConnectorConfig.TOMBSTONES_ON_DELETE, false)
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName(tableName))
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName(tableName))
                 // Explicitly configure connector TO parse query
-                .with(MySqlConnectorConfig.INCLUDE_SQL_QUERY, true)
+                .with(MariaDBConnectorConfig.INCLUDE_SQL_QUERY, true)
                 .build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
         waitForStreamingRunning(DATABASE.getServerName());
 
         // Flush all existing records not related to the test.
@@ -1651,15 +1651,15 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
         final String tableName = "products";
 
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
+                .with(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
                 .with(CommonConnectorConfig.TOMBSTONES_ON_DELETE, false)
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName(tableName))
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName(tableName))
                 // Explicitly configure connector to NOT parse query
-                .with(MySqlConnectorConfig.INCLUDE_SQL_QUERY, false)
+                .with(MariaDBConnectorConfig.INCLUDE_SQL_QUERY, false)
                 .build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         // Flush all existing records not related to the test.
         consumeRecords(PRODUCTS_TABLE_EVENT_COUNT, null);
@@ -1703,15 +1703,15 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
         final String tableName = "products";
 
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
+                .with(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
                 .with(CommonConnectorConfig.TOMBSTONES_ON_DELETE, false)
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName(tableName))
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName(tableName))
                 // Explicitly configure connector TO parse query
-                .with(MySqlConnectorConfig.INCLUDE_SQL_QUERY, true)
+                .with(MariaDBConnectorConfig.INCLUDE_SQL_QUERY, true)
                 .build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         // Flush all existing records not related to the test.
         consumeRecords(PRODUCTS_TABLE_EVENT_COUNT, null);
@@ -1755,15 +1755,15 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
         final String tableName = "products";
 
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
+                .with(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
                 .with(CommonConnectorConfig.TOMBSTONES_ON_DELETE, false)
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName(tableName))
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName(tableName))
                 // Explicitly configure connector TO parse query
-                .with(MySqlConnectorConfig.INCLUDE_SQL_QUERY, true)
+                .with(MariaDBConnectorConfig.INCLUDE_SQL_QUERY, true)
                 .build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         // Flush all existing records not related to the test.
         consumeRecords(PRODUCTS_TABLE_EVENT_COUNT, null);
@@ -1778,7 +1778,7 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
         try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {
             try (JdbcConnection connection = db.connect()) {
                 // Enable Query log option
-                connection.execute("SET binlog_rows_query_log_events=ON");
+                connection.execute("SET binlog_annotate_row_events=ON");
 
                 // Execute insert statement.
                 connection.execute(insertSqlStatement1);
@@ -1818,15 +1818,15 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
         final String tableName = "products";
 
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
+                .with(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
                 .with(CommonConnectorConfig.TOMBSTONES_ON_DELETE, false)
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName(tableName))
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName(tableName))
                 // Explicitly configure connector TO parse query
-                .with(MySqlConnectorConfig.INCLUDE_SQL_QUERY, true)
+                .with(MariaDBConnectorConfig.INCLUDE_SQL_QUERY, true)
                 .build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         // Flush all existing records not related to the test.
         consumeRecords(PRODUCTS_TABLE_EVENT_COUNT, null);
@@ -1879,15 +1879,15 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
         final String tableName = "orders";
 
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
+                .with(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
                 .with(CommonConnectorConfig.TOMBSTONES_ON_DELETE, false)
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName(tableName))
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName(tableName))
                 // Explicitly configure connector TO parse query
-                .with(MySqlConnectorConfig.INCLUDE_SQL_QUERY, true)
+                .with(MariaDBConnectorConfig.INCLUDE_SQL_QUERY, true)
                 .build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         // Flush all existing records not related to the test.
         consumeRecords(ORDERS_TABLE_EVENT_COUNT, null);
@@ -1930,15 +1930,15 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
         final String tableName = "orders";
 
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
+                .with(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
                 .with(CommonConnectorConfig.TOMBSTONES_ON_DELETE, false)
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName(tableName))
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName(tableName))
                 // Explicitly configure connector TO parse query
-                .with(MySqlConnectorConfig.INCLUDE_SQL_QUERY, true)
+                .with(MariaDBConnectorConfig.INCLUDE_SQL_QUERY, true)
                 .build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         // Flush all existing records not related to the test.
         consumeRecords(ORDERS_TABLE_EVENT_COUNT, null);
@@ -1989,15 +1989,15 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
         final String tableName = "products";
 
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
+                .with(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
                 .with(CommonConnectorConfig.TOMBSTONES_ON_DELETE, false)
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName(tableName))
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName(tableName))
                 // Explicitly configure connector TO parse query
-                .with(MySqlConnectorConfig.INCLUDE_SQL_QUERY, true)
+                .with(MariaDBConnectorConfig.INCLUDE_SQL_QUERY, true)
                 .build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         // Flush all existing records not related to the test.
         consumeRecords(PRODUCTS_TABLE_EVENT_COUNT, null);
@@ -2040,15 +2040,15 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
         final String tableName = "orders";
 
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
+                .with(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
                 .with(CommonConnectorConfig.TOMBSTONES_ON_DELETE, false)
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName(tableName))
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName(tableName))
                 // Explicitly configure connector TO parse query
-                .with(MySqlConnectorConfig.INCLUDE_SQL_QUERY, true)
+                .with(MariaDBConnectorConfig.INCLUDE_SQL_QUERY, true)
                 .build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         // Flush all existing records not related to the test.
         consumeRecords(ORDERS_TABLE_EVENT_COUNT, null);
@@ -2096,15 +2096,15 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
     @FixFor("DBZ-1234")
     public void shouldFailToValidateAdaptivePrecisionMode() throws InterruptedException {
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, true)
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, MySqlConnectorConfig.SnapshotMode.NEVER)
-                .with(MySqlConnectorConfig.TIME_PRECISION_MODE, TemporalPrecisionMode.ADAPTIVE)
+                .with(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, true)
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, MariaDBConnectorConfig.SnapshotMode.NEVER)
+                .with(MariaDBConnectorConfig.TIME_PRECISION_MODE, TemporalPrecisionMode.ADAPTIVE)
                 .build();
 
-        MySqlConnector connector = new MySqlConnector();
+        MariaDBConnector connector = new MariaDBConnector();
         Config result = connector.validate(config.asMap());
 
-        assertConfigurationErrors(result, MySqlConnectorConfig.TIME_PRECISION_MODE);
+        assertConfigurationErrors(result, MariaDBConnectorConfig.TIME_PRECISION_MODE);
     }
 
     @Test
@@ -2113,11 +2113,11 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
         final LogInterceptor logInterceptor = new LogInterceptor(RelationalDatabaseSchema.class);
 
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, SnapshotMode.INITIAL)
-                .with(MySqlConnectorConfig.DATABASE_INCLUDE_LIST, "my_database")
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, SnapshotMode.INITIAL)
+                .with(MariaDBConnectorConfig.DATABASE_INCLUDE_LIST, "my_database")
                 .build();
 
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         consumeRecordsByTopic(12);
         waitForAvailableRecords(100, TimeUnit.MILLISECONDS);
@@ -2131,10 +2131,10 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
         final LogInterceptor logInterceptor = new LogInterceptor(RelationalDatabaseSchema.class);
 
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, SnapshotMode.INITIAL)
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, SnapshotMode.INITIAL)
                 .build();
 
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         consumeRecordsByTopic(12);
         waitForAvailableRecords(100, TimeUnit.MILLISECONDS);
@@ -2149,11 +2149,11 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
         final LogInterceptor logInterceptor = new LogInterceptor(RelationalDatabaseSchema.class);
 
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, MySqlConnectorConfig.SnapshotMode.INITIAL)
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("my_products"))
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, MariaDBConnectorConfig.SnapshotMode.INITIAL)
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("my_products"))
                 .build();
 
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
         assertConnectorIsRunning();
         waitForSnapshotToBeCompleted("mysql", DATABASE.getServerName());
 
@@ -2170,10 +2170,10 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
         final LogInterceptor logInterceptor = new LogInterceptor(RelationalDatabaseSchema.class);
 
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, MySqlConnectorConfig.SnapshotMode.INITIAL)
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, MariaDBConnectorConfig.SnapshotMode.INITIAL)
                 .build();
 
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
         assertConnectorIsRunning();
 
         consumeRecordsByTopic(12);
@@ -2189,17 +2189,17 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
         final String tableName = "products";
 
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
+                .with(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
                 .with(CommonConnectorConfig.TOMBSTONES_ON_DELETE, false)
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName(tableName))
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName(tableName))
                 // Explicitly configure connector TO parse query
-                .with(MySqlConnectorConfig.INCLUDE_SQL_QUERY, true)
+                .with(MariaDBConnectorConfig.INCLUDE_SQL_QUERY, true)
                 // rewrite key from table 'products': from {id} to {id, name}
-                .with(MySqlConnectorConfig.MSG_KEY_COLUMNS, "(.*).products:id,name")
+                .with(MariaDBConnectorConfig.MSG_KEY_COLUMNS, "(.*).products:id,name")
                 .build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         final SourceRecords records = consumeRecordsByTopic(9);
         // Parse through the source record for the query value.
@@ -2219,17 +2219,17 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
         final String tableName = "products";
 
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
+                .with(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
                 .with(CommonConnectorConfig.TOMBSTONES_ON_DELETE, false)
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName(tableName))
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName(tableName))
                 // Explicitly configure connector TO parse query
-                .with(MySqlConnectorConfig.INCLUDE_SQL_QUERY, true)
+                .with(MariaDBConnectorConfig.INCLUDE_SQL_QUERY, true)
                 // rewrite key from table 'products': from {id} to {id, name}
-                .with(MySqlConnectorConfig.MSG_KEY_COLUMNS, "   (.*).products:id,name   ")
+                .with(MariaDBConnectorConfig.MSG_KEY_COLUMNS, "   (.*).products:id,name   ")
                 .build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         final SourceRecords records = consumeRecordsByTopic(9);
         // Parse through the source record for the query value.
@@ -2249,15 +2249,15 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
         final String tableName = "products";
 
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
+                .with(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
                 .with(CommonConnectorConfig.TOMBSTONES_ON_DELETE, false)
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName(tableName))
-                .with(MySqlConnectorConfig.INCLUDE_SQL_QUERY, true)
-                .with(MySqlConnectorConfig.MSG_KEY_COLUMNS, "(.*).products:id,name;")
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName(tableName))
+                .with(MariaDBConnectorConfig.INCLUDE_SQL_QUERY, true)
+                .with(MariaDBConnectorConfig.MSG_KEY_COLUMNS, "(.*).products:id,name;")
                 .build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         final SourceRecords records = consumeRecordsByTopic(9);
         // Parse through the source record for the query value.
@@ -2279,12 +2279,12 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
         final String tableName = "products";
 
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName(tableName))
+                .with(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName(tableName))
                 .build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         final SourceRecords records = consumeRecordsByTopic(PRODUCTS_TABLE_EVENT_COUNT);
         final List<SourceRecord> table = records.recordsForTopic(DATABASE.topicForTable(tableName));
@@ -2309,11 +2309,11 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
     @FixFor("DBZ-1531")
     public void shouldEmitHeadersOnPrimaryKeyUpdate() throws Exception {
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, MySqlConnectorConfig.SnapshotMode.NEVER)
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, MariaDBConnectorConfig.SnapshotMode.NEVER)
                 .build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         // ---------------------------------------------------------------------------------------------------------------
         // Consume all of the events due to startup and initialization of the database
@@ -2360,13 +2360,13 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
     @FixFor("DBZ-1895")
     public void shouldEmitNoEventsForSkippedCreateOperations() throws Exception {
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, MySqlConnectorConfig.SnapshotMode.SCHEMA_ONLY)
-                .with(MySqlConnectorConfig.SKIPPED_OPERATIONS, "c")
+                .with(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, MariaDBConnectorConfig.SnapshotMode.SCHEMA_ONLY)
+                .with(MariaDBConnectorConfig.SKIPPED_OPERATIONS, "c")
                 .build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
         waitForSnapshotToBeCompleted("mysql", DATABASE.getServerName());
 
         try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
@@ -2400,14 +2400,14 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
     @FixFor("DBZ-1895")
     public void shouldEmitNoEventsForSkippedUpdateAndDeleteOperations() throws Exception {
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, MySqlConnectorConfig.SnapshotMode.SCHEMA_ONLY)
-                .with(MySqlConnectorConfig.TOMBSTONES_ON_DELETE, false)
-                .with(MySqlConnectorConfig.SKIPPED_OPERATIONS, "u,d")
+                .with(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, MariaDBConnectorConfig.SnapshotMode.SCHEMA_ONLY)
+                .with(MariaDBConnectorConfig.TOMBSTONES_ON_DELETE, false)
+                .with(MariaDBConnectorConfig.SKIPPED_OPERATIONS, "u,d")
                 .build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
         waitForSnapshotToBeCompleted("mysql", DATABASE.getServerName());
 
         try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
@@ -2437,11 +2437,11 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
         final LogInterceptor logInterceptor = new LogInterceptor(RelationalDatabaseSchema.class);
 
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, SnapshotMode.NEVER)
-                .with(MySqlConnectorConfig.DATABASE_INCLUDE_LIST, "my_database")
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, SnapshotMode.NEVER)
+                .with(MariaDBConnectorConfig.DATABASE_INCLUDE_LIST, "my_database")
                 .build();
 
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         consumeRecordsByTopic(12);
         waitForAvailableRecords(100, TimeUnit.MILLISECONDS);
@@ -2453,15 +2453,15 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
     @FixFor("DBZ-3949")
     public void testDmlInChangeEvents() throws Exception {
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("products"))
-                .with(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, MySqlConnectorConfig.SnapshotMode.SCHEMA_ONLY)
-                .with(MySqlConnectorConfig.EVENT_DESERIALIZATION_FAILURE_HANDLING_MODE, CommonConnectorConfig.EventProcessingFailureHandlingMode.FAIL)
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("products"))
+                .with(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, MariaDBConnectorConfig.SnapshotMode.SCHEMA_ONLY)
+                .with(MariaDBConnectorConfig.EVENT_DESERIALIZATION_FAILURE_HANDLING_MODE, CommonConnectorConfig.EventProcessingFailureHandlingMode.FAIL)
                 .build();
 
         // Start the connector.
         CompletionResult completion = new CompletionResult();
-        start(MySqlConnector.class, config, completion);
+        start(MariaDBConnector.class, config, completion);
         waitForStreamingRunning(DATABASE.getServerName());
 
         // Do some changes.
@@ -2510,12 +2510,12 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
     @FixFor("DBZ-5052")
     public void shouldNotSendTombstonesWhenNotSupportedByHandler() throws Exception {
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, MySqlConnectorConfig.SnapshotMode.SCHEMA_ONLY)
-                .with(MySqlConnectorConfig.SKIPPED_OPERATIONS, "c")
+                .with(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, MariaDBConnectorConfig.SnapshotMode.SCHEMA_ONLY)
+                .with(MariaDBConnectorConfig.SKIPPED_OPERATIONS, "c")
                 .build();
 
-        start(MySqlConnector.class, config, new NoTombStonesHandler(consumedLines));
+        start(MariaDBConnector.class, config, new NoTombStonesHandler(consumedLines));
         waitForSnapshotToBeCompleted("mysql", DATABASE.getServerName());
 
         try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName());) {
@@ -2542,13 +2542,13 @@ public class MariaDBConnectorIT extends AbstractConnectorTest {
     @FixFor("DBZ-5610")
     public void shouldEmitTruncateOperation() throws Exception {
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, SnapshotMode.SCHEMA_ONLY)
-                .with(MySqlConnectorConfig.SNAPSHOT_LOCKING_MODE, SnapshotLockingMode.NONE)
-                .with(MySqlConnectorConfig.SKIPPED_OPERATIONS, "none")
+                .with(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, SnapshotMode.SCHEMA_ONLY)
+                .with(MariaDBConnectorConfig.SNAPSHOT_LOCKING_MODE, SnapshotLockingMode.NONE)
+                .with(MariaDBConnectorConfig.SKIPPED_OPERATIONS, "none")
                 .build();
 
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
         waitForSnapshotToBeCompleted("mysql", DATABASE.getServerName());
 
         try (MariaDBTestConnection db = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName())) {

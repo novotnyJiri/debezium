@@ -7,15 +7,15 @@ package io.debezium.connector.mariadb;
 
 import io.debezium.connector.common.AbstractPartitionTest;
 
-public class MySqlPartitionTest extends AbstractPartitionTest<MySqlPartition> {
+public class MariaDBPartitionTest extends AbstractPartitionTest<MariaDBPartition> {
 
     @Override
-    protected MySqlPartition createPartition1() {
-        return new MySqlPartition("server1", "database1");
+    protected MariaDBPartition createPartition1() {
+        return new MariaDBPartition("server1", "database1");
     }
 
     @Override
-    protected MySqlPartition createPartition2() {
-        return new MySqlPartition("server2", "database1");
+    protected MariaDBPartition createPartition2() {
+        return new MariaDBPartition("server2", "database1");
     }
 }

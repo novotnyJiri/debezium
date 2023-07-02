@@ -30,7 +30,7 @@ public class MySqlBinaryProtocolFieldReader extends AbstractMySqlFieldReader {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MySqlBinaryProtocolFieldReader.class);
 
-    public MySqlBinaryProtocolFieldReader(MySqlConnectorConfig config) {
+    public MySqlBinaryProtocolFieldReader(MariaDBConnectorConfig config) {
         super(config);
     }
 

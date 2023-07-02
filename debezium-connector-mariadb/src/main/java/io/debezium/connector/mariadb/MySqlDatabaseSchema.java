@@ -53,7 +53,7 @@ import io.debezium.util.Strings;
 /**
  * Component that records the schema history for databases hosted by a MySQL database server. The schema information includes
  * the {@link Tables table definitions} and the Kafka Connect {@link #schemaFor(TableId) Schema}s for each table, where the
- * {@link Schema} excludes any columns that have been {@link MySqlConnectorConfig#COLUMN_EXCLUDE_LIST specified} in the
+ * {@link Schema} excludes any columns that have been {@link MariaDBConnectorConfig#COLUMN_EXCLUDE_LIST specified} in the
  * configuration.
  *
  * @author Randall Hauch
@@ -70,14 +70,14 @@ public class MySqlDatabaseSchema extends HistorizedRelationalDatabaseSchema {
     private final Map<Long, TableId> tableIdsByTableNumber = new ConcurrentHashMap<>();
     private final Map<Long, TableId> excludeTableIdsByTableNumber = new ConcurrentHashMap<>();
     private boolean storageInitializationExecuted = false;
-    private final MySqlConnectorConfig connectorConfig;
+    private final MariaDBConnectorConfig connectorConfig;
 
     /**
-     * Create a schema component given the supplied {@link MySqlConnectorConfig MySQL connector configuration}.
+     * Create a schema component given the supplied {@link MariaDBConnectorConfig MySQL connector configuration}.
      * The DDL statements passed to the schema are parsed and a logical model of the database schema is created.
      *
      */
-    public MySqlDatabaseSchema(MySqlConnectorConfig connectorConfig, MySqlValueConverters valueConverter, TopicNamingStrategy<TableId> topicNamingStrategy,
+    public MySqlDatabaseSchema(MariaDBConnectorConfig connectorConfig, MySqlValueConverters valueConverter, TopicNamingStrategy<TableId> topicNamingStrategy,
                                SchemaNameAdjuster schemaNameAdjuster, boolean tableIdCaseInsensitive) {
         super(connectorConfig, topicNamingStrategy, connectorConfig.getTableFilters().dataCollectionFilter(), connectorConfig.getColumnFilter(),
                 new TableSchemaBuilder(
@@ -187,20 +187,20 @@ public class MySqlDatabaseSchema extends HistorizedRelationalDatabaseSchema {
         }
     }
 
-    public List<SchemaChangeEvent> parseSnapshotDdl(MySqlPartition partition, String ddlStatements, String databaseName,
-                                                    MySqlOffsetContext offset, Instant sourceTime) {
+    public List<SchemaChangeEvent> parseSnapshotDdl(MariaDBPartition partition, String ddlStatements, String databaseName,
+                                                    MariaDBOffsetContext offset, Instant sourceTime) {
         LOGGER.debug("Processing snapshot DDL '{}' for database '{}'", ddlStatements, databaseName);
         return parseDdl(partition, ddlStatements, databaseName, offset, sourceTime, true);
     }
 
-    public List<SchemaChangeEvent> parseStreamingDdl(MySqlPartition partition, String ddlStatements, String databaseName,
-                                                     MySqlOffsetContext offset, Instant sourceTime) {
+    public List<SchemaChangeEvent> parseStreamingDdl(MariaDBPartition partition, String ddlStatements, String databaseName,
+                                                     MariaDBOffsetContext offset, Instant sourceTime) {
         LOGGER.debug("Processing streaming DDL '{}' for database '{}'", ddlStatements, databaseName);
         return parseDdl(partition, ddlStatements, databaseName, offset, sourceTime, false);
     }
 
-    private List<SchemaChangeEvent> parseDdl(MySqlPartition partition, String ddlStatements, String databaseName,
-                                             MySqlOffsetContext offset, Instant sourceTime, boolean snapshot) {
+    private List<SchemaChangeEvent> parseDdl(MariaDBPartition partition, String ddlStatements, String databaseName,
+                                             MariaDBOffsetContext offset, Instant sourceTime, boolean snapshot) {
         final List<SchemaChangeEvent> schemaChangeEvents = new ArrayList<>(3);
 
         if (ignoredQueryStatements.contains(ddlStatements)) {
@@ -293,7 +293,7 @@ public class MySqlDatabaseSchema extends HistorizedRelationalDatabaseSchema {
         return schemaChangeEvents;
     }
 
-    private void emitChangeEvent(MySqlPartition partition, MySqlOffsetContext offset, List<SchemaChangeEvent> schemaChangeEvents,
+    private void emitChangeEvent(MariaDBPartition partition, MariaDBOffsetContext offset, List<SchemaChangeEvent> schemaChangeEvents,
                                  final String sanitizedDbName, Event event, TableId tableId, SchemaChangeEventType type,
                                  boolean snapshot) {
         SchemaChangeEvent schemaChangeEvent;

@@ -49,7 +49,7 @@ public class MySqlDatabaseSchemaTest {
     private static final String SERVER_NAME = "testServer";
 
     private MySqlDatabaseSchema mysql;
-    private MySqlConnectorConfig connectorConfig;
+    private MariaDBConnectorConfig connectorConfig;
 
     @Before
     public void beforeEach() {
@@ -58,7 +58,7 @@ public class MySqlDatabaseSchemaTest {
 
     private MySqlDatabaseSchema getSchema(Configuration config) {
         config = config.edit().with(AbstractSchemaHistory.INTERNAL_PREFER_DDL, true).build();
-        connectorConfig = new MySqlConnectorConfig(config);
+        connectorConfig = new MariaDBConnectorConfig(config);
         final MySqlValueConverters mySqlValueConverters = new MySqlValueConverters(
                 DecimalMode.PRECISE,
                 TemporalPrecisionMode.ADAPTIVE,
@@ -92,8 +92,8 @@ public class MySqlDatabaseSchemaTest {
         final Configuration config = DATABASE.defaultConfig().build();
         mysql = getSchema(config);
         mysql.initializeStorage();
-        final MySqlPartition partition = initializePartition(connectorConfig, config);
-        final MySqlOffsetContext offset = initializeOffset(connectorConfig);
+        final MariaDBPartition partition = initializePartition(connectorConfig, config);
+        final MariaDBOffsetContext offset = initializeOffset(connectorConfig);
 
         // Set up the server ...
         offset.setBinlogStartPoint("binlog.001", 400);
@@ -120,8 +120,8 @@ public class MySqlDatabaseSchemaTest {
         mysql = getSchema(config);
         mysql.initializeStorage();
 
-        final MySqlPartition partition = initializePartition(connectorConfig, config);
-        final MySqlOffsetContext offset = initializeOffset(connectorConfig);
+        final MariaDBPartition partition = initializePartition(connectorConfig, config);
+        final MariaDBOffsetContext offset = initializeOffset(connectorConfig);
 
         // Set up the server ...
         offset.setBinlogStartPoint("binlog.001", 400);
@@ -148,8 +148,8 @@ public class MySqlDatabaseSchemaTest {
                 .build();
         mysql = getSchema(config);
         mysql.initializeStorage();
-        final MySqlPartition partition = initializePartition(connectorConfig, config);
-        final MySqlOffsetContext offset = initializeOffset(connectorConfig);
+        final MariaDBPartition partition = initializePartition(connectorConfig, config);
+        final MariaDBOffsetContext offset = initializeOffset(connectorConfig);
 
         // Set up the server ...
         offset.setBinlogStartPoint("binlog.001", 400);
@@ -167,8 +167,8 @@ public class MySqlDatabaseSchemaTest {
                 .build();
         mysql = getSchema(config);
         mysql.initializeStorage();
-        final MySqlPartition partition = initializePartition(connectorConfig, config);
-        final MySqlOffsetContext offset = initializeOffset(connectorConfig);
+        final MariaDBPartition partition = initializePartition(connectorConfig, config);
+        final MariaDBOffsetContext offset = initializeOffset(connectorConfig);
 
         // Set up the server ...
         offset.setBinlogStartPoint("binlog.001", 400);
@@ -197,12 +197,12 @@ public class MySqlDatabaseSchemaTest {
         // Testing.Print.enable();
         final Configuration config = DATABASE.defaultConfigWithoutDatabaseFilter()
                 .with(SchemaHistory.SKIP_UNPARSEABLE_DDL_STATEMENTS, true)
-                .with(MySqlConnectorConfig.TABLE_IGNORE_BUILTIN, false)
+                .with(MariaDBConnectorConfig.TABLE_IGNORE_BUILTIN, false)
                 .build();
         mysql = getSchema(config);
         mysql.initializeStorage();
-        final MySqlPartition partition = initializePartition(connectorConfig, config);
-        final MySqlOffsetContext offset = initializeOffset(connectorConfig);
+        final MariaDBPartition partition = initializePartition(connectorConfig, config);
+        final MariaDBOffsetContext offset = initializeOffset(connectorConfig);
 
         // Set up the server ...
         offset.setBinlogStartPoint("binlog.001", 400);
@@ -234,8 +234,8 @@ public class MySqlDatabaseSchemaTest {
                 .build();
         mysql = getSchema(config);
         mysql.initializeStorage();
-        final MySqlPartition partition = initializePartition(connectorConfig, config);
-        final MySqlOffsetContext offset = initializeOffset(connectorConfig);
+        final MariaDBPartition partition = initializePartition(connectorConfig, config);
+        final MariaDBOffsetContext offset = initializeOffset(connectorConfig);
 
         // Set up the server ...
         offset.setBinlogStartPoint("binlog.001", 400);
@@ -254,12 +254,12 @@ public class MySqlDatabaseSchemaTest {
         // Testing.Print.enable();
         final Configuration config = DATABASE.defaultConfig()
                 .with(SchemaHistory.SKIP_UNPARSEABLE_DDL_STATEMENTS, false)
-                .with(MySqlConnectorConfig.DATABASE_INCLUDE_LIST, "captured")
+                .with(MariaDBConnectorConfig.DATABASE_INCLUDE_LIST, "captured")
                 .build();
         mysql = getSchema(config);
         mysql.initializeStorage();
-        final MySqlPartition partition = initializePartition(connectorConfig, config);
-        final MySqlOffsetContext offset = initializeOffset(connectorConfig);
+        final MariaDBPartition partition = initializePartition(connectorConfig, config);
+        final MariaDBOffsetContext offset = initializeOffset(connectorConfig);
 
         // Set up the server ...
         offset.setBinlogStartPoint("binlog.001", 400);
@@ -286,13 +286,13 @@ public class MySqlDatabaseSchemaTest {
         // Testing.Print.enable();
         final Configuration config = DATABASE.defaultConfig()
                 .with(SchemaHistory.SKIP_UNPARSEABLE_DDL_STATEMENTS, false)
-                .with(MySqlConnectorConfig.DATABASE_INCLUDE_LIST, "captured")
+                .with(MariaDBConnectorConfig.DATABASE_INCLUDE_LIST, "captured")
                 .with(SchemaHistory.STORE_ONLY_CAPTURED_TABLES_DDL, true)
                 .build();
         mysql = getSchema(config);
         mysql.initializeStorage();
-        final MySqlPartition partition = initializePartition(connectorConfig, config);
-        final MySqlOffsetContext offset = initializeOffset(connectorConfig);
+        final MariaDBPartition partition = initializePartition(connectorConfig, config);
+        final MariaDBOffsetContext offset = initializeOffset(connectorConfig);
 
         // Set up the server ...
         offset.setBinlogStartPoint("binlog.001", 400);
@@ -319,12 +319,12 @@ public class MySqlDatabaseSchemaTest {
         // Testing.Print.enable();
         final Configuration config = DATABASE.defaultConfigWithoutDatabaseFilter()
                 .with(SchemaHistory.SKIP_UNPARSEABLE_DDL_STATEMENTS, false)
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, "captured.ct")
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, "captured.ct")
                 .build();
         mysql = getSchema(config);
         mysql.initializeStorage();
-        final MySqlPartition partition = initializePartition(connectorConfig, config);
-        final MySqlOffsetContext offset = initializeOffset(connectorConfig);
+        final MariaDBPartition partition = initializePartition(connectorConfig, config);
+        final MariaDBOffsetContext offset = initializeOffset(connectorConfig);
 
         // Set up the server ...
         offset.setBinlogStartPoint("binlog.001", 400);
@@ -352,12 +352,12 @@ public class MySqlDatabaseSchemaTest {
         final Configuration config = DATABASE.defaultConfigWithoutDatabaseFilter()
                 .with(SchemaHistory.SKIP_UNPARSEABLE_DDL_STATEMENTS, false)
                 .with(SchemaHistory.STORE_ONLY_CAPTURED_TABLES_DDL, true)
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, "captured.ct")
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, "captured.ct")
                 .build();
         mysql = getSchema(config);
         mysql.initializeStorage();
-        final MySqlPartition partition = initializePartition(connectorConfig, config);
-        final MySqlOffsetContext offset = initializeOffset(connectorConfig);
+        final MariaDBPartition partition = initializePartition(connectorConfig, config);
+        final MariaDBOffsetContext offset = initializeOffset(connectorConfig);
 
         // Set up the server ...
         offset.setBinlogStartPoint("binlog.001", 400);
@@ -382,15 +382,15 @@ public class MySqlDatabaseSchemaTest {
     public void addCommentToSchemaTest() {
         final Configuration config = DATABASE.defaultConfig()
                 .with(SchemaHistory.SKIP_UNPARSEABLE_DDL_STATEMENTS, false)
-                .with(MySqlConnectorConfig.DATABASE_INCLUDE_LIST, "captured")
+                .with(MariaDBConnectorConfig.DATABASE_INCLUDE_LIST, "captured")
                 .with(SchemaHistory.STORE_ONLY_CAPTURED_TABLES_DDL, true)
-                .with(MySqlConnectorConfig.INCLUDE_SCHEMA_COMMENTS, true)
+                .with(MariaDBConnectorConfig.INCLUDE_SCHEMA_COMMENTS, true)
                 .build();
 
         mysql = getSchema(config);
         mysql.initializeStorage();
-        final MySqlPartition partition = initializePartition(connectorConfig, config);
-        final MySqlOffsetContext offset = initializeOffset(connectorConfig);
+        final MariaDBPartition partition = initializePartition(connectorConfig, config);
+        final MariaDBOffsetContext offset = initializeOffset(connectorConfig);
 
         // Set up the server ...
         offset.setBinlogStartPoint("binlog.001", 400);
@@ -431,7 +431,7 @@ public class MySqlDatabaseSchemaTest {
         assertThat(mysql.tableIds().stream().filter(id -> id.catalog().equals(dbName)).count()).isGreaterThan(0);
     }
 
-    protected void assertHistoryRecorded(Configuration config, MySqlPartition partition, OffsetContext offset) {
+    protected void assertHistoryRecorded(Configuration config, MariaDBPartition partition, OffsetContext offset) {
         try (MySqlDatabaseSchema duplicate = getSchema(config)) {
             duplicate.recover(Offsets.of(partition, offset));
 
@@ -463,14 +463,14 @@ public class MySqlDatabaseSchemaTest {
         Testing.print("Running DDL for '" + dbName + "': " + ddlStatements + " changing tables '" + tables + "'");
     }
 
-    private MySqlPartition initializePartition(MySqlConnectorConfig connectorConfig, Configuration taskConfig) {
-        Set<MySqlPartition> partitions = (new MySqlPartition.Provider(connectorConfig, taskConfig)).getPartitions();
+    private MariaDBPartition initializePartition(MariaDBConnectorConfig connectorConfig, Configuration taskConfig) {
+        Set<MariaDBPartition> partitions = (new MariaDBPartition.Provider(connectorConfig, taskConfig)).getPartitions();
         assertThat(partitions.size()).isEqualTo(1);
 
         return partitions.iterator().next();
     }
 
-    private MySqlOffsetContext initializeOffset(MySqlConnectorConfig connectorConfig) {
-        return MySqlOffsetContext.initial(connectorConfig);
+    private MariaDBOffsetContext initializeOffset(MariaDBConnectorConfig connectorConfig) {
+        return MariaDBOffsetContext.initial(connectorConfig);
     }
 }

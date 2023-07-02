@@ -47,22 +47,22 @@ class EventBuffer {
 
     private final int capacity;
     private final Queue<Event> buffer;
-    private final MySqlStreamingChangeEventSource streamingChangeEventSource;
+    private final MariaDBStreamingChangeEventSource streamingChangeEventSource;
     private boolean txStarted = false;
     private final ChangeEventSourceContext changeEventSourceContext;
 
     /**
      * Contains the position of the first event that has not fit into the buffer.
      */
-    private MySqlStreamingChangeEventSource.BinlogPosition largeTxNotBufferedPosition;
+    private MariaDBStreamingChangeEventSource.BinlogPosition largeTxNotBufferedPosition;
 
     /**
      * Contains the position of the last event belonging to the transaction that has not fit into
      * the buffer.
      */
-    private MySqlStreamingChangeEventSource.BinlogPosition forwardTillPosition;
+    private MariaDBStreamingChangeEventSource.BinlogPosition forwardTillPosition;
 
-    EventBuffer(int capacity, MySqlStreamingChangeEventSource streamingChangeEventSource, ChangeEventSourceContext changeEventSourceContext) {
+    EventBuffer(int capacity, MariaDBStreamingChangeEventSource streamingChangeEventSource, ChangeEventSourceContext changeEventSourceContext) {
         this.capacity = capacity;
         this.buffer = new ArrayBlockingQueue<>(capacity);
         this.streamingChangeEventSource = streamingChangeEventSource;
@@ -75,7 +75,7 @@ class EventBuffer {
      * @param partition the partition to which the event belongs
      * @param event to be stored in the buffer
      */
-    public void add(MySqlPartition partition, MySqlOffsetContext offsetContext, Event event) {
+    public void add(MariaDBPartition partition, MariaDBOffsetContext offsetContext, Event event) {
         if (event == null) {
             return;
         }
@@ -158,7 +158,7 @@ class EventBuffer {
         return largeTxNotBufferedPosition != null;
     }
 
-    private void consumeEvent(MySqlPartition partition, MySqlOffsetContext offsetContext, Event event) {
+    private void consumeEvent(MariaDBPartition partition, MariaDBOffsetContext offsetContext, Event event) {
         if (txStarted) {
             addToBuffer(event);
         }
@@ -167,7 +167,7 @@ class EventBuffer {
         }
     }
 
-    private void beginTransaction(MySqlPartition partition, MySqlOffsetContext offsetContext, Event event) {
+    private void beginTransaction(MariaDBPartition partition, MariaDBOffsetContext offsetContext, Event event) {
         if (txStarted) {
             LOGGER.warn("New transaction started but the previous was not completed, processing the buffer");
             completeTransaction(partition, offsetContext, false, null);
@@ -186,7 +186,7 @@ class EventBuffer {
      * @param wellFormed
      * @param event
      */
-    private void completeTransaction(MySqlPartition partition, MySqlOffsetContext offsetContext, boolean wellFormed, Event event) {
+    private void completeTransaction(MariaDBPartition partition, MariaDBOffsetContext offsetContext, boolean wellFormed, Event event) {
         LOGGER.debug("Committing transaction");
         if (event != null) {
             addToBuffer(event);

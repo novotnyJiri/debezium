@@ -10,7 +10,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import io.debezium.connector.mariadb.MySqlConnectorConfig;
+import io.debezium.connector.mariadb.MariaDBConnectorConfig;
 
 /**
  * Marker annotation used together with the {@link SkipTestDependingOnSslModeRule} JUnit rule, that allows
@@ -20,7 +20,7 @@ import io.debezium.connector.mariadb.MySqlConnectorConfig;
 @Target({ ElementType.METHOD, ElementType.TYPE })
 public @interface SkipWhenSslModeIsNot {
 
-    MySqlConnectorConfig.SecureConnectionMode value();
+    MariaDBConnectorConfig.SecureConnectionMode value();
 
     /**
      * Returns the reason why the test should be skipped.

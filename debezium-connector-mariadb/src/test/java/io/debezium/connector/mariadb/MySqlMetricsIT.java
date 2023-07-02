@@ -28,7 +28,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import io.debezium.config.CommonConnectorConfig;
-import io.debezium.connector.mariadb.MySqlConnectorConfig.SnapshotMode;
+import io.debezium.connector.mariadb.MariaDBConnectorConfig.SnapshotMode;
 import io.debezium.data.VerifyRecord;
 import io.debezium.embedded.AbstractConnectorTest;
 import io.debezium.relational.history.SchemaHistory;
@@ -69,13 +69,13 @@ public class MySqlMetricsIT extends AbstractConnectorTest {
     @Test
     public void testLifecycle() throws Exception {
         // start connector
-        start(MySqlConnector.class,
+        start(MariaDBConnector.class,
                 DATABASE.defaultConfig()
-                        .with(MySqlConnectorConfig.SNAPSHOT_MODE, SnapshotMode.INITIAL)
-                        .with(MySqlConnectorConfig.SCHEMA_HISTORY, FileSchemaHistory.class)
+                        .with(MariaDBConnectorConfig.SNAPSHOT_MODE, SnapshotMode.INITIAL)
+                        .with(MariaDBConnectorConfig.SCHEMA_HISTORY, FileSchemaHistory.class)
                         .with(FileSchemaHistory.FILE_PATH, SCHEMA_HISTORY_PATH)
-                        .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("simple"))
-                        .with(MySqlConnectorConfig.TABLES_IGNORE_BUILTIN, Boolean.TRUE)
+                        .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("simple"))
+                        .with(MariaDBConnectorConfig.TABLES_IGNORE_BUILTIN, Boolean.TRUE)
                         .with(SchemaHistory.STORE_ONLY_CAPTURED_TABLES_DDL, Boolean.TRUE)
                         .build());
 
@@ -117,13 +117,13 @@ public class MySqlMetricsIT extends AbstractConnectorTest {
         }
 
         // start connector
-        start(MySqlConnector.class,
+        start(MariaDBConnector.class,
                 DATABASE.defaultConfig()
-                        .with(MySqlConnectorConfig.SNAPSHOT_MODE, SnapshotMode.INITIAL_ONLY)
-                        .with(MySqlConnectorConfig.SCHEMA_HISTORY, FileSchemaHistory.class)
+                        .with(MariaDBConnectorConfig.SNAPSHOT_MODE, SnapshotMode.INITIAL_ONLY)
+                        .with(MariaDBConnectorConfig.SCHEMA_HISTORY, FileSchemaHistory.class)
                         .with(FileSchemaHistory.FILE_PATH, SCHEMA_HISTORY_PATH)
-                        .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("simple"))
-                        .with(MySqlConnectorConfig.TABLES_IGNORE_BUILTIN, Boolean.TRUE)
+                        .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("simple"))
+                        .with(MariaDBConnectorConfig.TABLES_IGNORE_BUILTIN, Boolean.TRUE)
                         .with(SchemaHistory.STORE_ONLY_CAPTURED_TABLES_DDL, Boolean.TRUE)
                         .build());
 
@@ -144,16 +144,16 @@ public class MySqlMetricsIT extends AbstractConnectorTest {
         }
 
         // Start connector.
-        start(MySqlConnector.class,
+        start(MariaDBConnector.class,
                 DATABASE.defaultConfig()
-                        .with(MySqlConnectorConfig.SNAPSHOT_MODE, SnapshotMode.INITIAL)
-                        .with(MySqlConnectorConfig.SCHEMA_HISTORY, FileSchemaHistory.class)
+                        .with(MariaDBConnectorConfig.SNAPSHOT_MODE, SnapshotMode.INITIAL)
+                        .with(MariaDBConnectorConfig.SCHEMA_HISTORY, FileSchemaHistory.class)
                         .with(FileSchemaHistory.FILE_PATH, SCHEMA_HISTORY_PATH)
-                        .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, String.format("%s", TABLE_NAME))
+                        .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, String.format("%s", TABLE_NAME))
                         .with(SchemaHistory.STORE_ONLY_CAPTURED_TABLES_DDL, Boolean.TRUE)
                         .with(CommonConnectorConfig.INCREMENTAL_SNAPSHOT_CHUNK_SIZE, 1)
                         .with(CommonConnectorConfig.SIGNAL_POLL_INTERVAL_MS, 5)
-                        .with(MySqlConnectorConfig.SIGNAL_DATA_COLLECTION, SIGNAL_TABLE_NAME)
+                        .with(MariaDBConnectorConfig.SIGNAL_DATA_COLLECTION, SIGNAL_TABLE_NAME)
                         .build());
 
         assertConnectorIsRunning();
@@ -196,13 +196,13 @@ public class MySqlMetricsIT extends AbstractConnectorTest {
         }
 
         // start connector
-        start(MySqlConnector.class,
+        start(MariaDBConnector.class,
                 DATABASE.defaultConfig()
-                        .with(MySqlConnectorConfig.SNAPSHOT_MODE, SnapshotMode.INITIAL)
-                        .with(MySqlConnectorConfig.SCHEMA_HISTORY, FileSchemaHistory.class)
+                        .with(MariaDBConnectorConfig.SNAPSHOT_MODE, SnapshotMode.INITIAL)
+                        .with(MariaDBConnectorConfig.SCHEMA_HISTORY, FileSchemaHistory.class)
                         .with(FileSchemaHistory.FILE_PATH, SCHEMA_HISTORY_PATH)
-                        .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("simple"))
-                        .with(MySqlConnectorConfig.TABLES_IGNORE_BUILTIN, Boolean.TRUE)
+                        .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("simple"))
+                        .with(MariaDBConnectorConfig.TABLES_IGNORE_BUILTIN, Boolean.TRUE)
                         .with(SchemaHistory.STORE_ONLY_CAPTURED_TABLES_DDL, Boolean.TRUE)
                         .build());
 
@@ -213,13 +213,13 @@ public class MySqlMetricsIT extends AbstractConnectorTest {
     @Test
     public void testStreamingOnlyMetrics() throws Exception {
         // start connector
-        start(MySqlConnector.class,
+        start(MariaDBConnector.class,
                 DATABASE.defaultConfig()
-                        .with(MySqlConnectorConfig.SNAPSHOT_MODE, SnapshotMode.NEVER)
-                        .with(MySqlConnectorConfig.SCHEMA_HISTORY, FileSchemaHistory.class)
+                        .with(MariaDBConnectorConfig.SNAPSHOT_MODE, SnapshotMode.NEVER)
+                        .with(MariaDBConnectorConfig.SCHEMA_HISTORY, FileSchemaHistory.class)
                         .with(FileSchemaHistory.FILE_PATH, SCHEMA_HISTORY_PATH)
-                        .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("simple"))
-                        .with(MySqlConnectorConfig.TABLES_IGNORE_BUILTIN, Boolean.TRUE)
+                        .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("simple"))
+                        .with(MariaDBConnectorConfig.TABLES_IGNORE_BUILTIN, Boolean.TRUE)
                         .with(SchemaHistory.STORE_ONLY_CAPTURED_TABLES_DDL, Boolean.TRUE)
                         .build());
 

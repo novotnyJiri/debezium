@@ -77,7 +77,7 @@ import io.debezium.util.Clock;
  * <b>No updates for included tables</b>
  * <p>It’s important to receive binlog events for the incremental snapshot to make progress. All binlog events are checked against the low and high watermarks, including the events from the tables that aren’t included in the connector. This guarantees that the window processing mode gets updated even when none of the tables included in the connector are getting binlog events.</p>
  */
-public class MySqlReadOnlyIncrementalSnapshotChangeEventSource<T extends DataCollectionId> extends AbstractIncrementalSnapshotChangeEventSource<MySqlPartition, T> {
+public class MySqlReadOnlyIncrementalSnapshotChangeEventSource<T extends DataCollectionId> extends AbstractIncrementalSnapshotChangeEventSource<MariaDBPartition, T> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MySqlReadOnlyIncrementalSnapshotChangeEventSource.class);
     private final String showMasterStmt = "SHOW MASTER STATUS";
@@ -85,18 +85,18 @@ public class MySqlReadOnlyIncrementalSnapshotChangeEventSource<T extends DataCol
 
     public MySqlReadOnlyIncrementalSnapshotChangeEventSource(RelationalDatabaseConnectorConfig config,
                                                              JdbcConnection jdbcConnection,
-                                                             EventDispatcher<MySqlPartition, T> dispatcher,
+                                                             EventDispatcher<MariaDBPartition, T> dispatcher,
                                                              DatabaseSchema<?> databaseSchema,
                                                              Clock clock,
-                                                             SnapshotProgressListener<MySqlPartition> progressListener,
-                                                             DataChangeEventListener<MySqlPartition> dataChangeEventListener,
-                                                             NotificationService<MySqlPartition, MySqlOffsetContext> notificationService) {
+                                                             SnapshotProgressListener<MariaDBPartition> progressListener,
+                                                             DataChangeEventListener<MariaDBPartition> dataChangeEventListener,
+                                                             NotificationService<MariaDBPartition, MariaDBOffsetContext> notificationService) {
         super(config, jdbcConnection, dispatcher, databaseSchema, clock, progressListener, dataChangeEventListener, notificationService);
         kafkaSignal = new KafkaSignalChannel();
     }
 
     @Override
-    public void init(MySqlPartition partition, OffsetContext offsetContext) {
+    public void init(MariaDBPartition partition, OffsetContext offsetContext) {
         super.init(partition, offsetContext);
 
         kafkaSignal.init(connectorConfig);
@@ -107,7 +107,7 @@ public class MySqlReadOnlyIncrementalSnapshotChangeEventSource<T extends DataCol
     }
 
     @Override
-    public void processMessage(MySqlPartition partition, DataCollectionId dataCollectionId, Object key, OffsetContext offsetContext) throws InterruptedException {
+    public void processMessage(MariaDBPartition partition, DataCollectionId dataCollectionId, Object key, OffsetContext offsetContext) throws InterruptedException {
         if (getContext() == null) {
             LOGGER.warn("Context is null, skipping message processing");
             return;
@@ -124,7 +124,7 @@ public class MySqlReadOnlyIncrementalSnapshotChangeEventSource<T extends DataCol
     }
 
     @Override
-    public void processHeartbeat(MySqlPartition partition, OffsetContext offsetContext) throws InterruptedException {
+    public void processHeartbeat(MariaDBPartition partition, OffsetContext offsetContext) throws InterruptedException {
         if (getContext() == null) {
             LOGGER.warn("Context is null, skipping message processing");
             return;
@@ -132,7 +132,7 @@ public class MySqlReadOnlyIncrementalSnapshotChangeEventSource<T extends DataCol
         readUntilGtidChange(partition, offsetContext);
     }
 
-    private void readUntilGtidChange(MySqlPartition partition, OffsetContext offsetContext) throws InterruptedException {
+    private void readUntilGtidChange(MariaDBPartition partition, OffsetContext offsetContext) throws InterruptedException {
         String currentGtid = getContext().getCurrentGtid(offsetContext);
         while (getContext().snapshotRunning() && getContext().reachedHighWatermark(currentGtid)) {
             getContext().closeWindow();
@@ -145,7 +145,7 @@ public class MySqlReadOnlyIncrementalSnapshotChangeEventSource<T extends DataCol
     }
 
     @Override
-    public void processFilteredEvent(MySqlPartition partition, OffsetContext offsetContext) throws InterruptedException {
+    public void processFilteredEvent(MariaDBPartition partition, OffsetContext offsetContext) throws InterruptedException {
         if (getContext() == null) {
             LOGGER.warn("Context is null, skipping message processing");
             return;
@@ -158,7 +158,7 @@ public class MySqlReadOnlyIncrementalSnapshotChangeEventSource<T extends DataCol
     }
 
     @Override
-    public void processTransactionStartedEvent(MySqlPartition partition, OffsetContext offsetContext) throws InterruptedException {
+    public void processTransactionStartedEvent(MariaDBPartition partition, OffsetContext offsetContext) throws InterruptedException {
         if (getContext() == null) {
             LOGGER.warn("Context is null, skipping message processing");
             return;
@@ -171,7 +171,7 @@ public class MySqlReadOnlyIncrementalSnapshotChangeEventSource<T extends DataCol
     }
 
     @Override
-    public void processTransactionCommittedEvent(MySqlPartition partition, OffsetContext offsetContext) throws InterruptedException {
+    public void processTransactionCommittedEvent(MariaDBPartition partition, OffsetContext offsetContext) throws InterruptedException {
         if (getContext() == null) {
             LOGGER.warn("Context is null, skipping message processing");
             return;
@@ -214,7 +214,7 @@ public class MySqlReadOnlyIncrementalSnapshotChangeEventSource<T extends DataCol
     }
 
     @Override
-    protected void emitWindowClose(MySqlPartition partition, OffsetContext offsetContext) throws InterruptedException {
+    protected void emitWindowClose(MariaDBPartition partition, OffsetContext offsetContext) throws InterruptedException {
         updateHighWatermark();
         if (getContext().serverUuidChanged()) {
             rereadChunk(partition, offsetContext);
@@ -222,10 +222,10 @@ public class MySqlReadOnlyIncrementalSnapshotChangeEventSource<T extends DataCol
     }
 
     @Override
-    protected void sendEvent(MySqlPartition partition, EventDispatcher<MySqlPartition, T> dispatcher,
+    protected void sendEvent(MariaDBPartition partition, EventDispatcher<MariaDBPartition, T> dispatcher,
                              OffsetContext offsetContext, Object[] row)
             throws InterruptedException {
-        SourceInfo sourceInfo = ((MySqlOffsetContext) offsetContext).getSource();
+        SourceInfo sourceInfo = ((MariaDBOffsetContext) offsetContext).getSource();
         String query = sourceInfo.getQuery();
         sourceInfo.setQuery(null);
         super.sendEvent(partition, dispatcher, offsetContext, row);
@@ -233,7 +233,7 @@ public class MySqlReadOnlyIncrementalSnapshotChangeEventSource<T extends DataCol
     }
 
     @Override
-    public void addDataCollectionNamesToSnapshot(SignalPayload<MySqlPartition> signalPayload,
+    public void addDataCollectionNamesToSnapshot(SignalPayload<MariaDBPartition> signalPayload,
                                                  List<String> dataCollectionIds,
                                                  Optional<String> additionalCondition, Optional<String> surrogateKey)
             throws InterruptedException {
@@ -246,7 +246,7 @@ public class MySqlReadOnlyIncrementalSnapshotChangeEventSource<T extends DataCol
     }
 
     @Override
-    public void stopSnapshot(MySqlPartition partition, OffsetContext offsetContext, Map<String, Object> additionalData, List<String> dataCollectionIds) {
+    public void stopSnapshot(MariaDBPartition partition, OffsetContext offsetContext, Map<String, Object> additionalData, List<String> dataCollectionIds) {
         {
             super.stopSnapshot(partition, offsetContext, additionalData, dataCollectionIds);
             getContext().setSignalOffset((Long) additionalData.get(KafkaSignalChannel.CHANNEL_OFFSET));

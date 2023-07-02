@@ -28,9 +28,9 @@ import org.junit.Test;
 
 import io.debezium.config.CommonConnectorConfig;
 import io.debezium.config.Configuration;
-import io.debezium.connector.mariadb.MySqlConnectorConfig;
-import io.debezium.connector.mariadb.MySqlOffsetContext;
-import io.debezium.connector.mariadb.MySqlPartition;
+import io.debezium.connector.mariadb.MariaDBConnectorConfig;
+import io.debezium.connector.mariadb.MariaDBOffsetContext;
+import io.debezium.connector.mariadb.MariaDBPartition;
 import io.debezium.connector.mariadb.MySqlReadOnlyIncrementalSnapshotContext;
 import io.debezium.connector.mariadb.SourceInfo;
 import io.debezium.connector.mariadb.antlr.MySqlAntlrDdlParser;
@@ -55,8 +55,8 @@ public class KafkaSchemaHistoryTest {
     private static KafkaCluster kafka;
 
     private KafkaSchemaHistory history;
-    private Offsets<Partition, MySqlOffsetContext> offsets;
-    private MySqlOffsetContext position;
+    private Offsets<Partition, MariaDBOffsetContext> offsets;
+    private MariaDBOffsetContext position;
     private LogInterceptor interceptor;
     private static final int PARTITION_NO = 0;
 
@@ -85,13 +85,13 @@ public class KafkaSchemaHistoryTest {
 
     @Before
     public void beforeEach() throws Exception {
-        MySqlPartition source = new MySqlPartition("my-server", "my-db");
+        MariaDBPartition source = new MariaDBPartition("my-server", "my-db");
         Configuration config = Configuration.empty()
                 .edit()
                 .with(CommonConnectorConfig.TOPIC_PREFIX, "dbserver1").build();
 
-        position = new MySqlOffsetContext(false, true, new TransactionContext(), new MySqlReadOnlyIncrementalSnapshotContext<>(),
-                new SourceInfo(new MySqlConnectorConfig(config)));
+        position = new MariaDBOffsetContext(false, true, new TransactionContext(), new MySqlReadOnlyIncrementalSnapshotContext<>(),
+                new SourceInfo(new MariaDBConnectorConfig(config)));
         offsets = Offsets.of(source, position);
 
         setLogPosition(0);

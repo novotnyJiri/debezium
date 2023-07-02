@@ -57,9 +57,9 @@ public class MySqlSchemaMigrationIT extends AbstractConnectorTest {
         // Use the DB configuration to define the connector's configuration ...
         // Breaks if table whitelist does not contain both tables
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, MySqlConnectorConfig.SnapshotMode.INITIAL)
-                .with(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("monitored") + "," + DATABASE.qualifiedTableName("_monitored_new"))
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, MariaDBConnectorConfig.SnapshotMode.INITIAL)
+                .with(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("monitored") + "," + DATABASE.qualifiedTableName("_monitored_new"))
                 .build();
 
         final MariaDBTestConnection connection = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName());
@@ -67,7 +67,7 @@ public class MySqlSchemaMigrationIT extends AbstractConnectorTest {
         connection.execute("insert into monitored values(default, 'a1', 1)");
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
         SourceRecords records = consumeRecordsByTopic(1);
 
         // ---------------------------------------------------------------------------------------------------------------
@@ -98,9 +98,9 @@ public class MySqlSchemaMigrationIT extends AbstractConnectorTest {
         final LogInterceptor logInterceptor = new LogInterceptor(RenameTableParserListener.class);
 
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, MySqlConnectorConfig.SnapshotMode.INITIAL)
-                .with(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("monitored"))
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, MariaDBConnectorConfig.SnapshotMode.INITIAL)
+                .with(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("monitored"))
                 .build();
 
         final MariaDBTestConnection connection = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName());
@@ -108,7 +108,7 @@ public class MySqlSchemaMigrationIT extends AbstractConnectorTest {
         connection.execute("insert into monitored values(default, 'a1', 1)");
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
         SourceRecords records = consumeRecordsByTopic(1);
 
         // ---------------------------------------------------------------------------------------------------------------
@@ -148,10 +148,10 @@ public class MySqlSchemaMigrationIT extends AbstractConnectorTest {
         final LogInterceptor logInterceptor = new LogInterceptor(RenameTableParserListener.class);
 
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, MySqlConnectorConfig.SnapshotMode.INITIAL)
-                .with(MySqlConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, MariaDBConnectorConfig.SnapshotMode.INITIAL)
+                .with(MariaDBConnectorConfig.INCLUDE_SCHEMA_CHANGES, false)
                 .with(SchemaHistory.STORE_ONLY_CAPTURED_TABLES_DDL, true)
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("monitored"))
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, DATABASE.qualifiedTableName("monitored"))
                 .build();
 
         final MariaDBTestConnection connection = MariaDBTestConnection.forTestDatabase(DATABASE.getDatabaseName());
@@ -159,7 +159,7 @@ public class MySqlSchemaMigrationIT extends AbstractConnectorTest {
         connection.execute("insert into monitored values(default, 'a1', 1)");
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
         SourceRecords records = consumeRecordsByTopic(1);
 
         // ---------------------------------------------------------------------------------------------------------------

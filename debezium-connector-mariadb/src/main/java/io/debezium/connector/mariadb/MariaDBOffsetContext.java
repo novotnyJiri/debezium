@@ -22,7 +22,7 @@ import io.debezium.pipeline.txmetadata.TransactionContext;
 import io.debezium.relational.TableId;
 import io.debezium.spi.schema.DataCollectionId;
 
-public class MySqlOffsetContext extends CommonOffsetContext<SourceInfo> {
+public class MariaDBOffsetContext extends CommonOffsetContext<SourceInfo> {
 
     private static final String SNAPSHOT_COMPLETED_KEY = "snapshot_completed";
     public static final String EVENTS_TO_SKIP_OFFSET_KEY = "event";
@@ -44,8 +44,8 @@ public class MySqlOffsetContext extends CommonOffsetContext<SourceInfo> {
     private boolean inTransaction = false;
     private String transactionId = null;
 
-    public MySqlOffsetContext(boolean snapshot, boolean snapshotCompleted, TransactionContext transactionContext,
-                              IncrementalSnapshotContext<TableId> incrementalSnapshotContext, SourceInfo sourceInfo) {
+    public MariaDBOffsetContext(boolean snapshot, boolean snapshotCompleted, TransactionContext transactionContext,
+                                IncrementalSnapshotContext<TableId> incrementalSnapshotContext, SourceInfo sourceInfo) {
         super(sourceInfo);
         sourceInfoSchema = sourceInfo.schema();
 
@@ -60,7 +60,7 @@ public class MySqlOffsetContext extends CommonOffsetContext<SourceInfo> {
         this.incrementalSnapshotContext = incrementalSnapshotContext;
     }
 
-    public MySqlOffsetContext(MariaDBConnectorConfig connectorConfig, boolean snapshot, boolean snapshotCompleted, SourceInfo sourceInfo) {
+    public MariaDBOffsetContext(MariaDBConnectorConfig connectorConfig, boolean snapshot, boolean snapshotCompleted, SourceInfo sourceInfo) {
         this(snapshot, snapshotCompleted, new TransactionContext(),
                 connectorConfig.isReadOnlyConnection() ? new MySqlReadOnlyIncrementalSnapshotContext<>() : new SignalBasedIncrementalSnapshotContext<>(),
                 sourceInfo);
@@ -152,13 +152,13 @@ public class MySqlOffsetContext extends CommonOffsetContext<SourceInfo> {
         this.restartRowsToSkip = restartRowsToSkip;
     }
 
-    public static MySqlOffsetContext initial(MariaDBConnectorConfig config) {
-        final MySqlOffsetContext offset = new MySqlOffsetContext(config, false, false, new SourceInfo(config));
+    public static MariaDBOffsetContext initial(MariaDBConnectorConfig config) {
+        final MariaDBOffsetContext offset = new MariaDBOffsetContext(config, false, false, new SourceInfo(config));
         offset.setBinlogStartPoint("", 0L); // start from the beginning of the binlog
         return offset;
     }
 
-    public static class Loader implements OffsetContext.Loader<MySqlOffsetContext> {
+    public static class Loader implements OffsetContext.Loader<MariaDBOffsetContext> {
 
         private final MariaDBConnectorConfig connectorConfig;
 
@@ -167,7 +167,7 @@ public class MySqlOffsetContext extends CommonOffsetContext<SourceInfo> {
         }
 
         @Override
-        public MySqlOffsetContext load(Map<String, ?> offset) {
+        public MariaDBOffsetContext load(Map<String, ?> offset) {
             boolean snapshot = Boolean.TRUE.equals(offset.get(SourceInfo.SNAPSHOT_KEY)) || "true".equals(offset.get(SourceInfo.SNAPSHOT_KEY));
             boolean snapshotCompleted = Boolean.TRUE.equals(offset.get(SNAPSHOT_COMPLETED_KEY)) || "true".equals(offset.get(SNAPSHOT_COMPLETED_KEY));
 
@@ -183,7 +183,7 @@ public class MySqlOffsetContext extends CommonOffsetContext<SourceInfo> {
             else {
                 incrementalSnapshotContext = SignalBasedIncrementalSnapshotContext.load(offset);
             }
-            final MySqlOffsetContext offsetContext = new MySqlOffsetContext(snapshot, snapshotCompleted,
+            final MariaDBOffsetContext offsetContext = new MariaDBOffsetContext(snapshot, snapshotCompleted,
                     TransactionContext.load(offset), incrementalSnapshotContext,
                     new SourceInfo(connectorConfig));
             offsetContext.setBinlogStartPoint(binlogFilename, binlogPosition);

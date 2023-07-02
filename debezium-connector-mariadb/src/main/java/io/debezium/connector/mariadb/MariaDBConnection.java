@@ -43,9 +43,9 @@ import io.debezium.util.Strings;
  * @author Jiri Pechanec, Randall Hauch
  *
  */
-public class MySqlConnection extends JdbcConnection {
+public class MariaDBConnection extends JdbcConnection {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(MySqlConnection.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(MariaDBConnection.class);
 
     private static final String SQL_SHOW_SYSTEM_VARIABLES = "SHOW VARIABLES";
     private static final String SQL_SHOW_SYSTEM_VARIABLES_CHARACTER_SET = "SHOW VARIABLES WHERE Variable_name IN ('character_set_server','collation_server')";
@@ -64,7 +64,7 @@ public class MySqlConnection extends JdbcConnection {
      * @param connectionConfig {@link MySqlConnectionConfiguration} instance, may not be null.
      * @param fieldReader binary or text protocol based readers
      */
-    public MySqlConnection(MySqlConnectionConfiguration connectionConfig, MySqlFieldReader fieldReader) {
+    public MariaDBConnection(MySqlConnectionConfiguration connectionConfig, MySqlFieldReader fieldReader) {
         super(connectionConfig.jdbcConfig, connectionConfig.factory(), QUOTED_CHARACTER, QUOTED_CHARACTER);
         this.connectionConfig = connectionConfig;
         this.mysqlFieldReader = fieldReader;
@@ -75,7 +75,7 @@ public class MySqlConnection extends JdbcConnection {
      *
      * @param connectionConfig {@link MySqlConnectionConfiguration} instance, may not be null.
      */
-    public MySqlConnection(MySqlConnectionConfiguration connectionConfig) {
+    public MariaDBConnection(MySqlConnectionConfiguration connectionConfig) {
         this(connectionConfig, new MySqlTextProtocolFieldReader(null));
     }
 
@@ -532,7 +532,7 @@ public class MySqlConnection extends JdbcConnection {
 
             this.jdbcConfig = JdbcConfiguration.adapt(jdbcConfigBuilder.build());
             String driverClassName = this.jdbcConfig.getString(MariaDBConnectorConfig.JDBC_DRIVER);
-            factory = JdbcConnection.patternBasedFactory(MySqlConnection.URL_PATTERN, driverClassName, getClass().getClassLoader());
+            factory = JdbcConnection.patternBasedFactory(MariaDBConnection.URL_PATTERN, driverClassName, getClass().getClassLoader());
         }
 
         private static String determineConnectionTimeZone(final Configuration dbConfig) {

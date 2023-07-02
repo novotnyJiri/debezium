@@ -17,11 +17,11 @@ import org.junit.Test;
 /**
  * @author Randall Hauch
  */
-public class MySqlConnectorTest {
+public class MariaDBConnectorTest {
 
     @Test
     public void shouldReturnConfigurationDefinition() {
-        assertConfigDefIsValid(new MySqlConnector(), MariaDBConnectorConfig.ALL_FIELDS);
+        assertConfigDefIsValid(new MariaDBConnector(), MariaDBConnectorConfig.ALL_FIELDS);
     }
 
     protected static void assertConfigDefIsValid(Connector connector, io.debezium.config.Field.Set fields) {

@@ -63,12 +63,12 @@ public class MySqlFloatIT extends AbstractConnectorTest {
                 Collect.arrayListOf(DATABASE.qualifiedTableName(TABLE_NAME), DATABASE.qualifiedTableName("DBZ3865_2")));
         // Use the DB configuration to define the connector's configuration ...
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, MySqlConnectorConfig.SnapshotMode.INITIAL)
-                .with(MySqlConnectorConfig.TABLE_INCLUDE_LIST, includeTables)
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, MariaDBConnectorConfig.SnapshotMode.INITIAL)
+                .with(MariaDBConnectorConfig.TABLE_INCLUDE_LIST, includeTables)
                 .build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         assertFloatChangeRecord(consumeInsert());
 

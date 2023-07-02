@@ -23,7 +23,7 @@ import io.debezium.connector.common.RelationalBaseSourceConnector;
 import io.debezium.relational.RelationalDatabaseConnectorConfig;
 
 /**
- * A Kafka Connect source connector that creates tasks that read the MySQL binary log and generate the corresponding
+ * A Kafka Connect source connector that creates tasks that read the MariaDB binary log and generate the corresponding
  * data change events.
  * <h2>Configuration</h2>
  * <p>
@@ -32,14 +32,14 @@ import io.debezium.relational.RelationalDatabaseConnectorConfig;
  *
  * @author Randall Hauch
  */
-public class MySqlConnector extends RelationalBaseSourceConnector {
+public class MariaDBConnector extends RelationalBaseSourceConnector {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MySqlConnector.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MariaDBConnector.class);
 
     @Immutable
     private Map<String, String> properties;
 
-    public MySqlConnector() {
+    public MariaDBConnector() {
     }
 
     @Override
@@ -54,7 +54,7 @@ public class MySqlConnector extends RelationalBaseSourceConnector {
 
     @Override
     public Class<? extends Task> taskClass() {
-        return MySqlConnectorTask.class;
+        return MariaDBConnectorTask.class;
     }
 
     @Override
@@ -79,8 +79,8 @@ public class MySqlConnector extends RelationalBaseSourceConnector {
     protected void validateConnection(Map<String, ConfigValue> configValues, Configuration config) {
         ConfigValue hostnameValue = configValues.get(RelationalDatabaseConnectorConfig.HOSTNAME.name());
         // Try to connect to the database ...
-        final MySqlConnection.MySqlConnectionConfiguration connectionConfig = new MySqlConnection.MySqlConnectionConfiguration(config);
-        try (MySqlConnection connection = new MySqlConnection(connectionConfig)) {
+        final MariaDBConnection.MySqlConnectionConfiguration connectionConfig = new MariaDBConnection.MySqlConnectionConfiguration(config);
+        try (MariaDBConnection connection = new MariaDBConnection(connectionConfig)) {
             try {
                 connection.connect();
                 connection.execute("SELECT version()");

@@ -21,7 +21,7 @@ import io.debezium.util.Clock;
  *
  * @author Jiri Pechanec
  */
-public class MySqlChangeRecordEmitter extends RelationalChangeRecordEmitter<MySqlPartition> {
+public class MySqlChangeRecordEmitter extends RelationalChangeRecordEmitter<MariaDBPartition> {
 
     private final Envelope.Operation operation;
     private final OffsetContext offset;
@@ -29,7 +29,7 @@ public class MySqlChangeRecordEmitter extends RelationalChangeRecordEmitter<MySq
     private final Object[] after;
     private final boolean skipMessagesWithoutChange;
 
-    public MySqlChangeRecordEmitter(MySqlPartition partition, OffsetContext offset, Clock clock, Operation operation, Serializable[] before,
+    public MySqlChangeRecordEmitter(MariaDBPartition partition, OffsetContext offset, Clock clock, Operation operation, Serializable[] before,
                                     Serializable[] after, boolean skipMessagesWithoutChange) {
         super(partition, offset, clock);
         this.offset = offset;

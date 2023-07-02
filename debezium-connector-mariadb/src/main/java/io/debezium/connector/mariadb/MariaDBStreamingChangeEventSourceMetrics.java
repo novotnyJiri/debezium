@@ -21,7 +21,7 @@ import io.debezium.util.Collect;
 /**
  * @author Randall Hauch
  */
-public class MySqlStreamingChangeEventSourceMetrics extends DefaultStreamingChangeEventSourceMetrics<MariaDBPartition>
+public class MariaDBStreamingChangeEventSourceMetrics extends DefaultStreamingChangeEventSourceMetrics<MariaDBPartition>
         implements MySqlStreamingChangeEventSourceMetricsMXBean {
 
     private final BinaryLogClient client;
@@ -36,7 +36,7 @@ public class MySqlStreamingChangeEventSourceMetrics extends DefaultStreamingChan
     private final AtomicLong milliSecondsBehindMaster = new AtomicLong();
     private final AtomicReference<String> lastTransactionId = new AtomicReference<>();
 
-    public MySqlStreamingChangeEventSourceMetrics(MySqlTaskContext taskContext, ChangeEventQueueMetrics changeEventQueueMetrics, EventMetadataProvider metadataProvider) {
+    public MariaDBStreamingChangeEventSourceMetrics(MariaDBTaskContext taskContext, ChangeEventQueueMetrics changeEventQueueMetrics, EventMetadataProvider metadataProvider) {
         super(taskContext, changeEventQueueMetrics, metadataProvider);
         this.client = taskContext.getBinaryLogClient();
         this.stats = new BinaryLogClientStatistics(client);

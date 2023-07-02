@@ -51,6 +51,6 @@ class MySqlEventMetadataProvider implements EventMetadataProvider {
 
     @Override
     public String getTransactionId(DataCollectionId source, OffsetContext offset, Object key, Struct value) {
-        return ((MySqlOffsetContext) offset).getTransactionId();
+        return ((MariaDBOffsetContext) offset).getTransactionId();
     }
 }

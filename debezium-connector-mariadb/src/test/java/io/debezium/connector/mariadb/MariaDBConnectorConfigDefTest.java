@@ -7,9 +7,9 @@ package io.debezium.connector.mariadb;
 
 import io.debezium.config.ConfigDefinitionMetadataTest;
 
-public class MySqlConnectorConfigDefTest extends ConfigDefinitionMetadataTest {
+public class MariaDBConnectorConfigDefTest extends ConfigDefinitionMetadataTest {
 
-    public MySqlConnectorConfigDefTest() {
-        super(new MySqlConnector());
+    public MariaDBConnectorConfigDefTest() {
+        super(new MariaDBConnector());
     }
 }

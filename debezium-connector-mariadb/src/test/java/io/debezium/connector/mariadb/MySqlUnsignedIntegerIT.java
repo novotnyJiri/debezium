@@ -61,12 +61,12 @@ public class MySqlUnsignedIntegerIT extends AbstractConnectorTest {
     public void shouldConsumeAllEventsFromDatabaseUsingBinlogAndNoSnapshot() throws SQLException, InterruptedException {
         // Use the DB configuration to define the connector's configuration ...
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, MySqlConnectorConfig.SnapshotMode.NEVER)
-                .with(MySqlConnectorConfig.BIGINT_UNSIGNED_HANDLING_MODE, MySqlConnectorConfig.BigIntUnsignedHandlingMode.PRECISE)
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, MariaDBConnectorConfig.SnapshotMode.NEVER)
+                .with(MariaDBConnectorConfig.BIGINT_UNSIGNED_HANDLING_MODE, MariaDBConnectorConfig.BigIntUnsignedHandlingMode.PRECISE)
                 .build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         // ---------------------------------------------------------------------------------------------------------------
         // Consume all of the events due to startup and initialization of the database
@@ -128,11 +128,11 @@ public class MySqlUnsignedIntegerIT extends AbstractConnectorTest {
     public void shouldConsumeAllEventsFromBigIntTableInDatabaseUsingBinlogAndNoSnapshotUsingLong() throws SQLException, InterruptedException {
         // Use the DB configuration to define the connector's configuration ...
         config = DATABASE.defaultConfig()
-                .with(MySqlConnectorConfig.SNAPSHOT_MODE, MySqlConnectorConfig.SnapshotMode.NEVER.toString())
-                .with(MySqlConnectorConfig.BIGINT_UNSIGNED_HANDLING_MODE, MySqlConnectorConfig.BigIntUnsignedHandlingMode.LONG)
+                .with(MariaDBConnectorConfig.SNAPSHOT_MODE, MariaDBConnectorConfig.SnapshotMode.NEVER.toString())
+                .with(MariaDBConnectorConfig.BIGINT_UNSIGNED_HANDLING_MODE, MariaDBConnectorConfig.BigIntUnsignedHandlingMode.LONG)
                 .build();
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         // ---------------------------------------------------------------------------------------------------------------
         // Consume all of the events due to startup and initialization of the database
@@ -166,7 +166,7 @@ public class MySqlUnsignedIntegerIT extends AbstractConnectorTest {
         config = DATABASE.defaultConfig().build();
 
         // Start the connector ...
-        start(MySqlConnector.class, config);
+        start(MariaDBConnector.class, config);
 
         // ---------------------------------------------------------------------------------------------------------------
         // Consume all of the events due to startup and initialization of the database

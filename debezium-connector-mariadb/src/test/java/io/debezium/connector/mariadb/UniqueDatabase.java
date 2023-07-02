@@ -191,25 +191,25 @@ public class UniqueDatabase {
      */
     public Configuration.Builder defaultJdbcConfigBuilder() {
         Builder builder = Configuration.create()
-                .with(MySqlConnectorConfig.HOSTNAME, System.getProperty("database.hostname", "localhost"))
-                .with(MySqlConnectorConfig.PORT, System.getProperty("database.port", "3306"))
-                .with(MySqlConnectorConfig.USER, "snapper")
-                .with(MySqlConnectorConfig.PASSWORD, "snapperpass");
+                .with(MariaDBConnectorConfig.HOSTNAME, System.getProperty("database.hostname", "localhost"))
+                .with(MariaDBConnectorConfig.PORT, System.getProperty("database.port", "3306"))
+                .with(MariaDBConnectorConfig.USER, "snapper")
+                .with(MariaDBConnectorConfig.PASSWORD, "snapperpass");
 
         String sslMode = System.getProperty("database.ssl.mode", "preferred");
 
         if (sslMode.equals("disabled")) {
-            builder.with(MySqlConnectorConfig.SSL_MODE, MySqlConnectorConfig.SecureConnectionMode.DISABLED);
+            builder.with(MariaDBConnectorConfig.SSL_MODE, MariaDBConnectorConfig.SecureConnectionMode.DISABLED);
         }
         else {
             URL trustStoreFile = UniqueDatabase.class.getClassLoader().getResource("ssl/truststore");
             URL keyStoreFile = UniqueDatabase.class.getClassLoader().getResource("ssl/keystore");
 
-            builder.with(MySqlConnectorConfig.SSL_MODE, sslMode)
-                    .with(MySqlConnectorConfig.SSL_TRUSTSTORE, System.getProperty("database.ssl.truststore", trustStoreFile.getPath()))
-                    .with(MySqlConnectorConfig.SSL_TRUSTSTORE_PASSWORD, System.getProperty("database.ssl.truststore.password", "debezium"))
-                    .with(MySqlConnectorConfig.SSL_KEYSTORE, System.getProperty("database.ssl.keystore", keyStoreFile.getPath()))
-                    .with(MySqlConnectorConfig.SSL_KEYSTORE_PASSWORD, System.getProperty("database.ssl.keystore.password", "debezium"));
+            builder.with(MariaDBConnectorConfig.SSL_MODE, sslMode)
+                    .with(MariaDBConnectorConfig.SSL_TRUSTSTORE, System.getProperty("database.ssl.truststore", trustStoreFile.getPath()))
+                    .with(MariaDBConnectorConfig.SSL_TRUSTSTORE_PASSWORD, System.getProperty("database.ssl.truststore.password", "debezium"))
+                    .with(MariaDBConnectorConfig.SSL_KEYSTORE, System.getProperty("database.ssl.keystore", keyStoreFile.getPath()))
+                    .with(MariaDBConnectorConfig.SSL_KEYSTORE_PASSWORD, System.getProperty("database.ssl.keystore.password", "debezium"));
         }
 
         if (dbHistoryPath != null) {
@@ -224,7 +224,7 @@ public class UniqueDatabase {
      */
     public Configuration.Builder defaultConfig() {
         return defaultConfigWithoutDatabaseFilter()
-                .with(MySqlConnectorConfig.DATABASE_INCLUDE_LIST, getDatabaseName());
+                .with(MariaDBConnectorConfig.DATABASE_INCLUDE_LIST, getDatabaseName());
     }
 
     /**
@@ -233,10 +233,10 @@ public class UniqueDatabase {
      */
     public Configuration.Builder defaultConfigWithoutDatabaseFilter() {
         return defaultJdbcConfigBuilder()
-                .with(MySqlConnectorConfig.SERVER_ID, 18765)
-                .with(MySqlConnectorConfig.POLL_INTERVAL_MS, 10)
-                .with(MySqlConnectorConfig.SCHEMA_HISTORY, FileSchemaHistory.class)
-                .with(MySqlConnectorConfig.BUFFER_SIZE_FOR_BINLOG_READER, 10_000)
+                .with(MariaDBConnectorConfig.SERVER_ID, 18765)
+                .with(MariaDBConnectorConfig.POLL_INTERVAL_MS, 10)
+                .with(MariaDBConnectorConfig.SCHEMA_HISTORY, FileSchemaHistory.class)
+                .with(MariaDBConnectorConfig.BUFFER_SIZE_FOR_BINLOG_READER, 10_000)
                 .with(CommonConnectorConfig.TOPIC_PREFIX, getServerName());
     }
 
