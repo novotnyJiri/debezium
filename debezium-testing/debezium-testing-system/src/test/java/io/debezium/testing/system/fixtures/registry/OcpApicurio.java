@@ -10,6 +10,7 @@ import static io.debezium.testing.system.tools.ConfigProperties.OCP_PROJECT_REGI
 import static io.debezium.testing.system.tools.kafka.builders.FabricKafkaConnectBuilder.*;
 
 import io.fabric8.kubernetes.api.model.Secret;
+import io.fabric8.kubernetes.api.model.SecretBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
@@ -48,8 +49,11 @@ public class OcpApicurio extends TestFixture {
 
         Secret kafkaSecret = ocp.secrets().inNamespace(OCP_PROJECT_DBZ).withName(KAFKA_CERT_SECRET).get();
         Secret kafkaClientSecret = ocp.secrets().inNamespace(OCP_PROJECT_DBZ).withName(KAFKA_CLIENT_CERT_SECRET).get();
-        ocp.secrets().inNamespace(OCP_PROJECT_REGISTRY).create(kafkaSecret);
-        ocp.secrets().inNamespace(OCP_PROJECT_REGISTRY).create(kafkaClientSecret);
+
+        Secret secretCorrectNamespace = new SecretBuilder(kafkaSecret).editMetadata().withNamespace(OCP_PROJECT_REGISTRY).endMetadata().build();
+        Secret clientSecretCorrectNamespace = new SecretBuilder(kafkaClientSecret).editMetadata().withNamespace(OCP_PROJECT_REGISTRY).endMetadata().build();
+        ocp.secrets().inNamespace(OCP_PROJECT_REGISTRY).create(secretCorrectNamespace);
+        ocp.secrets().inNamespace(OCP_PROJECT_REGISTRY).create(clientSecretCorrectNamespace);
 
         FabricApicurioBuilder fabricBuilder = FabricApicurioBuilder
                 .baseKafkaSql(kafkaController.getTslBootstrapAddress());
