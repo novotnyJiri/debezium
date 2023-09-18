@@ -78,6 +78,11 @@ public class OcpKafkaController implements KafkaController {
         return name + "-kafka-bootstrap." + project + ".svc.cluster.local:9092";
     }
 
+    @Override
+    public String getTslBootstrapAddress() {
+        return name + "-kafka-bootstrap." + project + ".svc.cluster.local:9093";
+    }
+
     /**
      * Returns bootstrap to be used by KC.
      * The address is local.

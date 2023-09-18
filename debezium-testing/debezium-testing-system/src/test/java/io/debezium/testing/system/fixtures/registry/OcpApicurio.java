@@ -5,8 +5,11 @@
  */
 package io.debezium.testing.system.fixtures.registry;
 
+import static io.debezium.testing.system.tools.ConfigProperties.OCP_PROJECT_DBZ;
 import static io.debezium.testing.system.tools.ConfigProperties.OCP_PROJECT_REGISTRY;
+import static io.debezium.testing.system.tools.kafka.builders.FabricKafkaConnectBuilder.*;
 
+import io.fabric8.kubernetes.api.model.Secret;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
@@ -42,8 +45,14 @@ public class OcpApicurio extends TestFixture {
 
     @Override
     public void setup() throws Exception {
+
+        Secret kafkaSecret = ocp.secrets().inNamespace(OCP_PROJECT_DBZ).withName(KAFKA_CERT_SECRET).get();
+        Secret kafkaClientSecret = ocp.secrets().inNamespace(OCP_PROJECT_DBZ).withName(KAFKA_CLIENT_CERT_SECRET).get();
+        ocp.secrets().inNamespace(OCP_PROJECT_REGISTRY).create(kafkaSecret);
+        ocp.secrets().inNamespace(OCP_PROJECT_REGISTRY).create(kafkaClientSecret);
+
         FabricApicurioBuilder fabricBuilder = FabricApicurioBuilder
-                .baseKafkaSql(kafkaController.getBootstrapAddress());
+                .baseKafkaSql(kafkaController.getTslBootstrapAddress());
 
         OcpApicurioDeployer deployer = new OcpApicurioDeployer(OCP_PROJECT_REGISTRY, fabricBuilder, ocp, new OkHttpClient());
 
