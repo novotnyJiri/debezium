@@ -49,6 +49,9 @@ public class OcpApicurio extends TestFixture {
 
         Secret kafkaSecret = ocp.secrets().inNamespace(OCP_PROJECT_DBZ).withName(KAFKA_CERT_SECRET).get();
         Secret kafkaClientSecret = ocp.secrets().inNamespace(OCP_PROJECT_DBZ).withName(KAFKA_CLIENT_CERT_SECRET).get();
+        LOGGER.info("All secrets - " + ocp.secrets().inNamespace(OCP_PROJECT_DBZ));
+        LOGGER.info("Kafka secret - " + kafkaSecret.toString());
+        LOGGER.info("Client secret - " + kafkaClientSecret.toString());
 
         Secret secretCorrectNamespace = new SecretBuilder(kafkaSecret).editMetadata().withNamespace(OCP_PROJECT_REGISTRY).endMetadata().build();
         Secret clientSecretCorrectNamespace = new SecretBuilder(kafkaClientSecret).editMetadata().withNamespace(OCP_PROJECT_REGISTRY).endMetadata().build();
