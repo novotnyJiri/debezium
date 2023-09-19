@@ -5,6 +5,8 @@
  */
 package io.debezium.testing.system.tools.registry.builders;
 
+import static io.debezium.testing.system.tools.kafka.builders.FabricKafkaConnectBuilder.KAFKA_CERT_SECRET;
+import static io.debezium.testing.system.tools.kafka.builders.FabricKafkaConnectBuilder.KAFKA_CLIENT_CERT_SECRET;
 
 import io.apicurio.registry.operator.api.model.ApicurioRegistry;
 import io.apicurio.registry.operator.api.model.ApicurioRegistryBuilder;
@@ -13,10 +15,6 @@ import io.apicurio.registry.operator.api.model.ApicurioRegistrySpecConfiguration
 import io.apicurio.registry.operator.api.model.ApicurioRegistrySpecConfigurationKafkaSecurityTlsBuilder;
 import io.debezium.testing.system.tools.ConfigProperties;
 import io.debezium.testing.system.tools.fabric8.FabricBuilderWrapper;
-
-
-import static io.debezium.testing.system.tools.kafka.builders.FabricKafkaConnectBuilder.KAFKA_CERT_SECRET;
-import static io.debezium.testing.system.tools.kafka.builders.FabricKafkaConnectBuilder.KAFKA_CLIENT_CERT_SECRET;
 
 public class FabricApicurioBuilder
         extends FabricBuilderWrapper<FabricApicurioBuilder, ApicurioRegistryBuilder, ApicurioRegistry> {
@@ -49,15 +47,13 @@ public class FabricApicurioBuilder
 
     public FabricApicurioBuilder withKafkaSqlConfiguration(String bootstrap) {
 
-        ApicurioRegistrySpecConfigurationKafkaSecurity tls =
-                new ApicurioRegistrySpecConfigurationKafkaSecurityBuilder()
-                        .withTls(
-                                new ApicurioRegistrySpecConfigurationKafkaSecurityTlsBuilder()
-                                        .withKeystoreSecretName(KAFKA_CLIENT_CERT_SECRET)
-                                        .withTruststoreSecretName(KAFKA_CERT_SECRET)
-                                        .build()
-                        )
-                        .build();
+        ApicurioRegistrySpecConfigurationKafkaSecurity tls = new ApicurioRegistrySpecConfigurationKafkaSecurityBuilder()
+                .withTls(
+                        new ApicurioRegistrySpecConfigurationKafkaSecurityTlsBuilder()
+                                .withKeystoreSecretName(KAFKA_CLIENT_CERT_SECRET)
+                                .withTruststoreSecretName(KAFKA_CERT_SECRET)
+                                .build())
+                .build();
 
         builder
                 .editSpec()

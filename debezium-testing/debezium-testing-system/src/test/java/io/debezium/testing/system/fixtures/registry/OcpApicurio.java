@@ -7,10 +7,9 @@ package io.debezium.testing.system.fixtures.registry;
 
 import static io.debezium.testing.system.tools.ConfigProperties.OCP_PROJECT_DBZ;
 import static io.debezium.testing.system.tools.ConfigProperties.OCP_PROJECT_REGISTRY;
-import static io.debezium.testing.system.tools.kafka.builders.FabricKafkaConnectBuilder.*;
+import static io.debezium.testing.system.tools.kafka.builders.FabricKafkaConnectBuilder.KAFKA_CERT_SECRET;
+import static io.debezium.testing.system.tools.kafka.builders.FabricKafkaConnectBuilder.KAFKA_CLIENT_CERT_SECRET;
 
-import io.fabric8.kubernetes.api.model.Secret;
-import io.fabric8.kubernetes.api.model.SecretBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
@@ -24,6 +23,8 @@ import io.debezium.testing.system.tools.registry.OcpApicurioController;
 import io.debezium.testing.system.tools.registry.OcpApicurioDeployer;
 import io.debezium.testing.system.tools.registry.RegistryController;
 import io.debezium.testing.system.tools.registry.builders.FabricApicurioBuilder;
+import io.fabric8.kubernetes.api.model.Secret;
+import io.fabric8.kubernetes.api.model.SecretBuilder;
 import io.fabric8.openshift.client.OpenShiftClient;
 
 import fixture5.TestFixture;
@@ -49,14 +50,12 @@ public class OcpApicurio extends TestFixture {
 
         Secret kafkaSecret = ocp.secrets().inNamespace(OCP_PROJECT_DBZ).withName(KAFKA_CERT_SECRET).get();
         Secret kafkaClientSecret = ocp.secrets().inNamespace(OCP_PROJECT_DBZ).withName(KAFKA_CLIENT_CERT_SECRET).get();
-        LOGGER.info("All secrets - " + ocp.secrets().inNamespace(OCP_PROJECT_DBZ));
-        LOGGER.info("Kafka secret - " + kafkaSecret.toString());
-        LOGGER.info("Client secret - " + kafkaClientSecret.toString());
 
-        Secret secretCorrectNamespace = new SecretBuilder(kafkaSecret).editMetadata().withNamespace(OCP_PROJECT_REGISTRY).endMetadata().build();
-        Secret clientSecretCorrectNamespace = new SecretBuilder(kafkaClientSecret).editMetadata().withNamespace(OCP_PROJECT_REGISTRY).endMetadata().build();
-        ocp.secrets().inNamespace(OCP_PROJECT_REGISTRY).create(secretCorrectNamespace);
-        ocp.secrets().inNamespace(OCP_PROJECT_REGISTRY).create(clientSecretCorrectNamespace);
+        Secret secretNewMetadata = new SecretBuilder(kafkaSecret).withNewMetadata().withNamespace(OCP_PROJECT_REGISTRY).withName(KAFKA_CERT_SECRET).endMetadata().build();
+        Secret clientSecretNewMetadata = new SecretBuilder(kafkaClientSecret).withNewMetadata().withNamespace(OCP_PROJECT_REGISTRY).withName(KAFKA_CLIENT_CERT_SECRET)
+                .endMetadata().build();
+        ocp.secrets().inNamespace(OCP_PROJECT_REGISTRY).create(secretNewMetadata);
+        ocp.secrets().inNamespace(OCP_PROJECT_REGISTRY).create(clientSecretNewMetadata);
 
         FabricApicurioBuilder fabricBuilder = FabricApicurioBuilder
                 .baseKafkaSql(kafkaController.getTslBootstrapAddress());
