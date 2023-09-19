@@ -47,15 +47,15 @@ public class OcpApicurio extends TestFixture {
 
     @Override
     public void setup() throws Exception {
-
+        // Copy kafka secrets created with strimzi to apicurio registry namespace
         Secret kafkaSecret = ocp.secrets().inNamespace(OCP_PROJECT_DBZ).withName(KAFKA_CERT_SECRET).get();
-        Secret kafkaClientSecret = ocp.secrets().inNamespace(OCP_PROJECT_DBZ).withName(KAFKA_CLIENT_CERT_SECRET).get();
+        var kafkaClientSecretData = ocp.secrets().inNamespace(OCP_PROJECT_DBZ).withName(KAFKA_CLIENT_CERT_SECRET).get().getData();
 
         Secret secretNewMetadata = new SecretBuilder(kafkaSecret).withNewMetadata().withNamespace(OCP_PROJECT_REGISTRY).withName(KAFKA_CERT_SECRET).endMetadata().build();
-        Secret clientSecretNewMetadata = new SecretBuilder(kafkaClientSecret).withNewMetadata().withNamespace(OCP_PROJECT_REGISTRY).withName(KAFKA_CLIENT_CERT_SECRET)
-                .endMetadata().build();
+        Secret clientSecretRenamedData = new SecretBuilder().withNewMetadata().withNamespace(OCP_PROJECT_REGISTRY).withName(KAFKA_CLIENT_CERT_SECRET)
+                .endMetadata().addToData("user.p12", kafkaClientSecretData.get("ca.p12")).addToData("user.password", kafkaClientSecretData.get("ca.password")).build();
         ocp.secrets().inNamespace(OCP_PROJECT_REGISTRY).create(secretNewMetadata);
-        ocp.secrets().inNamespace(OCP_PROJECT_REGISTRY).create(clientSecretNewMetadata);
+        ocp.secrets().inNamespace(OCP_PROJECT_REGISTRY).create(clientSecretRenamedData);
 
         FabricApicurioBuilder fabricBuilder = FabricApicurioBuilder
                 .baseKafkaSql(kafkaController.getTslBootstrapAddress());
