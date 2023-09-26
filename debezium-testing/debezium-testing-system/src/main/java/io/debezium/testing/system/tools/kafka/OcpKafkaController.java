@@ -150,7 +150,7 @@ public class OcpKafkaController implements KafkaController {
             throw new RuntimeException(e);
         }
         kafkaConsumerProps.put(BOOTSTRAP_SERVERS_CONFIG, getPublicBootstrapAddress());
-        kafkaConsumerProps.put(GROUP_ID_CONFIG, "DEBEZIUM_IT_01");
+        kafkaConsumerProps.put(GROUP_ID_CONFIG, "DEBEZIUMIT01");
         kafkaConsumerProps.put(AUTO_OFFSET_RESET_CONFIG, "earliest");
         kafkaConsumerProps.put(ENABLE_AUTO_COMMIT_CONFIG, false);
         kafkaConsumerProps.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SSL");
