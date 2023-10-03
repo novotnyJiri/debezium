@@ -14,12 +14,9 @@ import static io.debezium.testing.system.tools.kafka.builders.FabricKafkaConnect
 
 import io.apicurio.registry.operator.api.v1.model.ApicurioRegistry;
 import io.apicurio.registry.operator.api.v1.model.ApicurioRegistryBuilder;
-import io.apicurio.registry.operator.api.v1.model.apicurioregistryspec.configuration.Sql;
-import io.apicurio.registry.operator.api.v1.model.apicurioregistryspec.configuration.SqlBuilder;
 import io.apicurio.registry.operator.api.v1.model.apicurioregistryspec.configuration.kafkasql.Security;
 import io.apicurio.registry.operator.api.v1.model.apicurioregistryspec.configuration.kafkasql.SecurityBuilder;
 import io.apicurio.registry.operator.api.v1.model.apicurioregistryspec.configuration.kafkasql.security.TlsBuilder;
-import io.apicurio.registry.operator.api.v1.model.apicurioregistryspec.configuration.sql.DataSourceBuilder;
 import io.debezium.testing.system.tools.ConfigProperties;
 import io.debezium.testing.system.tools.fabric8.FabricBuilderWrapper;
 
@@ -27,6 +24,7 @@ public class FabricApicurioBuilder
         extends FabricBuilderWrapper<FabricApicurioBuilder, ApicurioRegistryBuilder, ApicurioRegistry> {
 
     private static final String DEFAULT_PERSISTENCE_TYPE = "kafkasql";
+    private static final String SQL_PERSISTENCE_TYPE = "sql";
 
     protected FabricApicurioBuilder(ApicurioRegistryBuilder builder) {
         super(builder);
@@ -56,7 +54,7 @@ public class FabricApicurioBuilder
         builder.editSpec()
                 .withNewConfiguration()
                 .withLogLevel(ConfigProperties.APICURIO_LOG_LEVEL)
-                .withPersistence(DEFAULT_PERSISTENCE_TYPE)
+                .withPersistence(SQL_PERSISTENCE_TYPE)
                 .withNewSql()
                 .withNewDataSource()
                 .withUserName(DATABASE_POSTGRESQL_DBZ_USERNAME)
