@@ -14,9 +14,9 @@ import static io.debezium.testing.system.tools.kafka.builders.FabricKafkaConnect
 
 import io.apicurio.registry.operator.api.v1.model.ApicurioRegistry;
 import io.apicurio.registry.operator.api.v1.model.ApicurioRegistryBuilder;
-import io.apicurio.registry.operator.api.v1.model.apicurioregistryspec.configuration.kafkasql.Security;
-import io.apicurio.registry.operator.api.v1.model.apicurioregistryspec.configuration.kafkasql.SecurityBuilder;
-import io.apicurio.registry.operator.api.v1.model.apicurioregistryspec.configuration.kafkasql.security.TlsBuilder;
+import io.apicurio.registry.operator.api.v1.model.ApicurioRegistrySpecConfigurationKafkaSecurity;
+import io.apicurio.registry.operator.api.v1.model.ApicurioRegistrySpecConfigurationKafkaSecurityBuilder;
+import io.apicurio.registry.operator.api.v1.model.ApicurioRegistrySpecConfigurationKafkaSecurityTlsBuilder;
 import io.debezium.testing.system.tools.ConfigProperties;
 import io.debezium.testing.system.tools.fabric8.FabricBuilderWrapper;
 
@@ -83,10 +83,10 @@ public class FabricApicurioBuilder
         return self();
     }
 
-    private Security getTlsSpec() {
-        return new SecurityBuilder()
+    private ApicurioRegistrySpecConfigurationKafkaSecurity getTlsSpec() {
+        return new ApicurioRegistrySpecConfigurationKafkaSecurityBuilder()
                 .withTls(
-                        new TlsBuilder()
+                        new ApicurioRegistrySpecConfigurationKafkaSecurityTlsBuilder()
                                 .withKeystoreSecretName(KAFKA_CLIENT_CERT_SECRET)
                                 .withTruststoreSecretName(KAFKA_CERT_SECRET)
                                 .build())
