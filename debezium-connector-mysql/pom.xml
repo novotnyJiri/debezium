@@ -203,7 +203,7 @@
                     <watchInterval>500</watchInterval>
                     <logDate>default</logDate>
                     <verbose>true</verbose>
-                    <imagePullPolicy>IfNotPresent</imagePullPolicy>
+                    <imagePullPolicy>Never</imagePullPolicy>
                     <images>
                         <!--
                         Images based on "${mysql.server.image.source}" Docker image
@@ -231,9 +231,10 @@
                                     <log>(MySQL|MariaDB) init process done. Ready for start up.(?s)(.*)(mysqld|mariadbd): ready for connections.</log>
                                     <time>${mysql.init.timeout}</time>
                                 </wait>
+                                <platform>linux/arm64</platform>
                             </run>
                             <build>
-                                <from>${mysql.server.image.source}:${version.mysql.server}</from>
+                                <from>${mysql.server.image.source}:${version.mysql.server}-aarch64</from>
                                 <runCmds>
                                     <run>${docker.initimage}</run>
                                 </runCmds>
@@ -255,6 +256,11 @@
                                     </inline>
                                     <targetDir>/</targetDir>
                                 </assembly>
+                                <buildx>
+                                    <platforms>
+                                        <platform>linux/arm64</platform>
+                                    </platforms>
+                                </buildx>
                             </build>
                             <external>
                                 <type>properties</type>
