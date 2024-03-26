@@ -155,23 +155,23 @@ public class OcpKafkaController implements KafkaController {
         return Crds.kafkaOperation(ocp).inNamespace(project);
     }
 
-//    @Override
-//    public Properties getDefaultConsumerProperties() {
-//        Properties kafkaConsumerProps = new Properties();
-//        try {
-//            kafkaConsumerProps.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, getKafkaCaCertificate().getAbsolutePath());
-//        }
-//        catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//        kafkaConsumerProps.put(BOOTSTRAP_SERVERS_CONFIG, getPublicBootstrapAddress());
-//        kafkaConsumerProps.put(GROUP_ID_CONFIG, "DEBEZIUM_IT_01");
-//        kafkaConsumerProps.put(AUTO_OFFSET_RESET_CONFIG, "earliest");
-//        kafkaConsumerProps.put(ENABLE_AUTO_COMMIT_CONFIG, false);
-//        kafkaConsumerProps.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SSL");
-//        kafkaConsumerProps.put(SslConfigs.SSL_TRUSTSTORE_TYPE_CONFIG, "PEM");
-//        return kafkaConsumerProps;
-//    }
+    // @Override
+    // public Properties getDefaultConsumerProperties() {
+    // Properties kafkaConsumerProps = new Properties();
+    // try {
+    // kafkaConsumerProps.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, getKafkaCaCertificate().getAbsolutePath());
+    // }
+    // catch (IOException e) {
+    // throw new RuntimeException(e);
+    // }
+    // kafkaConsumerProps.put(BOOTSTRAP_SERVERS_CONFIG, getPublicBootstrapAddress());
+    // kafkaConsumerProps.put(GROUP_ID_CONFIG, "DEBEZIUM_IT_01");
+    // kafkaConsumerProps.put(AUTO_OFFSET_RESET_CONFIG, "earliest");
+    // kafkaConsumerProps.put(ENABLE_AUTO_COMMIT_CONFIG, false);
+    // kafkaConsumerProps.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SSL");
+    // kafkaConsumerProps.put(SslConfigs.SSL_TRUSTSTORE_TYPE_CONFIG, "PEM");
+    // return kafkaConsumerProps;
+    // }
     @Override
     public Properties getDefaultConsumerProperties() {
         Properties kafkaConsumerProps = new Properties();
