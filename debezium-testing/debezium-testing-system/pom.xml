@@ -267,6 +267,11 @@
     </dependency>
 
     <dependency>
+      <groupId>org.apache.kafka</groupId>
+      <artifactId>connect-api</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>io.strimzi</groupId>
       <artifactId>api</artifactId>
       <version>${version.strimzi}</version>
