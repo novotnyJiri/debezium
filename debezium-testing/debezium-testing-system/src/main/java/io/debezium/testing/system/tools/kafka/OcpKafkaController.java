@@ -180,7 +180,7 @@ public class OcpKafkaController implements KafkaController {
         kafkaConsumerProps.put(AUTO_OFFSET_RESET_CONFIG, "earliest");
         kafkaConsumerProps.put(ENABLE_AUTO_COMMIT_CONFIG, false);
         kafkaConsumerProps.put(HEARTBEAT_INTERVAL_MS_CONFIG, 1000);
-        kafkaConsumerProps.put(SESSION_TIMEOUT_MS_CONFIG, 5000);
+        kafkaConsumerProps.put(SESSION_TIMEOUT_MS_CONFIG, 10000);
         return kafkaConsumerProps;
     }
 
